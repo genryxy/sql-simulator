@@ -14,7 +14,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 public class RegistrationController {
 
     @Autowired
-    private UserRepo userrepo;
+    private UserRepo userRepo;
 
     @GetMapping("/registration")
     public String registration() {
@@ -23,14 +23,14 @@ public class RegistrationController {
 
     @PostMapping("/registration")
     public String addUser(final User user, Map<String, Object> model) {
-        final User userfromdb = userrepo.findByUsername(user.getUsername());
-        if (userfromdb != null) {
+        final User userFromDb = userRepo.findByUsername(user.getUsername());
+        if (userFromDb != null) {
             model.put("message", "User exists!");
             return "registration";
         }
         user.setActive(true);
         user.setRoles(Collections.singleton(Role.USER));
-        userrepo.save(user);
+        userRepo.save(user);
         return "redirect:/login";
     }
 }
