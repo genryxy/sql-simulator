@@ -5,13 +5,21 @@
 </head>
 <body>
 <div>
+    <form action="/logout" method="post">
+        <input type="submit" value="Sign Out"/>
+        <input type="hidden" name="_csrf" value="{{_csrf.token}}">
+    </form>
+</div>
+<div>
     <form method="post">
         <input type="text" name="text" placeholder="Input message" />
         <input type="text" name="tag" placeholder="Input tag" />
+        <input type="hidden" name="_csrf" value="{{_csrf.token}}">
         <button type="submit">Add</button>
     </form>
     <form method="post" action="filter">
         <input type="text" name="filter" placeholder="Input filter" />
+        <input type="hidden" name="_csrf" value="{{_csrf.token}}">
         <button type="submit">Search</button>
     </form>
 </div>
