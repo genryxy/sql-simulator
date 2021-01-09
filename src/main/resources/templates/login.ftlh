@@ -2,5 +2,6 @@
 <#import "parts/authentication.ftlh" as auth>
 
 <@c.page>
+    ${message!}
     <@auth.login "/login" false/>
 </@c.page>

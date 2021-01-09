@@ -4,7 +4,7 @@
 <@c.page>
     <div class="mb-1"> Add new user </div>
     <#if message??>
-       ${message}
+       ${message!}
     </#if>
     <@auth.login "/registration" true/>
 </@c.page>
