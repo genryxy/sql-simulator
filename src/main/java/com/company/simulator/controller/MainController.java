@@ -3,10 +3,13 @@ package com.company.simulator.controller;
 import com.company.simulator.model.Message;
 import com.company.simulator.model.User;
 import com.company.simulator.repos.MessageRepo;
+import java.util.Map;
+import javax.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -38,12 +41,20 @@ public final class MainController {
     @PostMapping("/main")
     public String add(
         @AuthenticationPrincipal User user,
-        @RequestParam String text,
-        @RequestParam String tag,
+        @Valid Message message,
+        BindingResult bindingResult,
         Model model
     ) {
-        final Message message = new Message(text, tag, user);
-        msgRepo.save(message);
+        // Important that param `bindingResult` should be before `model`.
+        message.setAuthor(user);
+        if (bindingResult.hasErrors()) {
+            final Map<String, String> errors = ControllerUtils.getErrors(bindingResult);
+            model.mergeAttributes(errors);
+            model.addAttribute("message", message);
+        } else {
+            model.addAttribute("message", null);
+            msgRepo.save(message);
+        }
         final Iterable<Message> msgs = msgRepo.findAll();
         model.addAttribute("messages", msgs);
         return "main";

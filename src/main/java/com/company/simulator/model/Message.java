@@ -7,6 +7,8 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.Size;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -21,7 +23,12 @@ public final class Message {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
 
+    @NotBlank(message = "Please fill the message")
+    @Size(max = 65535, message = "Message too long (more than 64kB)")
     private String text;
+
+    @NotBlank(message = "Please fill the tag")
+    @Size(max = 255, message = "Tag too long (more than 8kB)")
     private String tag;
 
     @ManyToOne(fetch = FetchType.EAGER)
