@@ -91,13 +91,9 @@ public class UserService implements UserDetailsService {
         final boolean isEmailChanged = !Objects.equals(email, user.getEmail());
         if (isEmailChanged) {
             user.setEmail(email);
-            if (!StringUtils.isEmpty(email)) {
-                user.setActivationCode(UUID.randomUUID().toString());
-            }
+            user.setActivationCode(UUID.randomUUID().toString());
         }
-        if (!StringUtils.isEmpty(password)) {
-            user.setPassword(passwordEncoder.encode(password));
-        }
+        user.setPassword(passwordEncoder.encode(password));
         userRepo.save(user);
         if (isEmailChanged) {
             sendMessage(user);
