@@ -9,10 +9,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.util.StringUtils;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
@@ -23,8 +21,7 @@ public final class MainController {
     private MessageRepo msgRepo;
 
     @GetMapping("/")
-    public String greeting(@AuthenticationPrincipal User user, Model model) {
-        model.addAttribute("user", user);
+    public String greeting(Model model) {
         return "greeting";
     }
 
@@ -61,42 +58,6 @@ public final class MainController {
         final Iterable<Message> msgs = msgRepo.findAll();
         model.addAttribute("messages", msgs);
         return "main";
-    }
-
-    @GetMapping("/user-messages/{user}")
-    public String userMessages(
-        @AuthenticationPrincipal User currentUser,
-        @PathVariable User user,
-        Model model,
-        @RequestParam(required = false) Message message
-    ) {
-        model.addAttribute("messages", user.getMessages());
-        model.addAttribute("message", message);
-        model.addAttribute("isCurrentUser", currentUser.equals(user));
-        return "userMessages";
-    }
-
-    @PostMapping("/user-messages/{user}")
-    public String updateMessage(
-        @AuthenticationPrincipal User currentUser,
-        @PathVariable Long user,
-        @RequestParam(name = "id") Message message,
-        @RequestParam(name = "text") String text,
-        @RequestParam(name = "tag") String tag
-    ) {
-        // TODO: Return message in case of attempt
-        // to change someone else's message.
-        if (message.getAuthor().equals(currentUser)) {
-            if (!StringUtils.isEmpty(text)) {
-                message.setText(text);
-            }
-            if (!StringUtils.isEmpty(tag)) {
-                message.setTag(tag);
-            }
-            msgRepo.save(message);
-        }
-
-        return String.format("redirect:/user-messages/%d", user);
     }
 
 }
