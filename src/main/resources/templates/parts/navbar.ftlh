@@ -1,3 +1,4 @@
+<#include "security.ftlh">
 <#import "authentication.ftlh" as auth>
 
 <nav class="navbar navbar-expand-lg navbar-light bg-light">
