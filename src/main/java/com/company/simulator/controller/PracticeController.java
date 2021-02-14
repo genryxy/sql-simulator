@@ -1,40 +1,57 @@
 package com.company.simulator.controller;
 
-import com.company.simulator.model.Message;
 import com.company.simulator.model.Practice;
-import com.company.simulator.model.User;
+import com.company.simulator.model.Task;
 import com.company.simulator.repos.PracticeRepo;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestParam;
 
 @Controller
 public final class PracticeController {
-
     @Autowired
     private PracticeRepo practiceRepo;
 
     @GetMapping("/practice")
-    public String main(Model model) {
+    public String getAllPractices(Model model) {
         final Iterable<Practice> practices = practiceRepo.findAll();
         model.addAttribute("practices", practices);
-        return "practice/practice";
+        return "practice/practiceList";
     }
 
-    @GetMapping("/user-messages/{user}")
-    public String userMessages(
-        @AuthenticationPrincipal User currentUser,
-        @PathVariable User user,
-        Model model,
-        @RequestParam(required = false) Message message
+    @GetMapping("/practice/{id}")
+    public String getTasksByPracticeId(
+        @PathVariable Long id,
+        Model model
     ) {
-        model.addAttribute("messages", user.getMessages());
-        model.addAttribute("message", message);
-        model.addAttribute("isCurrentUser", currentUser.equals(user));
-        return "userMessages";
+        final Optional<Practice> practice = practiceRepo.findById(id);
+        final List<Task> tasks;
+        if (practice.isPresent()) {
+            tasks = new ArrayList<>(practice.get().getTasks());
+        } else {
+            throw new IllegalStateException(
+                String.format("Failed to get practice by id `%d`", id)
+            );
+        }
+        model.addAttribute("tasks", tasks);
+        return "practice/taskList";
     }
+
+//    @GetMapping("/user-messages/{user}")
+//    public String userMessages(
+//        @AuthenticationPrincipal User currentUser,
+//        @PathVariable User user,
+//        Model model,
+//        @RequestParam(required = false) Message message
+//    ) {
+//        model.addAttribute("messages", user.getMessages());
+//        model.addAttribute("message", message);
+//        model.addAttribute("isCurrentUser", currentUser.equals(user));
+//        return "userMessages";
+//    }
 }
