@@ -5,7 +5,7 @@
     <#list tasks as task>
         <div class="list-group">
             <a href="/practice/task/${task.id}" class="list-group-item list-group-item-action">
-                Task number: ${task.id}
+                Task name: ${task.name}
             </a>
         </div>
     <#else>

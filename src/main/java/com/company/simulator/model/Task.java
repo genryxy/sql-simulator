@@ -37,19 +37,22 @@ public class Task implements Serializable {
     @NotBlank(message = "authorId cannot be empty")
     private Long authorId;
 
-    @NotBlank(message = "text cannot be empty")
+    @NotBlank(message = "Task name cannot be empty")
+    private String name;
+
+    @NotBlank(message = "Task text cannot be empty")
     private String text;
 
-    @NotBlank(message = "correctQuery cannot be empty")
+    @NotBlank(message = "Task correctQuery cannot be empty")
     private String correctQuery;
 
-    @NotBlank(message = "points cannot be empty")
+    @NotBlank(message = "Task points cannot be empty")
     private Integer points;
 
-    @NotBlank(message = "isPrivate cannot be empty")
+    @NotBlank(message = "Task isPrivate cannot be empty")
     private Boolean isPrivate;
 
-    @NotBlank(message = "categoryId cannot be empty")
+    @NotBlank(message = "Task categoryId cannot be empty")
     private Long categoryId;
 
     @ManyToMany
