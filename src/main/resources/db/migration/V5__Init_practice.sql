@@ -5,6 +5,6 @@ create table practice (
     primary key (id)
 );
 
-alter table if exists task
+alter table if exists practice
     add constraint practice_person_fk
         foreign key (author_id) references person;
