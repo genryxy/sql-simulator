@@ -36,7 +36,7 @@ public class TaskController {
     }
 
     @PostMapping("/task/{task}")
-    public String updateMessage(
+    public String saveStudentQuery(
         @PathVariable Task task,
         @RequestParam(name = "query") String query,
         Model model
