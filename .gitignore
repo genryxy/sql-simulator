@@ -7,3 +7,4 @@ classes/
 *.run.xml
 .classpath
 .settings/
+application.properties
