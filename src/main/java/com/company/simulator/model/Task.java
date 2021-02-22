@@ -28,10 +28,11 @@ import java.io.Serializable;
 @Data
 public class Task implements Serializable {
 
-    public Task(Long authorId, String name, String text, String correctQuery, Integer points, Boolean isPrivate, Long categoryId) {
+    public Task(Long authorId, String name, String text, String ddlScript, String correctQuery, Integer points, Boolean isPrivate, Long categoryId) {
         this.authorId = authorId;
         this.name = name;
         this.text = text;
+        this.ddlScript = ddlScript;
         this.correctQuery = correctQuery;
         this.points = points;
         this.isPrivate = isPrivate;
@@ -39,16 +40,17 @@ public class Task implements Serializable {
     }
 
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @CollectionTable(name = "person", joinColumns = @JoinColumn(name = "user_id"))
-    @NotBlank(message = "authorId cannot be empty")
     private Long authorId;
 
     private String name;
 
     private String text;
+
+    private String ddlScript;
 
     private String correctQuery;
 

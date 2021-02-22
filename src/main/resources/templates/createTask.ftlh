@@ -8,6 +8,7 @@
             <form method="post" action="/task/create" class="form-inline">
                 <input type="hidden" name="_csrf" value="${_csrf.token}">
                 <input type="text" name="text" placeholder="text" >
+                <input type="text" name="ddlScript" placeholder="ddlScript" >
                 <input type="text" name="name" placeholder="name" >
                 <input type="text" name="correctQuery" placeholder="correctQuery">
                 <input type="int" name="points" placeholder="points">

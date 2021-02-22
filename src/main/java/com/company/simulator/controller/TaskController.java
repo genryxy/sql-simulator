@@ -1,7 +1,10 @@
 package com.company.simulator.controller;
 
+import com.company.simulator.model.StudentQuery;
 import com.company.simulator.model.Task;
 import com.company.simulator.model.User;
+import com.company.simulator.repos.StudentQueryRepo;
+import com.company.simulator.repos.TaskRepo;
 import com.company.simulator.service.TaskService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -15,23 +18,22 @@ import org.springframework.web.bind.annotation.*;
 import java.util.Optional;
 
 @Controller
-@RequestMapping("/task")
 public class TaskController {
 
     @Autowired
     private TaskService taskService;
 
-    @GetMapping("")
+    @GetMapping("/task")
     public String task(Model model) {
         return "task";
     }
 
-    @GetMapping("/all")
+    @GetMapping("/task/all")
     public String taskList(Model model) {
         return "taskList";
     }
 
-    @RequestMapping(value = "{id}", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+    @RequestMapping(value = "/task/{id}", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<Object> getTask(@PathVariable("id") Long taskId) {
         if (taskId == null) {
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
@@ -45,22 +47,55 @@ public class TaskController {
         return new ResponseEntity<>(task, HttpStatus.OK);
     }
 
-    @GetMapping("/create")
+    @GetMapping("/task/create")
     public String createTask(Model model) {
         return "createTask";
     }
 
-    @PostMapping("/create")
+    @PostMapping("/task/create")
     public String addTask(
             @AuthenticationPrincipal User user,
             @RequestParam String text,
             @RequestParam String name,
+            @RequestParam String ddlScript,
             @RequestParam String correctQuery,
             @RequestParam Integer points,
             @RequestParam Long categoryId,
             Model model) {
-        Task task = new Task(user.getId(), text, name, correctQuery, points, Boolean.TRUE, categoryId);
+        Task task = new Task(user.getId(), text, name, ddlScript, correctQuery, points, Boolean.TRUE, categoryId);
         taskService.save(task);
         return ("task");
+    }
+
+    /*
+        From Alexander
+     */
+
+    @Autowired
+    private StudentQueryRepo queryRepo;
+
+    @GetMapping("practice//task/{task}")
+    public String taskById(
+            @PathVariable Task task,
+            Model model
+    ) {
+        model.addAttribute("task", task);
+        return "practice/taskExecution";
+    }
+
+    @PostMapping("practice//task/{task}")
+    public String saveStudentQuery(
+            @PathVariable Task task,
+            @RequestParam(name = "query") String query,
+            Model model
+    ) {
+        // TODO: Check student's answer. Is it correct query or wrong?
+        final StudentQuery stq = new StudentQuery();
+        stq.setCorrect(true);
+        stq.setQuery(query);
+        stq.setTask(task);
+        queryRepo.save(stq);
+        model.addAttribute("task", task);
+        return String.format("redirect:/practice/task/%d", task.getId());
     }
 }
