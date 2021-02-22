@@ -1,3 +1,4 @@
+<#include "security.ftlh">
 <#import "authentication.ftlh" as auth>
 <#include "security.ftlh">
 
@@ -32,6 +33,9 @@
                     <a class="nav-link" href="/user">User list</a>
                 </li>
             </#if>
+            <li class="nav-item">
+                <a class="nav-link" href="/practice">Practice</a>
+            </li>
         </ul>
 
         <div class="navbar-text mr-3">

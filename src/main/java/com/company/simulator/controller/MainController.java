@@ -86,7 +86,7 @@ public final class MainController {
     ) {
         // TODO: Return message in case of attempt
         // to change someone else's message.
-        if (message.getAuthor().equals(currentUser)) {
+        if (message != null && message.getAuthor().equals(currentUser)) {
             if (!StringUtils.isEmpty(text)) {
                 message.setText(text);
             }
@@ -94,8 +94,9 @@ public final class MainController {
                 message.setTag(tag);
             }
             msgRepo.save(message);
+        } else {
+            msgRepo.save(new Message(text, tag, currentUser));
         }
-
         return String.format("redirect:/user-messages/%d", user);
     }
 

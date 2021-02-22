@@ -1,15 +1,31 @@
 package com.company.simulator.model;
 
-import lombok.*;
+import java.util.Set;
+import javax.persistence.CollectionTable;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
+import javax.persistence.ManyToMany;
+import javax.persistence.Table;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 import javax.persistence.*;
+import javax.validation.constraints.NotBlank;
 import java.io.Serializable;
 
 @Entity
-@Getter
-@Setter
 @NoArgsConstructor
 @Table(name = "task")
+@EqualsAndHashCode(of = {"id"})
+@Data
 public class Task implements Serializable {
 
     public Task(Long authorId, String name, String text, String correctQuery, Integer points, Boolean isPrivate, Long categoryId) {
@@ -27,6 +43,7 @@ public class Task implements Serializable {
     private Long id;
 
     @CollectionTable(name = "person", joinColumns = @JoinColumn(name = "user_id"))
+    @NotBlank(message = "authorId cannot be empty")
     private Long authorId;
 
     private String name;
@@ -40,4 +57,11 @@ public class Task implements Serializable {
     private Boolean isPrivate;
 
     private Long categoryId;
+
+    @ManyToMany
+    @JoinTable(
+        name = "practice_x_task",
+        joinColumns = @JoinColumn(name = "task_id"),
+        inverseJoinColumns = @JoinColumn(name = "practice_id"))
+    private Set<Practice> practices;
 }
