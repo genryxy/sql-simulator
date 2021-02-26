@@ -1,43 +1,21 @@
 package com.company.simulator.model;
 
-import java.util.Set;
-import javax.persistence.CollectionTable;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.JoinTable;
-import javax.persistence.ManyToMany;
-import javax.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
-import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.Setter;
 
 import javax.persistence.*;
-import javax.validation.constraints.NotBlank;
 import java.io.Serializable;
+import java.util.Set;
 
 @Entity
 @NoArgsConstructor
+@AllArgsConstructor
 @Table(name = "task")
 @EqualsAndHashCode(of = {"id"})
 @Data
 public class Task implements Serializable {
-
-    public Task(Long authorId, String name, String text, String ddlScript, String correctQuery, Integer points, Boolean isPrivate, Long categoryId) {
-        this.authorId = authorId;
-        this.name = name;
-        this.text = text;
-        this.ddlScript = ddlScript;
-        this.correctQuery = correctQuery;
-        this.points = points;
-        this.isPrivate = isPrivate;
-        this.categoryId = categoryId;
-    }
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

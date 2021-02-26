@@ -31,16 +31,7 @@ public class TaskController {
     }
 
     @GetMapping(value = "/task/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<Object> getTask(@PathVariable("id") Long taskId) {
-        if (taskId == null) {
-            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
-        }
-
-        Optional<Task> task = taskRepo.getById(taskId);
-
-        if (!task.isPresent()) {
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-        }
+    public ResponseEntity<Task> getTask(@PathVariable("id") Task task) {
         return new ResponseEntity<>(task, HttpStatus.OK);
     }
 
