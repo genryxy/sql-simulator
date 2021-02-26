@@ -1,14 +1,15 @@
 create table task (
-    id              int8    not null,
+    id              bigserial  primary key not null,
     author_id       int8    not null,
     name            varchar(255) not null,
-    text            varchar(4095),
-    correct_query   varchar(4095),
+    text            varchar not null,
+    ddl_script      varchar not null,
+    correct_query   varchar not null,
     points          int4   not null,
     is_private      boolean not null,
-    category_id     int8    not null,
-    primary key (id)
+    category_id     int8    not null
 );
+
 alter table if exists task
     add constraint task_person_fk
     foreign key (author_id) references person;
