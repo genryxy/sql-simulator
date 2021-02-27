@@ -1,5 +1,11 @@
 package com.company.simulator.model;
 
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.EqualsAndHashCode;
+import lombok.NoArgsConstructor;
+import lombok.ToString;
+
 import java.util.Set;
 import javax.persistence.CollectionTable;
 import javax.persistence.Entity;
@@ -10,8 +16,6 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToMany;
 import javax.persistence.Table;
 import javax.validation.constraints.NotBlank;
-
-import lombok.*;
 
 @Entity
 @NoArgsConstructor
