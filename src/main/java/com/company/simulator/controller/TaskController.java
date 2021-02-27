@@ -12,6 +12,8 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 
 @Controller
@@ -27,7 +29,9 @@ public class TaskController {
 
     @GetMapping("/task/all")
     public String taskList(Model model) {
-        return "taskList";
+        final List<Task> tasks = (List<Task>) taskRepo.findAll();
+        model.addAttribute("tasks", tasks);
+        return "practice/taskList";
     }
 
     @GetMapping(value = "/task/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
