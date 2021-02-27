@@ -12,7 +12,7 @@ import java.util.Set;
 @Table(name = "task")
 @EqualsAndHashCode(of = {"id"})
 @Data
-@ToString(of = "name")
+@ToString(of = {"id", "name"})
 public class Task implements Serializable {
 
     @Id
