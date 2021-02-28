@@ -1,16 +1,17 @@
 package com.company.simulator.config;
 
-import org.apache.catalina.core.ApplicationContext;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.datasource.DriverManagerDataSource;
 
 import javax.sql.DataSource;
-import java.io.ObjectInputFilter;
-import java.sql.DriverManager;
 
+@Configuration
 public class SpringConfig {
+
     private final ApplicationContext applicationContext;
 
     @Autowired

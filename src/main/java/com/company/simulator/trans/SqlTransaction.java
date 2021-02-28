@@ -13,12 +13,12 @@ import java.util.List;
 import java.util.Objects;
 
 @Component
-public class MyTransaction {
+public class SqlTransaction implements AutoCloseable{
 
     private final JdbcTemplate jdbcTemplate;
 
     @Autowired
-    public MyTransaction(JdbcTemplate jdbcTemplate) {
+    public SqlTransaction(JdbcTemplate jdbcTemplate) {
         this.jdbcTemplate = jdbcTemplate;
     }
 
@@ -27,7 +27,7 @@ public class MyTransaction {
             Connection connection = Objects.requireNonNull(jdbcTemplate.getDataSource()).getConnection();
             String[] wordsFromSQL = sql.split(" +"); // на случай более 1 пробела
 
-            if (checkQuery(wordsFromSQL)) {
+            if (checkingTableNames(wordsFromSQL)) {
                 return new ResponseEntity(HttpStatus.BAD_REQUEST);
             } else {
                 connection.setAutoCommit(false);
@@ -54,15 +54,25 @@ public class MyTransaction {
         return result;
     }
 
-    private boolean checkQuery(String[] words) {
-
+    private boolean checkingTableNames(String[] tables) {
         List<String> ourTables = jdbcTemplate.query(
                 "SELECT table_name FROM information_schema.tables\n" +
                         "WHERE table_schema IN('public', 'myschema');",
                 (rs, rowNum) -> rs.getString("table_name"));
 
-        return ourTables.stream()
-                .filter(List.of(words)::contains)
-                .toArray().length > 0;
+        List<List<String>> lists = List.of(ourTables);
+        for (String ourTable : ourTables) {
+            if (lists.contains(ourTable)) return true;
+        }
+        return false;
+    }
+
+    @Override
+    public void close(){
+        try {
+            Objects.requireNonNull(this.jdbcTemplate.getDataSource()).getConnection().close();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
     }
 }

@@ -1,6 +1,6 @@
 package com.company.simulator.controller;
 
-import com.company.simulator.trans.MyTransaction;
+import com.company.simulator.trans.SqlTransaction;
 import com.company.simulator.model.StudentQuery;
 import com.company.simulator.model.Task;
 import com.company.simulator.repos.StudentQueryRepo;
@@ -20,7 +20,7 @@ public class TaskController {
     private TaskRepo taskRepo;
 
     @Autowired
-    private MyTransaction myTransaction;
+    private SqlTransaction sqlTransaction;
 
     @GetMapping("/task")
     public String task(Model model) {
@@ -46,7 +46,7 @@ public class TaskController {
                 "    user_id int8,\n" +
                 "    primary key (id)\n" +
                 ");";
-        return myTransaction.executeQuery(example);
+        return sqlTransaction.executeQuery(example);
     }
 
     @GetMapping("/task/all")
