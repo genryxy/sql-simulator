@@ -1,5 +1,6 @@
 package com.company.simulator.controller;
 
+import com.company.simulator.trans.MyTransaction;
 import com.company.simulator.model.StudentQuery;
 import com.company.simulator.model.Task;
 import com.company.simulator.repos.StudentQueryRepo;
@@ -12,17 +13,40 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.Optional;
-
 @Controller
 public class TaskController {
 
     @Autowired
     private TaskRepo taskRepo;
 
+    @Autowired
+    private MyTransaction myTransaction;
+
     @GetMapping("/task")
     public String task(Model model) {
         return "task";
+    }
+
+    @GetMapping("/task/createTable")
+    public ResponseEntity executeQuery() {
+        String example ="create table test_table (\n" +
+                "    id      int8 not null,\n" +
+                "    tag     varchar(255),\n" +
+                "    text    varchar(65535) not null,\n" +
+                "    user_id int8,\n" +
+                "    primary key (id)\n" +
+                ");" +
+                "insert into test_table values (1,'123', '1234', 1);" +
+                "insert into test_table values (2,'123', '1234', 1);" +
+                "insert into test_table values (3,'123', '1234', 1);" +
+                "create table task2 (\n" +
+                "    id      int8 not null,\n" +
+                "    tag     varchar(255),\n" +
+                "    text    varchar(65535) not null,\n" +
+                "    user_id int8,\n" +
+                "    primary key (id)\n" +
+                ");";
+        return myTransaction.executeQuery(example);
     }
 
     @GetMapping("/task/all")
