@@ -40,7 +40,7 @@ public class SqlTransaction implements AutoCloseable{
                 return new ResponseEntity(HttpStatus.OK);
             }
         } catch (SQLException e) {
-            return new ResponseEntity(HttpStatus.valueOf(500));
+            return new ResponseEntity(HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 
