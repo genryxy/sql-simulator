@@ -27,15 +27,18 @@
                 <li class="nav-item">
                     <a class="nav-link" href="/task">Task</a>
                 </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="/practice">Practice</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="/student/team">Team</a>
+                </li>
             </#if>
             <#if isAdmin>
                 <li class="nav-item">
                     <a class="nav-link" href="/user">User list</a>
                 </li>
             </#if>
-            <li class="nav-item">
-                <a class="nav-link" href="/practice">Practice</a>
-            </li>
         </ul>
 
         <div class="navbar-text mr-3">
