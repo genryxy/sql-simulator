@@ -27,6 +27,7 @@ public class TaskController {
         return "task";
     }
 
+    // TODO use this method in execute task by student
     @GetMapping("/task/createTable")
     public ResponseEntity executeQuery() {
         String example ="create table test_table (\n" +
@@ -46,7 +47,7 @@ public class TaskController {
                 "    user_id int8,\n" +
                 "    primary key (id)\n" +
                 ");";
-        return sqlTransaction.executeQuery(example);
+        return sqlTransaction.executeQuery(example, "select * from test_table", "select * from test_table");
     }
 
     @GetMapping("/task/all")
