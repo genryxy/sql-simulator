@@ -20,9 +20,9 @@ public class SqlTransaction {
 
     @Autowired
     public SqlTransaction(
-            @Value("${url.garbage.db}") String url,
-            @Value(value = "${spring.datasource.username}") String username,
-            @Value(value = "${spring.datasource.password}") String password
+            @Value("${db.garbage.url}") String url,
+            @Value(value = "${db.garbage.username}") String username,
+            @Value(value = "${db.garbage.password}") String password
     ) {
         this.jdbcTemplate = new JdbcTemplate(dataSource(url, username, password));
     }
