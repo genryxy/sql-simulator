@@ -1,5 +1,12 @@
 package com.company.simulator.model;
 
+import javax.persistence.JoinTable;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.EqualsAndHashCode;
+import lombok.NoArgsConstructor;
+import lombok.ToString;
+
 import java.util.Set;
 import javax.persistence.CollectionTable;
 import javax.persistence.Entity;
@@ -10,16 +17,13 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToMany;
 import javax.persistence.Table;
 import javax.validation.constraints.NotBlank;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.EqualsAndHashCode;
-import lombok.NoArgsConstructor;
 
 @Entity
 @NoArgsConstructor
 @AllArgsConstructor
 @EqualsAndHashCode(of = {"id"})
 @Data
+@ToString(of = {"id", "name"})
 @Table(name = "practice")
 public class Practice {
     @Id
@@ -32,6 +36,13 @@ public class Practice {
     @CollectionTable(name = "person", joinColumns = @JoinColumn(name = "user_id"))
     @NotBlank(message = "Practice authorId cannot be empty")
     private Long authorId;
+
+    @ManyToMany
+    @JoinTable(
+        name = "practice_x_team",
+        joinColumns = @JoinColumn(name = "practice_id"),
+        inverseJoinColumns = @JoinColumn(name = "team_id"))
+    private Set<Team> teams;
 
     @ManyToMany(mappedBy = "practices")
     private Set<Task> tasks;

@@ -1,11 +1,21 @@
 package com.company.simulator.model;
 
+
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
+import lombok.ToString;
 
-import javax.persistence.*;
+import javax.persistence.CollectionTable;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
+import javax.persistence.ManyToMany;
+import javax.persistence.Table;
 import java.io.Serializable;
 import java.util.Set;
 
@@ -15,6 +25,7 @@ import java.util.Set;
 @Table(name = "task")
 @EqualsAndHashCode(of = {"id"})
 @Data
+@ToString(of = {"id", "name"})
 public class Task implements Serializable {
 
     @Id

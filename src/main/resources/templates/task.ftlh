@@ -16,5 +16,4 @@
             </form>
         </div>
     </div>
-    <#include "parts/taskList.ftlh"/>
 </@c.page>
