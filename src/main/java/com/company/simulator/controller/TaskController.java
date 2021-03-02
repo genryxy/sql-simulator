@@ -1,6 +1,6 @@
 package com.company.simulator.controller;
 
-import com.company.simulator.trans.SqlTransaction;
+import com.company.simulator.transaction.SqlTransaction;
 import com.company.simulator.model.StudentQuery;
 import com.company.simulator.model.Task;
 import com.company.simulator.repos.StudentQueryRepo;

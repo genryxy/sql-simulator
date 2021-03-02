@@ -1,6 +1,7 @@
-package com.company.simulator.trans;
+package com.company.simulator.transaction;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -13,21 +14,24 @@ import java.sql.SQLException;
 import java.util.Objects;
 
 @Component
-public class SqlTransaction{
+public class SqlTransaction {
 
     private final JdbcTemplate jdbcTemplate;
 
     @Autowired
-    public SqlTransaction() {
-        this.jdbcTemplate = new JdbcTemplate(dataSource());
+    public SqlTransaction(
+            @Value("${url.garbage.db}") String url,
+            @Value(value = "${spring.datasource.username}") String username,
+            @Value(value = "${spring.datasource.password}") String password
+    ) {
+        this.jdbcTemplate = new JdbcTemplate(dataSource(url, username, password));
     }
 
-    private DataSource dataSource() {
+    private DataSource dataSource(String url, String username, String password) {
         DriverManagerDataSource dataSource = new DriverManagerDataSource();
-        dataSource.setDriverClassName("org.postgresql.Driver");
-        dataSource.setUrl("jdbc:postgresql://localhost/garbage");
-        dataSource.setUsername("postgres");
-        dataSource.setPassword("12345");
+        dataSource.setUrl(url);
+        dataSource.setUsername(username);
+        dataSource.setPassword(password);
         return dataSource;
     }
 
