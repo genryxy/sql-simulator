@@ -26,9 +26,6 @@ public class TeacherTaskController {
     private TaskRepo taskRepo;
 
     @Autowired
-    private PracticeRepo practiceRepo;
-
-    @Autowired
     private SqlTransaction sqlTransaction;
 
     @GetMapping

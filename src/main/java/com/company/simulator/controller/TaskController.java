@@ -68,17 +68,6 @@ public class TaskController {
         return new ResponseEntity<>(task, HttpStatus.OK);
     }
 
-    @GetMapping("/task/create")
-    public String createTask(Model model) {
-        return "/main/resources/templates/teacher/createTask.ftlh";
-    }
-
-    @PostMapping("/task/create")
-    public String addTask(@ModelAttribute Task task) {
-        taskRepo.save(task);
-        return ("task");
-    }
-
     /*
         From Alexander
      */
