@@ -70,7 +70,7 @@ public class TaskController {
 
     @GetMapping("/task/create")
     public String createTask(Model model) {
-        return "createTask";
+        return "/main/resources/templates/teacher/createTask.ftlh";
     }
 
     @PostMapping("/task/create")
