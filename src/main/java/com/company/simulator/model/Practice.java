@@ -38,7 +38,6 @@ public class Practice {
     private String description;
 
     @CollectionTable(name = "person", joinColumns = @JoinColumn(name = "user_id"))
-//    @NotBlank(message = "Practice authorId cannot be empty")
     private Long authorId;
 
     @ManyToMany
