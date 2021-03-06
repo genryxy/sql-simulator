@@ -1,5 +1,4 @@
 <#import "../parts/common.ftlh" as c>
-<#include "../parts/security.ftlh">
 
 <@c.page>
     Practice list
@@ -15,5 +14,11 @@
         <#else>
             No available practice
         </#list>
+
+        <div class="form-group col-md-6">
+            <form method="get" action="/teacher/practice/create" class="form-inline">
+                <button type="submit" class="btn btn-primary ml-2">Create practice</button>
+            </form>
+        </div>
     </div>
 </@c.page>

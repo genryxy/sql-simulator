@@ -26,15 +26,18 @@ import javax.validation.constraints.NotBlank;
 @ToString(of = {"id", "name"})
 @Table(name = "practice")
 public class Practice {
+
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @NotBlank(message = "Practice name cannot be empty")
     private String name;
 
+    @NotBlank(message = "Practice description cannot be empty")
+    private String description;
+
     @CollectionTable(name = "person", joinColumns = @JoinColumn(name = "user_id"))
-    @NotBlank(message = "Practice authorId cannot be empty")
     private Long authorId;
 
     @ManyToMany

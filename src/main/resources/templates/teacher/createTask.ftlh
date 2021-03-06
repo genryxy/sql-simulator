@@ -1,12 +1,12 @@
-<#import 'parts/common.ftlh' as c>
-<#include "parts/security.ftlh">
+<#import '../parts/common.ftlh' as c>
+<#include "../parts/security.ftlh">
 
 <@c.page>
     <h5>Input Data: </h5>
 
     <div class="form-row">
         <div class="form-group col-md-6">
-            <form name="task" method="post" action="/task/create" class="form-inline">
+            <form name="task" method="post" action="create" class="form-inline">
                 <input type="hidden" name="_csrf" value="${_csrf.token}">
                 <input type="hidden" name="authorId" value="${currentUserId}">
                 <input type="text" name="name" placeholder="name">

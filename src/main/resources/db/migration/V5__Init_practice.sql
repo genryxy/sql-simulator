@@ -1,8 +1,8 @@
 create table practice (
-    id        int8 not null,
-    name      varchar(255) not null,
-    author_id int8 not null,
-    primary key (id)
+    id             bigserial  primary key not null,
+    name           varchar(255) not null,
+    description    varchar(255) not null,
+    author_id      int8 not null
 );
 
 alter table if exists practice
