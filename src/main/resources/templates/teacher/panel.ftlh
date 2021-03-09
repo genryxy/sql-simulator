@@ -9,6 +9,7 @@
                     <h5 class="card-title">${practice.name}</h5>
                     <p class="card-text">${practice.description}</p>
                     <a href="/practice/${practice.id}" class="btn btn-primary">Start</a>
+                    <a href="/teacher/team/${practice.id}" class="btn btn-primary">Choose Groups</a>
                 </div>
             </div>
         <#else>
@@ -17,7 +18,7 @@
 
         <div class="form-group col-md-6">
             <form method="get" action="/teacher/practice/create" class="form-inline">
-                <button type="submit" class="btn btn-primary ml-2">Create practice</button>
+                <button type="submit" class="btn btn-primary ml-2">Create new practice</button>
             </form>
         </div>
     </div>
