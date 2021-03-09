@@ -14,7 +14,7 @@
                     <input type="hidden" name="_csrf" value="${_csrf.token}">
                     <input type="hidden" name="practiceId" value="${practiceId}">
                     <input type="hidden" name="teamId" value="${team.id}">
-                    <button type="submit" class="btn btn-primary ml-2">Save</button>
+                    <button type="submit" class="btn btn-primary ml-2">Assign</button>
                 </form>
             </div>
         <#else>

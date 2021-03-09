@@ -11,7 +11,7 @@
                 <input type="hidden" name="authorId" value="${currentUserId}">
                 <input type="text" name="name" placeholder="name">
                 <input type="text" name="invitation" placeholder="text" >
-                <button type="submit" class="btn btn-primary ml-2">save</button>
+                <button type="submit" class="btn btn-primary ml-2">Save</button>
             </form>
         </div>
     </div>

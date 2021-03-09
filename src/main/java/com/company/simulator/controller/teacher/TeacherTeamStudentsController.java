@@ -30,39 +30,32 @@ public class TeacherTeamStudentsController {
     @Autowired
     PracticeRepo practiceRepo;
 
-    @GetMapping("/{practiceId}")
+    @GetMapping("/{practice}")
     public String teamsByPractice(Model model,
-                                  @PathVariable Long practiceId) {
-        final Optional<Practice> practice = practiceRepo.findById(practiceId);
-        if (practice.isPresent()) {
-            final Optional<List<Team>> teams = teamRepo.findTeamsByPracticesContains(practice.get());
-            if (teams.isPresent()) {
-                model.addAttribute("teams", teams.get());
-            } else {
-                model.addAttribute("teams", new ArrayList<Team>());
-            }
-            model.addAttribute("practiceId", practiceId);
-            return "teacher/teamsList";
+                                  @PathVariable Practice practice) {
+        final Optional<List<Team>> teams = teamRepo.findTeamsByPracticesContains(practice);
+        if (teams.isPresent()) {
+            model.addAttribute("teams", teams.get());
+        } else {
+            model.addAttribute("teams", new ArrayList<Team>());
         }
-        return "teacher";
+        model.addAttribute("practiceId", practice.getId());
+        return "teacher/teamsList";
     }
 
-    @GetMapping("/{practiceId}/notIncludedTeams")
+    @GetMapping("/{practice}/notIncludedTeams")
     public String notIncludedTeams(Model model,
-                                   @PathVariable Long practiceId,
+                                   @PathVariable Practice practice,
                                    @AuthenticationPrincipal User user) {
-        final Optional<Practice> practice = practiceRepo.findById(practiceId);
-        if (practice.isPresent()) {
-            final Optional<List<Team>> teams = teamRepo.findTeamsByPracticesNotContainsAndAuthorId(practice.get(), user.getId());
-            if (teams.isPresent()) {
-                model.addAttribute("teams", teams.get());
-            } else {
-                model.addAttribute("teams", new ArrayList<Team>());
-            }
-            model.addAttribute("practiceId", practiceId);
-            return "teacher/addTeams";
+        System.out.println(practice);
+        final Optional<List<Team>> teams = teamRepo.findTeamsByPracticesNotContainsAndAuthorId(practice, user.getId());
+        if (teams.isPresent()) {
+            model.addAttribute("teams", teams.get());
+        } else {
+            model.addAttribute("teams", new ArrayList<Team>());
         }
-        return "teacher";
+        model.addAttribute("practiceId", practice.getId());
+        return "teacher/addTeams";
     }
 
     @GetMapping("/{practiceId}/create")
@@ -73,23 +66,18 @@ public class TeacherTeamStudentsController {
     }
 
     @PostMapping("/{practiceId}/create")
-    public String saveTeam(Model model,
-                           @PathVariable Long practiceId,
+    public String saveTeam(@PathVariable Long practiceId,
                            @ModelAttribute Team team
     ) {
-        model.addAttribute("practiceId", practiceId);
         teamRepo.save(team);
-        return ("redirect:/teacher/team/{practiceId}/notIncludedTeams");
+        return String.format("redirect:/teacher/team/%d/notIncludedTeams", practiceId);
     }
 
     @PostMapping("/assign")
     public String assignTeams(@RequestParam Long practiceId,
-                              @RequestParam Long teamId,
-                              Model model
+                              @RequestParam Long teamId
     ) {
         teamRepo.assignPracticeToTeam(practiceId, teamId);
-        System.out.println(practiceId + " *-* " + teamId);
-        model.addAttribute("practiceId", practiceId);
-        return ("redirect:/teacher/team/"+practiceId+"/notIncludedTeams");
+        return String.format("redirect:/teacher/team/%d/notIncludedTeams", practiceId);
     }
 }
