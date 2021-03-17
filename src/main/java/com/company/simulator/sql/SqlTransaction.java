@@ -78,7 +78,7 @@ public class SqlTransaction {
         return script;
     }
 
-    private  ResponseEntity<ResultQuery> logAngGetResponse(SQLException exc) {
+    private ResponseEntity<ResultQuery> logAngGetResponse(SQLException exc) {
         LoggerFactory.getLogger(SqlTransaction.class)
             .error(String.format("SQL exception in transaction: %s", exc.getMessage()));
         final ResultQuery res = new ResultQuery(false);
@@ -103,7 +103,7 @@ public class SqlTransaction {
         private Optional<String> sqlException;
 
         /**
-         * Message of internal exception in case of existence, empty otherwise
+         * Message of internal exception in case of existence, empty otherwise.
          */
         private Optional<String> internalError;
 
