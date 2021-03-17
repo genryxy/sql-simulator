@@ -1,10 +1,12 @@
 package com.company.simulator.model;
 
 import java.util.Set;
+import javax.persistence.CollectionTable;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
 import javax.persistence.ManyToMany;
 import javax.persistence.OneToMany;
 import lombok.Data;
@@ -19,6 +21,9 @@ public class Team {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
+    @CollectionTable(name = "person", joinColumns = @JoinColumn(name = "user_id"))
+    private Long authorId;
 
     private String name;
 
