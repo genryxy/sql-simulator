@@ -34,7 +34,7 @@ public class TeacherPracticeController {
     public String allPractices(Model model) {
         final Iterable<Practice> practices = practiceRepo.findAll();
         model.addAttribute("practices", practices);
-        return "practice/practiceList";
+        return "teacher/practiceList";
     }
 
     @GetMapping("/{practice}")
@@ -44,7 +44,7 @@ public class TeacherPracticeController {
     ) {
         final List<Task> tasks = new ArrayList<>(practice.getTasks());
         model.addAttribute("tasks", tasks);
-        return "practice/taskList";
+        return "teacher/taskList";
     }
 
     @GetMapping("/create")

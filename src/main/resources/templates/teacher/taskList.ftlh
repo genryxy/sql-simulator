@@ -3,15 +3,10 @@
 
 <@c.page>
     Task list
-    <#if result??>
-        <div class="alert alert-${type}" role="alert">
-            ${result}
-        </div>
-    </#if>
     <div>
         <#list tasks as task>
             <div class="list-group">
-                <a href="/practice/${practice.id}/task/${task.id}" class="list-group-item list-group-item-action">
+                <a href="/teacher/practice/${practice.id}/task/${task.id}" class="list-group-item list-group-item-action">
                     Task name: ${task.name}
                 </a>
             </div>

@@ -1,10 +1,12 @@
 package com.company.simulator.controller;
 
-import com.company.simulator.transaction.SqlTransaction;
+import com.company.simulator.model.Practice;
 import com.company.simulator.model.StudentQuery;
 import com.company.simulator.model.Task;
 import com.company.simulator.repos.StudentQueryRepo;
 import com.company.simulator.repos.TaskRepo;
+import com.company.simulator.sql.SqlTransaction;
+import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -12,12 +14,10 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
-
-import java.util.List;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 @Controller
 public class TaskController {
@@ -31,29 +31,6 @@ public class TaskController {
     @GetMapping("/task")
     public String task(Model model) {
         return "task";
-    }
-
-    // TODO use this method in execute task by student
-    @GetMapping("/task/createTable")
-    public ResponseEntity executeQuery() {
-        String example ="create table test_table (\n" +
-                "    id      int8 not null,\n" +
-                "    tag     varchar(255),\n" +
-                "    text    varchar(65535) not null,\n" +
-                "    user_id int8,\n" +
-                "    primary key (id)\n" +
-                ");" +
-                "insert into test_table values (1,'123', '1234', 1);" +
-                "insert into test_table values (2,'123', '1234', 1);" +
-                "insert into test_table values (3,'123', '1234', 1);" +
-                "create table task2 (\n" +
-                "    id      int8 not null,\n" +
-                "    tag     varchar(255),\n" +
-                "    text    varchar(65535) not null,\n" +
-                "    user_id int8,\n" +
-                "    primary key (id)\n" +
-                ");";
-        return sqlTransaction.executeQuery(example, "select * from test_table", "select * from test_table");
     }
 
     @GetMapping("/task/all")
@@ -75,28 +52,47 @@ public class TaskController {
     @Autowired
     private StudentQueryRepo queryRepo;
 
-    @GetMapping("practice/task/{task}")
+    @GetMapping("practice/{practice}/task/{task}")
     public String taskById(
-            @PathVariable Task task,
-            Model model
+        @PathVariable Task task,
+        @RequestParam(required = false, name = "sentQuery") String query,
+        @RequestParam(required = false) String result,
+        @RequestParam(required = false) String type,
+        Model model
     ) {
         model.addAttribute("task", task);
+        model.addAttribute("sentQuery", query);
+        model.addAttribute("result", result);
+        model.addAttribute("type", type);
         return "practice/taskExecution";
     }
 
-    @PostMapping("practice/task/{task}")
+    @PostMapping("practice/{practice}/task/{task}")
     public String saveStudentQuery(
-            @PathVariable Task task,
-            @RequestParam(name = "query") String query,
-            Model model
+        @PathVariable Practice practice,
+        @PathVariable Task task,
+        @RequestParam(name = "query") String query,
+        RedirectAttributes redirAttr,
+        Model model
     ) {
-        // TODO: Check student's answer. Is it correct query or wrong?
-        final StudentQuery stq = new StudentQuery();
-        stq.setCorrect(true);
-        stq.setQuery(query);
-        stq.setTask(task);
-        queryRepo.save(stq);
-        model.addAttribute("task", task);
-        return String.format("redirect:/practice/task/%d", task.getId());
+        final SqlTransaction.ResultQuery res;
+        res = sqlTransaction.executeQuery(
+            task.getDdlScript(), query, task.getCorrectQuery()
+        ).getBody();
+        if (res.getInternalError().isEmpty() && res.getSqlException().isEmpty()) {
+            final StudentQuery stq = new StudentQuery(query, res.isCorrect(), task);
+            stq.setPractice(practice);
+            queryRepo.save(stq);
+            redirAttr.addAttribute("result", "Query was successfully submitted");
+            redirAttr.addAttribute("type", "success");
+            return String.format("redirect:/practice/%d", practice.getId());
+        } else if (res.getSqlException().isPresent()) {
+            model.addAttribute("result", res.getSqlException().get());
+        } else if (res.getInternalError().isPresent()) {
+            model.addAttribute("result", res.getInternalError().get());
+        }
+        model.addAttribute("sentQuery", query);
+        model.addAttribute("type", "danger");
+        return "practice/taskExecution";
     }
 }

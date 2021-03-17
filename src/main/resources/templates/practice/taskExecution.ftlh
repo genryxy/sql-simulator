@@ -1,6 +1,11 @@
 <#import "../parts/common.ftlh" as c>
 
 <@c.page>
+    <#if result??>
+        <div class="alert alert-${type}" role="alert">
+            ${result}
+        </div>
+    </#if>
     <b>Task execution</b>
     <form method="post">
         <div class="container-fluid">
@@ -11,7 +16,7 @@
             </div>
             <div class="form-group">
                 <label>Please, enter the answer below</label>
-                <textarea class="form-control" name="query" rows="3"></textarea>
+                <textarea class="form-control" name="query" rows="3" placeholder="Type your query ..."><#if sentQuery??>${sentQuery}</#if></textarea>
             </div>
             <button class="btn btn-primary" type="submit">Submit task</button>
         </div>
