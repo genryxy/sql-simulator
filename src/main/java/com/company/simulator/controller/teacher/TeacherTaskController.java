@@ -1,9 +1,8 @@
 package com.company.simulator.controller.teacher;
 
 import com.company.simulator.model.Task;
-import com.company.simulator.repos.PracticeRepo;
 import com.company.simulator.repos.TaskRepo;
-import com.company.simulator.transaction.SqlTransaction;
+import com.company.simulator.sql.SqlTransaction;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -17,9 +16,10 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 import java.util.List;
+import org.springframework.web.bind.annotation.RequestParam;
 
 @Controller
-@RequestMapping("/teacher/task")
+@RequestMapping("/teacher")
 public class TeacherTaskController {
 
     @Autowired
@@ -28,13 +28,14 @@ public class TeacherTaskController {
     @Autowired
     private SqlTransaction sqlTransaction;
 
-    @GetMapping
+    @GetMapping("task")
     public String task(Model model) {
         return "task";
     }
 
-    // TODO use this method to check dsl from teacher
-    @GetMapping("/createTable")
+    // TODO use this method to check ddl from teacher. Not executeQuery() method,
+    // but something similar it is possible to use.
+    @GetMapping("task/createTable")
     public ResponseEntity executeQuery() {
         String example ="create table test_table (\n" +
                 "    id      int8 not null,\n" +
@@ -56,26 +57,40 @@ public class TeacherTaskController {
         return sqlTransaction.executeQuery(example, "select * from test_table", "select * from test_table");
     }
 
-    @GetMapping("/all")
+    @GetMapping("task/all")
     public String taskList(Model model) {
         final List<Task> tasks = (List<Task>) taskRepo.findAll();
         model.addAttribute("tasks", tasks);
-        return "practice/taskList";
+        return "teacher/taskList";
     }
 
-    @GetMapping(value = "/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
+    @GetMapping(value = "task/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<Task> getTask(@PathVariable("id") Task task) {
         return new ResponseEntity<>(task, HttpStatus.OK);
     }
 
-    @GetMapping("/create")
+    @GetMapping("task/create")
     public String createTask(Model model) {
         return "teacher/createTask";
     }
 
-    @PostMapping("/create")
+    @PostMapping("task/create")
     public String addTask(@ModelAttribute Task task) {
         taskRepo.save(task);
-        return ("task");
+        return "task";
+    }
+
+    @GetMapping("practice/{practice}/task/{task}")
+    public String editTaskById(
+        @PathVariable Task task,
+        Model model
+    ) {
+        model.addAttribute("task", task);
+        // TODO: Form for editing of tasks should be completed.
+        // Probably the path can be "teacher/task/{task}" because one task
+        // can be included in many practices.
+        // For this purpose method for obtaining task by id
+        // in JSON should be removed.
+        return "teacher/taskEdit";
     }
 }

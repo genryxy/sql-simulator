@@ -19,7 +19,7 @@ import lombok.NoArgsConstructor;
 @Data
 public final class StudentQuery {
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     private String query;
@@ -29,6 +29,16 @@ public final class StudentQuery {
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "task_id")
     private Task task;
+
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "practice_id")
+    private Practice practice;
+
+    public StudentQuery(final String query, final boolean isCorrect, final Task task) {
+        this.query = query;
+        this.isCorrect = isCorrect;
+        this.task = task;
+    }
 
     // Todo: Student query usually should contain id
     // on studentSolution. This entity should be added.

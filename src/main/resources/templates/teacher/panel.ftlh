@@ -8,7 +8,7 @@
                 <div class="card-body">
                     <h5 class="card-title">${practice.name}</h5>
                     <p class="card-text">${practice.description}</p>
-                    <a href="/practice/${practice.id}" class="btn btn-primary">Start</a>
+                    <a href="/teacher/practice/${practice.id}" class="btn btn-primary">Start</a>
                     <a href="/teacher/team/${practice.id}" class="btn btn-primary">Choose Groups</a>
                 </div>
             </div>

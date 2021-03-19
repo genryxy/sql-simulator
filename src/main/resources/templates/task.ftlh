@@ -11,9 +11,6 @@
             <form method="get" action="/task/all" class="form-inline">
                 <button type="submit" class="btn btn-primary ml-2">Available tasks</button>
             </form>
-            <form method="get" action="/task/createTable" class="form-inline">
-                <button type="submit" class="btn btn-primary ml-2">Execute task</button>
-            </form>
         </div>
     </div>
 </@c.page>

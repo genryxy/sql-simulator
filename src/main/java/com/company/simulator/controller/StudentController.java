@@ -41,8 +41,7 @@ public class StudentController {
     public String addStudentToTeam(
         @AuthenticationPrincipal User user,
         @RequestParam String invitation,
-        RedirectAttributes redirectAttributes,
-        Model model
+        RedirectAttributes redirectAttributes
     ) {
         final Optional<Team> team = teamRepo.findTeamByInvitation(invitation);
         team.ifPresentOrElse(
