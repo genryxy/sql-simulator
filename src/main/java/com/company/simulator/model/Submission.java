@@ -2,6 +2,7 @@ package com.company.simulator.model;
 
 import java.time.Instant;
 import java.util.Date;
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
@@ -42,13 +43,14 @@ public final class Submission {
     @JoinColumn(name = "user_id")
     private User user;
 
+    @Column(name = "send_date")
     @Temporal(TemporalType.TIMESTAMP)
-    private Date date;
+    private Date sendDate;
 
     public Submission(final String query, final boolean isCorrect, final Task task) {
         this.query = query;
         this.isCorrect = isCorrect;
         this.task = task;
-        this.date = Date.from(Instant.now());
+        this.sendDate = Date.from(Instant.now());
     }
 }

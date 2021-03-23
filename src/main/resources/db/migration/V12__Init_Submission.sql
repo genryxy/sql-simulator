@@ -5,7 +5,7 @@ create table submission (
     task_id     int8      not null,
     practice_id int8      not null,
     user_id     int8      not null,
-    date        timestamp not null,
+    send_date   timestamp not null,
     primary key (id)
 );
 
