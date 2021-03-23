@@ -11,7 +11,10 @@
     <div>
         <#list tasks as task>
             <div class="list-group">
-                <a href="/practice/${practice.id}/task/${task.id}" class="list-group-item list-group-item-action">
+                <a href="/practice/${practice.id}/task/${task.id}"
+                    class="list-group-item list-group-item-action
+                        list-group-item-<#if task.state.value() == "correct">success<#elseif
+                        task.state.value() == "wrong">danger</#if>">
                     Task name: ${task.name}
                 </a>
             </div>
