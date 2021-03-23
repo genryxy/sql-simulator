@@ -18,7 +18,7 @@
                 <label>Please, enter the answer below</label>
                 <textarea class="form-control" name="query" rows="3" placeholder="Type your query ..."><#if sentQuery??>${sentQuery}</#if></textarea>
             </div>
-            <button class="btn btn-primary" type="submit">Submit task</button>
+            <button class="btn btn-primary" type="submit">Submit solution</button>
         </div>
         <input type="hidden" value="${task.id}" name="task">
         <input type="hidden" name="_csrf" value="${_csrf.token}">

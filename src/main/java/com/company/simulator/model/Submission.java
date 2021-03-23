@@ -1,5 +1,7 @@
 package com.company.simulator.model;
 
+import java.time.Instant;
+import java.util.Date;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
@@ -8,16 +10,18 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 
 @Entity
-@Table(name = "student_query")
+@Table(name = "submission")
 @NoArgsConstructor
 @EqualsAndHashCode(of = {"id"})
 @Data
-public final class StudentQuery {
+public final class Submission {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -34,15 +38,17 @@ public final class StudentQuery {
     @JoinColumn(name = "practice_id")
     private Practice practice;
 
-    public StudentQuery(final String query, final boolean isCorrect, final Task task) {
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "user_id")
+    private User user;
+
+    @Temporal(TemporalType.TIMESTAMP)
+    private Date date;
+
+    public Submission(final String query, final boolean isCorrect, final Task task) {
         this.query = query;
         this.isCorrect = isCorrect;
         this.task = task;
+        this.date = Date.from(Instant.now());
     }
-
-    // Todo: Student query usually should contain id
-    // on studentSolution. This entity should be added.
-    // Also it needs to think how to submit tasks from the general
-    // bank and how to connect multiple studentQueries with
-    // one student solution.
 }

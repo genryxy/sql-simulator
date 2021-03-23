@@ -1,9 +1,10 @@
 package com.company.simulator.controller;
 
 import com.company.simulator.model.Practice;
-import com.company.simulator.model.StudentQuery;
+import com.company.simulator.model.Submission;
 import com.company.simulator.model.Task;
-import com.company.simulator.repos.StudentQueryRepo;
+import com.company.simulator.model.User;
+import com.company.simulator.repos.SubmissionRepo;
 import com.company.simulator.repos.TaskRepo;
 import com.company.simulator.sql.SqlTransaction;
 import java.util.List;
@@ -11,6 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -50,7 +52,7 @@ public class TaskController {
      */
 
     @Autowired
-    private StudentQueryRepo queryRepo;
+    private SubmissionRepo submRepo;
 
     @GetMapping("practice/{practice}/task/{task}")
     public String taskById(
@@ -68,7 +70,8 @@ public class TaskController {
     }
 
     @PostMapping("practice/{practice}/task/{task}")
-    public String saveStudentQuery(
+    public String saveSubmission(
+        @AuthenticationPrincipal User user,
         @PathVariable Practice practice,
         @PathVariable Task task,
         @RequestParam(name = "query") String query,
@@ -80,9 +83,10 @@ public class TaskController {
             task.getDdlScript(), query, task.getCorrectQuery()
         ).getBody();
         if (res.getInternalError().isEmpty() && res.getSqlException().isEmpty()) {
-            final StudentQuery stq = new StudentQuery(query, res.isCorrect(), task);
-            stq.setPractice(practice);
-            queryRepo.save(stq);
+            final Submission subm = new Submission(query, res.isCorrect(), task);
+            subm.setPractice(practice);
+            subm.setUser(user);
+            submRepo.save(subm);
             redirAttr.addAttribute("result", "Query was successfully submitted");
             redirAttr.addAttribute("type", "success");
             return String.format("redirect:/practice/%d", practice.getId());
