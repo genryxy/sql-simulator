@@ -20,4 +20,10 @@
             </form>
         </div>
     </div>
+
+    <#if message??>
+        <div class="alert alert-${type}" role="alert">
+            ${message}
+        </div>
+    </#if>
 </@c.page>

@@ -15,6 +15,8 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.util.List;
 
@@ -63,19 +65,38 @@ public class TeacherTaskController {
         return "practice/taskList";
     }
 
-    @GetMapping(value = "/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<Task> getTask(@PathVariable("id") Task task) {
-        return new ResponseEntity<>(task, HttpStatus.OK);
+    @GetMapping("/{task}")
+    public String getTask(@PathVariable("task") Task task, Model model) {
+        model.addAttribute("task", task);
+        return "teacher/taskInfo";
     }
 
     @GetMapping("/create")
-    public String createTask(Model model) {
+    public String createTask(Model model,
+                             @RequestParam(required = false) String message,
+                             @RequestParam(required = false) String type
+    ) {
+        model.addAttribute("message", message);
+        model.addAttribute("type", type);
         return "teacher/createTask";
     }
 
     @PostMapping("/create")
-    public String addTask(@ModelAttribute Task task) {
-        taskRepo.save(task);
-        return ("task");
+    public String addTask(@ModelAttribute Task task,
+                          RedirectAttributes redirectAttributes
+    ) {
+        String message = "Successfully created",
+                type = "success";
+        try{
+            sqlTransaction.validationTeacherQuery(task.getDdlScript(), task.getCorrectQuery());
+            taskRepo.save(task);
+        } catch (Exception e){
+            message = e.getMessage();
+            type = "danger";
+        }
+
+        redirectAttributes.addAttribute("message", message);
+        redirectAttributes.addAttribute("type", type);
+        return ("redirect:/teacher/task/create");
     }
 }

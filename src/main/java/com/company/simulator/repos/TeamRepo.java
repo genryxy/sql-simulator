@@ -23,4 +23,11 @@ public interface TeamRepo extends CrudRepository<Team, Long> {
             nativeQuery = true)
     @Transactional
     void assignPracticeToTeam(@Param("practiceId") Long practiceId, @Param("teamId") Long teamId);
+
+    @Modifying
+    @Query(
+            value = "DELETE FROM practice_x_team WHERE (practice_id = :practiceId AND team_id = :teamId)",
+            nativeQuery = true)
+    @Transactional
+    void throwPracticeToTeam(@Param("practiceId") Long practiceId, @Param("teamId") Long teamId);
 }

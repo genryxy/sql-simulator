@@ -5,11 +5,13 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.datasource.DriverManagerDataSource;
 import org.springframework.stereotype.Component;
 
 import javax.sql.DataSource;
 import java.sql.Connection;
+import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.Objects;
 
@@ -47,6 +49,23 @@ public class SqlTransaction {
             return new ResponseEntity(HttpStatus.OK);
         } catch (SQLException e) {
             return new ResponseEntity(HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    public void validationTeacherQuery(String dsl, String correctSelect){
+        try (Connection connection = Objects.requireNonNull(jdbcTemplate.getDataSource()).getConnection()) {
+            connection.setAutoCommit(false);
+            jdbcTemplate.update(getScriptDeleteTables());
+            jdbcTemplate.update(dsl);
+            jdbcTemplate.query(correctSelect, new RowMapper<Object>() {
+                @Override
+                public Object mapRow(ResultSet rs, int rowNum) {
+                    return null;
+                }
+            });
+            connection.commit();
+        } catch (SQLException e) {
+            e.printStackTrace();
         }
     }
 

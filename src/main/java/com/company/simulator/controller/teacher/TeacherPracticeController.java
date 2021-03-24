@@ -18,6 +18,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
 
 @Controller
@@ -29,13 +32,6 @@ public class TeacherPracticeController {
     @Autowired
     private TaskRepo taskRepo;
 
-    @GetMapping
-    public String allPractices(Model model) {
-        final Iterable<Practice> practices = practiceRepo.findAll();
-        model.addAttribute("practices", practices);
-        return "practice/practiceList";
-    }
-
     @GetMapping("/{practice}")
     public String tasksByPracticeId(
             @PathVariable Practice practice,
@@ -43,7 +39,8 @@ public class TeacherPracticeController {
     ) {
         final List<Task> tasks = new ArrayList<>(practice.getTasks());
         model.addAttribute("tasks", tasks);
-        return "practice/taskList";
+        model.addAttribute("practice", practice);
+        return "teacher/practiceInfo";
     }
 
     @GetMapping("/create")
@@ -68,4 +65,15 @@ public class TeacherPracticeController {
         }
         return ("redirect:/teacher");
     }
+
+    //TODO get statistic
+//    @GetMapping("/{practice}/statistic")
+//    public String getStatistic(@AuthenticationPrincipal User user,
+//                               Model model,
+//                               @PathVariable Practice practice) {
+//        final Iterable<Task> tasks = taskRepo.getStatistic(user.getId(), new HashSet<>(Collections.singletonList(practice)));
+//        model.addAttribute("tasks", tasks);
+//        return "teacher/statistic";
+//    }
+
 }
