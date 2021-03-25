@@ -100,11 +100,9 @@ public class TeacherTeamStudentsController {
     @PostMapping("{practiceId}/start")
     public String startPractice(@PathVariable Long practiceId,
                                 @RequestParam String date,
-                                @RequestParam String time) {
-        System.out.println("***"+practiceId);
-        System.out.println(LocalDateTime.now());
-        System.out.println(LocalDateTime.of(LocalDate.parse(date), LocalTime.parse(time)));
-        practiceRepo.addDeadLineToPractice(practiceId, LocalDateTime.now(), LocalDateTime.of(LocalDate.parse(date), LocalTime.parse(time)), false);
-        return String.format("redirect:/teacher/team/%d", practiceId);
+                                @RequestParam String time,
+                                @RequestParam Boolean checkBox) {
+        practiceRepo.addDeadLineToPractice(practiceId, LocalDateTime.now(), LocalDateTime.of(LocalDate.parse(date), LocalTime.parse(time)), checkBox);
+        return "redirect:/teacher";
     }
 }

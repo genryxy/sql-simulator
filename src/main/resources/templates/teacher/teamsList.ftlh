@@ -63,6 +63,10 @@
                             <input type="time" name="time" class="form-control">
                             <label>Choose your time</label>
                         </div>
+                        <div class="form-check">
+                            <input type="checkbox" class="form-check-input" id="exampleCheck1" name="checkBox">
+                            <label class="form-check-label" for="exampleCheck1">Solving after deadline</label>
+                        </div>
                         <input type="hidden" name="_csrf" value="${_csrf.token}">
                         <input type="hidden" name="practiceId" value="${practiceId}">
                         <button type="submit" class="btn btn-primary ml-2">Ready!</button>
