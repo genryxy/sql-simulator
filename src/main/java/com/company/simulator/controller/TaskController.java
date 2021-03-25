@@ -9,9 +9,6 @@ import com.company.simulator.repos.TaskRepo;
 import com.company.simulator.sql.SqlTransaction;
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
-import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -23,7 +20,6 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 @Controller
 public class TaskController {
-
     @Autowired
     private TaskRepo taskRepo;
 
@@ -42,11 +38,6 @@ public class TaskController {
         return "practice/taskList";
     }
 
-    @GetMapping(value = "/task/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<Task> getTask(@PathVariable("id") Task task) {
-        return new ResponseEntity<>(task, HttpStatus.OK);
-    }
-
     /*
         From Alexander
      */
@@ -56,17 +47,31 @@ public class TaskController {
 
     @GetMapping("practice/{practice}/task/{task}")
     public String taskById(
+        @AuthenticationPrincipal User user,
+        @PathVariable Practice practice,
         @PathVariable Task task,
         @RequestParam(required = false, name = "sentQuery") String query,
         @RequestParam(required = false) String result,
         @RequestParam(required = false) String type,
+        RedirectAttributes redirAttr,
         Model model
     ) {
-        model.addAttribute("task", task);
-        model.addAttribute("sentQuery", query);
-        model.addAttribute("result", result);
-        model.addAttribute("type", type);
-        return "practice/taskExecution";
+        if (!practice.getId().equals(Practice.COMMON_POOL)
+                && submRepo.findByUserAndPracticeAndTask(user, practice, task).isPresent()
+        ) {
+            redirAttr.addAttribute(
+                "result",
+                String.format("You have already solved this task `%s`", task.getName())
+            );
+            redirAttr.addAttribute("type", "warning");
+            return String.format("redirect:/practice/%d", practice.getId());
+        } else {
+            model.addAttribute("task", task);
+            model.addAttribute("sentQuery", query);
+            model.addAttribute("result", result);
+            model.addAttribute("type", type);
+            return "practice/taskExecution";
+        }
     }
 
     @PostMapping("practice/{practice}/task/{task}")
