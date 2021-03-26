@@ -26,6 +26,11 @@ import javax.validation.constraints.NotBlank;
 @ToString(of = {"id", "name"})
 @Table(name = "practice")
 public class Practice {
+    /**
+     * ID of practice which is included common tasks. It is a common pool.
+     * All students are available to solve tasks from this one.
+     */
+    public static final Long COMMON_POOL = 1L;
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

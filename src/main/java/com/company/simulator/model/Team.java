@@ -12,10 +12,12 @@ import javax.persistence.OneToMany;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
+import lombok.ToString;
 
 @Entity
 @NoArgsConstructor
 @EqualsAndHashCode(of = {"id"})
+@ToString(of = {"id", "authorId", "invitation", "name"})
 @Data
 public class Team {
     @Id

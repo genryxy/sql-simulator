@@ -1,17 +1,12 @@
 package com.company.simulator.repos;
 
-import com.company.simulator.model.Practice;
-import com.company.simulator.model.StudentQuery;
 import com.company.simulator.model.Task;
+import java.util.Collection;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.data.repository.query.Param;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.util.Collection;
-import java.util.List;
-import java.util.Set;
 
 public interface TaskRepo extends CrudRepository<Task, Long> {
 

@@ -1,7 +1,6 @@
 <#import "../parts/common.ftlh" as c>
 
 <@c.page>
-
     <div class="form-group col-md-6">
         <form method="get" action="/teacher/practice/create" class="form-inline">
             <button type="submit" class="btn btn-primary ml-2">Create new practice</button>
@@ -22,7 +21,7 @@
                             <div class="card-body">
                                 <h5 class="card-title">${practice.name}</h5>
                                 <p class="card-text">${practice.description}</p>
-                                <small class="card-text">${}</small>
+                                <small class="card-text"></small>
                                 <a href="/teacher/practice/${practice.id}" class="btn btn-primary">Info</a>
                                 <a href="/teacher/team/${practice.id}" class="btn btn-primary">Start</a>
                             </div>
