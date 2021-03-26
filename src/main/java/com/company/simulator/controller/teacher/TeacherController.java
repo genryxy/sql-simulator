@@ -13,7 +13,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 
 @Controller
 @RequestMapping("/teacher")
@@ -25,31 +24,19 @@ public class TeacherController {
     @GetMapping
     public String teacherPanel(@AuthenticationPrincipal User user,
                                Model model) {
-        final Optional<List<Practice>> practices = practiceRepo.findAllPracticeNotInProcess(user.getId());
-        if (practices.isPresent()) {
-            model.addAttribute("practices", practices.get());
-        } else {
-            model.addAttribute("practices", new ArrayList<Practice>());
-        }
+        final List<Practice> practices = practiceRepo.findAllPracticeNotInProcess(user.getId()).orElseGet(ArrayList::new);
+        model.addAttribute("practices", practices);
 
-        final Optional<List<Practice>> practicesInProcess = practiceRepo.findAllPracticeInProcess(user.getId(), LocalDateTime.now());
-        if (practicesInProcess.isPresent()) {
-            model.addAttribute("practicesInProcess", practicesInProcess.get());
-        } else {
-            model.addAttribute("practicesInProcess", new ArrayList<Practice>());
-        }
+        final List<Practice> practicesInProcess = practiceRepo.findAllPracticeInProcess(user.getId(), LocalDateTime.now()).orElseGet(ArrayList::new);
+        model.addAttribute("practicesInProcess", practicesInProcess);
         return "teacher/panel";
     }
 
     @GetMapping("archive")
-    public String getArchive(@AuthenticationPrincipal User user,
+    public String getArchivedPractices(@AuthenticationPrincipal User user,
                                Model model) {
-        final Optional<List<Practice>> practices = practiceRepo.findAllPracticeInArchive(user.getId(), LocalDateTime.now());
-        if (practices.isPresent()) {
-            model.addAttribute("practices", practices.get());
-        } else {
-            model.addAttribute("practices", new ArrayList<Practice>());
-        }
+        final List<Practice> practices = practiceRepo.findAllPracticeInArchive(user.getId(), LocalDateTime.now()).orElseGet(ArrayList::new);
+        model.addAttribute("practices", practices);
         return "teacher/archive";
     }
 }

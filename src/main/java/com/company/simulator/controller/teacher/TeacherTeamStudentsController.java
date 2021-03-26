@@ -21,9 +21,7 @@ import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
-import java.util.Random;
-import java.util.stream.Collectors;
+import java.util.UUID;
 
 @Controller
 @RequestMapping("/teacher/team")
@@ -39,21 +37,10 @@ public class TeacherTeamStudentsController {
     public String teamsByPractice(Model model,
                                   @PathVariable Practice practice,
                                   @AuthenticationPrincipal User user) {
-
-        final Optional<List<Team>> teams = teamRepo.findTeamsByPracticesContains(practice);
-        if (teams.isPresent()) {
-            model.addAttribute("teams", teams.get());
-        } else {
-            model.addAttribute("teams", new ArrayList<Team>());
-        }
-
-        final Optional<List<Team>> teams2 = teamRepo.findTeamsByPracticesNotContainsAndAuthorId(practice, user.getId());
-        if (teams2.isPresent()) {
-            model.addAttribute("teams2", teams2.get());
-        } else {
-            model.addAttribute("teams2", new ArrayList<Team>());
-        }
-
+        final List<Team> teamsInPractice = teamRepo.findTeamsByPracticesContains(practice).orElseGet(ArrayList::new);
+        final List<Team> allAnotherTeamsByAuthor = teamRepo.findTeamsByPracticesNotContainsAndAuthorId(practice, user.getId()).orElseGet(ArrayList::new);
+        model.addAttribute("teamsInPractice", teamsInPractice);
+        model.addAttribute("allAnotherTeamsByAuthor", allAnotherTeamsByAuthor);
         model.addAttribute("practiceId", practice.getId());
         return "teacher/teamsList";
     }
@@ -63,10 +50,7 @@ public class TeacherTeamStudentsController {
                              @PathVariable Long practiceId) {
         String inviteCode;
         do {
-            inviteCode = new Random()
-                    .ints(10, 33, 122)
-                    .mapToObj(i -> String.valueOf((char) i))
-                    .collect(Collectors.joining());
+            inviteCode = UUID.randomUUID().toString();
         } while (teamRepo.findTeamByInvitation(inviteCode).isPresent());
         model.addAttribute("inviteCode", inviteCode);
         model.addAttribute("practiceId", practiceId);
@@ -89,8 +73,8 @@ public class TeacherTeamStudentsController {
         return String.format("redirect:/teacher/team/%d", practiceId);
     }
 
-    @PostMapping("/throw")
-    public String throwTeam(@RequestParam Long practiceId,
+    @PostMapping("/remove")
+    public String removePracticeFromTeam(@RequestParam Long practiceId,
                             @RequestParam Long teamId
     ) {
         teamRepo.throwPracticeToTeam(practiceId, teamId);
@@ -101,8 +85,8 @@ public class TeacherTeamStudentsController {
     public String startPractice(@PathVariable Long practiceId,
                                 @RequestParam String date,
                                 @RequestParam String time,
-                                @RequestParam Boolean checkBox) {
-        practiceRepo.addDeadLineToPractice(practiceId, LocalDateTime.now(), LocalDateTime.of(LocalDate.parse(date), LocalTime.parse(time)), checkBox);
+                                @RequestParam Boolean sendingAfterDeadLine) {
+        practiceRepo.addDeadLineToPractice(practiceId, LocalDateTime.now(), LocalDateTime.of(LocalDate.parse(date), LocalTime.parse(time)), sendingAfterDeadLine);
         return "redirect:/teacher";
     }
 }
