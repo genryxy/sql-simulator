@@ -10,7 +10,7 @@
                 <input type="hidden" name="_csrf" value="${_csrf.token}">
                 <input type="hidden" name="authorId" value="${currentUserId}">
                 <input type="text" name="name" placeholder="name">
-                <input type="text" name="invitation" placeholder="text" >
+                <input type="hidden" name="invitation" value="${inviteCode}" >
                 <button type="submit" class="btn btn-primary ml-2">Save</button>
             </form>
         </div>

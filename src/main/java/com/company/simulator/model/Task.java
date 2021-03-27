@@ -1,6 +1,5 @@
 package com.company.simulator.model;
 
-
 import javax.persistence.Transient;
 import lombok.AllArgsConstructor;
 import lombok.Data;

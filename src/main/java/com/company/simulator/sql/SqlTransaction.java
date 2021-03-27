@@ -2,6 +2,7 @@ package com.company.simulator.sql;
 
 import com.google.common.base.Throwables;
 import java.sql.Connection;
+import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.List;
 import java.util.Map;
@@ -16,6 +17,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.datasource.DriverManagerDataSource;
 import org.springframework.stereotype.Component;
 
@@ -65,6 +67,18 @@ public class SqlTransaction {
             return ResponseEntity
                 .status(HttpStatus.INTERNAL_SERVER_ERROR)
                 .body(res);
+        }
+    }
+
+    public void validationTeacherQuery(String dsl, String correctSelect){
+        try (Connection connection = Objects.requireNonNull(jdbcTemplate.getDataSource()).getConnection()) {
+            connection.setAutoCommit(false);
+            jdbcTemplate.update(getScriptDeleteTables());
+            jdbcTemplate.update(dsl);
+            jdbcTemplate.query(correctSelect, (rs, rowNum) -> null);
+            connection.commit();
+        } catch (SQLException e) {
+            e.printStackTrace();
         }
     }
 

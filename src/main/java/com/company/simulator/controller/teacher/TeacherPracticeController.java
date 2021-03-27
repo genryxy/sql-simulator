@@ -29,21 +29,15 @@ public class TeacherPracticeController {
     @Autowired
     private TaskRepo taskRepo;
 
-    @GetMapping
-    public String allPractices(Model model) {
-        final Iterable<Practice> practices = practiceRepo.findAll();
-        model.addAttribute("practices", practices);
-        return "teacher/practiceList";
-    }
-
     @GetMapping("/{practice}")
-    public String tasksByPracticeId(
+    public String getPracticeInfo(
             @PathVariable Practice practice,
             Model model
     ) {
         final List<Task> tasks = new ArrayList<>(practice.getTasks());
         model.addAttribute("tasks", tasks);
-        return "teacher/taskList";
+        model.addAttribute("practice", practice);
+        return "teacher/practiceInfo";
     }
 
     @GetMapping("/create")
@@ -68,4 +62,15 @@ public class TeacherPracticeController {
         }
         return ("redirect:/teacher");
     }
+
+    //TODO get statistic
+//    @GetMapping("/{practice}/statistic")
+//    public String getStatistic(@AuthenticationPrincipal User user,
+//                               Model model,
+//                               @PathVariable Practice practice) {
+//        final Iterable<Task> tasks = taskRepo.getStatistic(user.getId(), new HashSet<>(Collections.singletonList(practice)));
+//        model.addAttribute("tasks", tasks);
+//        return "teacher/statistic";
+//    }
+
 }
