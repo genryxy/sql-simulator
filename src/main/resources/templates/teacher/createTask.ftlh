@@ -15,7 +15,11 @@
                 <input type="text" name="correctQuery" placeholder="correctQuery">
                 <input type="int" name="points" placeholder="points">
                 <input type="hidden" name="isPrivate" value="${false?c}">
-                <input type="long" name="categoryId" placeholder="categoryId">
+                <select class="form-select form-select-sm" name="category" aria-label=".form-select-sm example">
+                    <#list categories as category>
+                        <option value="${category.id}">${category.name}</option>
+                    </#list>
+                </select>
                 <button type="submit" class="btn btn-primary ml-2">save</button>
             </form>
         </div>

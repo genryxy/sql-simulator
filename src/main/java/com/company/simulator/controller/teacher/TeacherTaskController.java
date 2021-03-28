@@ -1,6 +1,7 @@
 package com.company.simulator.controller.teacher;
 
 import com.company.simulator.model.Task;
+import com.company.simulator.repos.CategoryRepo;
 import com.company.simulator.repos.TaskRepo;
 import com.company.simulator.sql.SqlTransaction;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,9 +15,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
-import java.util.List;
-import org.springframework.web.bind.annotation.RequestParam;
-
 @Controller
 @RequestMapping("/teacher")
 public class TeacherTaskController {
@@ -26,6 +24,9 @@ public class TeacherTaskController {
 
     @Autowired
     private SqlTransaction sqlTransaction;
+
+    @Autowired
+    private CategoryRepo categoryRepo;
 
     @GetMapping("task")
     public String task(Model model) {
@@ -43,6 +44,7 @@ public class TeacherTaskController {
                              @RequestParam(required = false) String message,
                              @RequestParam(required = false) String type
     ) {
+        model.addAttribute("categories", categoryRepo.findAll());
         model.addAttribute("message", message);
         model.addAttribute("type", type);
         return "teacher/createTask";

@@ -15,7 +15,7 @@
                 <div>
                     <#list tasks as task>
                         <div class="list-group">
-                            <a href="/practice/task/${task.id}" class="list-group-item list-group-item-action">
+                            <a href="/teacher/task/${task.id}" class="list-group-item list-group-item-action">
                                 Task name: ${task.name}
                             </a>
                             <input class="form-check-input" type="checkbox" name="checkBox${task.id}">

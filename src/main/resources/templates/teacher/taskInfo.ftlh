@@ -8,5 +8,5 @@
     <p class="card-text">${task.ddlScript}</p>
     <p class="card-text">${task.correctQuery}</p>
     <p class="card-text">${task.points}</p>
-    <p class="card-text">${task.categoryId}</p>
+    <p class="card-text">${task.category.name}</p>
 </@c.page>
