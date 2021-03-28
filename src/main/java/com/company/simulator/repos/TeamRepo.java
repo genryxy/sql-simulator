@@ -17,6 +17,14 @@ public interface TeamRepo extends CrudRepository<Team, Long> {
     Optional<List<Team>> findTeamsByPracticesContains(Practice practice);
     Optional<List<Team>> findTeamsByPracticesNotContainsAndAuthorId(Practice practice, Long id);
 
+    @Query(
+        value = "SELECT * FROM team t " +
+                    "JOIN student s on t.id = s.team_id " +
+                    "WHERE s.user_id = ?1",
+        nativeQuery = true
+    )
+    Optional<List<Team>> findTeamsByStudentId(Long student);
+
     @Modifying
     @Query(
             value = "INSERT INTO practice_x_team (practice_id, team_id) values (:practiceId, :teamId)",
