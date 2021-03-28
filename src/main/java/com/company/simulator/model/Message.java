@@ -1,5 +1,6 @@
 package com.company.simulator.model;
 
+import java.io.Serializable;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
@@ -12,12 +13,14 @@ import javax.validation.constraints.Size;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
+import lombok.ToString;
 
 @Entity
 @NoArgsConstructor
 @EqualsAndHashCode(of = {"id"})
+@ToString(of = {"id", "text", "tag"})
 @Data
-public final class Message {
+public final class Message implements Serializable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)

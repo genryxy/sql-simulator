@@ -37,5 +37,5 @@ public interface PracticeRepo extends CrudRepository<Practice, Long> {
             nativeQuery = true)
     Optional<List<Practice>> findAllPracticeInProcess(Long authorId, LocalDateTime dateTime);
 
-    Optional<List<Practice>> findAllByAuthorId(Long authorId);
+    List<Practice> findAllByIdIsNot(Long id);
 }

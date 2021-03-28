@@ -2,7 +2,7 @@
 <#include "../parts/security.ftlh">
 
 <@c.page>
-    Practice list
+    <p class="text-dark h5">Available practices</p>
     <div class="card-columns">
         <#list practices as practice>
             <div class="card my-3">

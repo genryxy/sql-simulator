@@ -1,11 +1,7 @@
 <#import "../parts/common.ftlh" as c>
 
 <@c.page>
-    <#if result??>
-        <div class="alert alert-${type}" role="alert">
-            ${result}
-        </div>
-    </#if>
+    <#include "../parts/alertResult.ftlh"/>
     <b>Task execution</b>
     <form method="post">
         <div class="container-fluid">
