@@ -28,11 +28,6 @@ public class TeacherTaskController {
     @Autowired
     private CategoryRepo categoryRepo;
 
-    @GetMapping("task")
-    public String task(Model model) {
-        return "task";
-    }
-
     @GetMapping("task/{task}")
     public String getTask(@PathVariable("task") Task task, Model model) {
         model.addAttribute("task", task);

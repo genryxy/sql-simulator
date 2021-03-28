@@ -19,6 +19,7 @@ import javax.validation.constraints.NotBlank;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
+import lombok.ToString;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
@@ -26,6 +27,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 @Table(name = "person")
 @NoArgsConstructor
 @EqualsAndHashCode(of = {"id"})
+@ToString(of = {"id", "username", "email"})
 @Data
 public class User implements UserDetails {
     @Id

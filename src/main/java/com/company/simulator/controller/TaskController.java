@@ -5,9 +5,7 @@ import com.company.simulator.model.Submission;
 import com.company.simulator.model.Task;
 import com.company.simulator.model.User;
 import com.company.simulator.repos.SubmissionRepo;
-import com.company.simulator.repos.TaskRepo;
 import com.company.simulator.sql.SqlTransaction;
-import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
@@ -21,29 +19,15 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 @Controller
 public class TaskController {
     @Autowired
-    private TaskRepo taskRepo;
+    private SubmissionRepo submRepo;
 
     @Autowired
     private SqlTransaction sqlTransaction;
 
     @GetMapping("/task")
     public String task(Model model) {
-        return "task";
+        return "practice/task";
     }
-
-    @GetMapping("/task/all")
-    public String taskList(Model model) {
-        final List<Task> tasks = (List<Task>) taskRepo.findAll();
-        model.addAttribute("tasks", tasks);
-        return "practice/taskList";
-    }
-
-    /*
-        From Alexander
-     */
-
-    @Autowired
-    private SubmissionRepo submRepo;
 
     @GetMapping("practice/{practice}/task/{task}")
     public String taskById(
