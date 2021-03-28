@@ -25,9 +25,5 @@
         </div>
     </div>
 
-    <#if message??>
-        <div class="alert alert-${type}" role="alert">
-            ${message}
-        </div>
-    </#if>
+    <#include "../parts/alertResult.ftlh"/>
 </@c.page>

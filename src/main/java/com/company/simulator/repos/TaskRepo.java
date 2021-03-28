@@ -10,7 +10,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 public interface TaskRepo extends CrudRepository<Task, Long> {
 
-//  TODO
+    //  TODO
 
 //    @Query(
 //            value = "SELECT * FROM task t WHERE t.author_id = ?1",
@@ -28,4 +28,11 @@ public interface TaskRepo extends CrudRepository<Task, Long> {
             nativeQuery = true)
     @Transactional
     void addTaskToPractice(@Param("practiceId") Long practiceId,@Param("taskId") Long taskId);
+
+    @Query(
+        value = "SELECT * FROM task t " +
+                "JOIN practice_x_task p ON t.id=p.task_id " +
+                "WHERE t.category_id=?1 and p.practice_id=?2",
+        nativeQuery = true)
+    Collection<Task> findAllByCategoryAndPractice(Long category, Long practice);
 }
