@@ -59,6 +59,8 @@ public class TeacherTaskController {
     public String addTask(@ModelAttribute Task task,
                           RedirectAttributes redirectAttributes
     ) {
+        String message = "Successfully created",
+            type = "success";
         try {
             sqlTransaction.validationTeacherQuery(task.getDdlScript(), task.getCorrectQuery());
             taskRepo.save(task);
@@ -70,6 +72,9 @@ public class TeacherTaskController {
             redirectAttributes.addAttribute("type", "danger");
             return "redirect:/teacher/task/create";
         }
+        redirectAttributes.addAttribute("message", message);
+        redirectAttributes.addAttribute("type", type);
+        return ("redirect:/teacher/task/create");
     }
 
     @GetMapping("task/{task}/edit")
@@ -90,4 +95,17 @@ public class TeacherTaskController {
         model.addAttribute("task", task);
         return "/teacher/task";
     }
+//    @GetMapping("practice/{practice}/task/{task}")
+//    public String editTaskById(
+//        @PathVariable Task task,
+//        Model model
+//    ) {
+//        model.addAttribute("task", task);
+//        // TODO: Form for editing of tasks should be completed.
+//        // Probably the path can be "teacher/task/{task}" because one task
+//        // can be included in many practices.
+//        // For this purpose method for obtaining task by id
+//        // in JSON should be removed.
+//        return "teacher/taskEdit";
+//    }
 }
