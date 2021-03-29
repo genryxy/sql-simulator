@@ -2,11 +2,14 @@ package com.company.simulator.controller;
 
 import com.company.simulator.model.Category;
 import com.company.simulator.model.Practice;
+import com.company.simulator.model.Student;
 import com.company.simulator.model.Submission;
 import com.company.simulator.model.Task;
+import com.company.simulator.model.Team;
 import com.company.simulator.model.User;
 import com.company.simulator.repos.CategoryRepo;
 import com.company.simulator.repos.PracticeRepo;
+import com.company.simulator.repos.StudentRepo;
 import com.company.simulator.repos.SubmissionRepo;
 import com.company.simulator.repos.TaskRepo;
 import java.util.ArrayList;
@@ -14,14 +17,13 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.Set;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.security.core.parameters.P;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -40,10 +42,27 @@ public final class PracticeController {
     @Autowired
     private TaskRepo taskRepo;
 
+    @Autowired
+    private StudentRepo studentRepo;
+
     @GetMapping("/practice")
-    public String allPractices(Model model) {
-        final Iterable<Practice> practices = practiceRepo.findAllByIdIsNot(Practice.COMMON_POOL);
+    public String availablePractices(
+        Model model,
+        @RequestParam(required = false) Team team,
+        @RequestParam(required = false) String result,
+        @RequestParam(required = false) String type
+    ) {
+        final Iterable<Practice> practices;
+        if (team == null) {
+            practices = practiceRepo.findAllByIdIsNot(Practice.COMMON_POOL);
+        } else {
+            practices = team.getPractices().stream()
+                .filter(prac -> !prac.getId().equals(Practice.COMMON_POOL))
+                .collect(Collectors.toList());
+        }
         model.addAttribute("practices", practices);
+        model.addAttribute("result", result);
+        model.addAttribute("type", type);
         return "practice/practiceList";
     }
 
@@ -57,27 +76,51 @@ public final class PracticeController {
         @RequestParam(required = false) String type,
         Model model
     ) {
-        final Collection<Task> tasks;
-        model.addAttribute("categories", categoryRepo.findAll());
-        model.addAttribute("practice", practice);
-        model.addAttribute("result", result);
-        model.addAttribute("type", type);
-        final String template;
-        if (practice.getId().equals(Practice.COMMON_POOL)) {
-            if (category != null) {
-                tasks = taskRepo.findAllByCategoryAndPractice(category.getId(), practice.getId());
-                model.addAttribute("category_filter", category);
+        if (hasAccess(user, practice)) {
+            final Collection<Task> tasks;
+            model.addAttribute("categories", categoryRepo.findAll());
+            model.addAttribute("practice", practice);
+            model.addAttribute("result", result);
+            model.addAttribute("type", type);
+            final String template;
+            if (practice.getId().equals(Practice.COMMON_POOL)) {
+                if (category != null) {
+                    tasks = taskRepo.findAllByCategoryAndPractice(category.getId(), practice.getId());
+                    model.addAttribute("category_filter", category);
+                } else {
+                    tasks = practice.getTasks();
+                }
+                template = "practice/commonPool";
             } else {
                 tasks = practice.getTasks();
+                template = "practice/tasksByPractice";
             }
-            template = "practice/commonPool";
+            final List<Task> markedTasks = tasksWithMarkedStatus(tasks, practice, user);
+            model.addAttribute("tasks", filterTasksByStatus(markedTasks, task_status));
+            return template;
         } else {
-            tasks = practice.getTasks();
-            template = "practice/tasksByPractice";
+            model.addAttribute(
+                "result",
+                String.format("Access to practice `%d` denied", practice.getId())
+            );
+            model.addAttribute("type", "danger");
+            model.addAttribute("practices", practiceRepo.findAllByIdIsNot(Practice.COMMON_POOL));
+            return "practice/practiceList";
         }
-        final List<Task> markedTasks = tasksWithMarkedStatus(tasks, practice, user);
-        model.addAttribute("tasks", filterTasksByStatus(markedTasks, task_status));
-        return template;
+    }
+
+    private boolean hasAccess(User user, Practice practice) {
+        boolean allowed = false;
+        final Set<Team> teams = practice.getTeams();
+        final List<Student> students = studentRepo.findAllByUserId(user.getId())
+            .orElseGet(ArrayList::new);
+        for (Student student: students) {
+            if (teams.contains(student.getTeam())) {
+                allowed = true;
+                break;
+            }
+        }
+        return allowed;
     }
 
     private Collection<Task> filterTasksByStatus(Collection<Task> tasks, String status) {
