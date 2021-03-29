@@ -2,6 +2,12 @@
 <#include "../parts/security.ftlh">
 
 <@c.page>
+    <#if message??>
+        <div class="alert alert-${type}" role="alert">
+            ${message}
+        </div>
+    </#if>
+
     <h5>Create new Practice: </h5>
 
     <div class="form-row">

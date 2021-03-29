@@ -1,21 +1,15 @@
 package com.company.simulator.repos;
 
 import com.company.simulator.model.Task;
-import java.util.Collection;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.data.repository.query.Param;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Collection;
+
 public interface TaskRepo extends CrudRepository<Task, Long> {
-
-    //  TODO
-
-//    @Query(
-//            value = "SELECT * FROM task t WHERE t.author_id = ?1",
-//            nativeQuery = true)
-//    Collection<StudentQuery> getStatistic(Long id);
 
     @Query(
             value = "SELECT * FROM task t WHERE t.author_id = ?1",
