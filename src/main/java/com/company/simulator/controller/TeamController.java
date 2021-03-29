@@ -6,6 +6,8 @@ import com.company.simulator.model.Team;
 import com.company.simulator.model.User;
 import com.company.simulator.repos.StudentRepo;
 import com.company.simulator.repos.TeamRepo;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -19,7 +21,7 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 @Controller
 @RequestMapping("/student")
-public class StudentController {
+public class TeamController {
     @Autowired
     private TeamRepo teamRepo;
 
@@ -28,20 +30,24 @@ public class StudentController {
 
     @GetMapping("/team")
     public String registerToTeam(
-        @RequestParam(required = false) String message,
+        @AuthenticationPrincipal User user,
+        @RequestParam(required = false) String result,
         @RequestParam(required = false) String type,
         Model model
     ) {
-        model.addAttribute("message", message);
+        final List<Team> teams = teamRepo.findTeamsByStudentId(user.getId())
+            .orElseGet(ArrayList::new);
+        model.addAttribute("result", result);
         model.addAttribute("type", type);
-        return "teamInvitation";
+        model.addAttribute("teams", teams);
+        return "team";
     }
 
     @PostMapping("/team")
     public String addStudentToTeam(
         @AuthenticationPrincipal User user,
         @RequestParam String invitation,
-        RedirectAttributes redirectAttributes
+        RedirectAttributes redirAttr
     ) {
         final Optional<Team> team = teamRepo.findTeamByInvitation(invitation);
         team.ifPresentOrElse(
@@ -52,15 +58,15 @@ public class StudentController {
                     group
                 );
                 studentRepo.save(student);
-                redirectAttributes.addAttribute("message", "Successfully joined");
-                redirectAttributes.addAttribute("type", "success");
+                redirAttr.addAttribute("result", "Successfully joined");
+                redirAttr.addAttribute("type", "success");
             },
             () -> {
-                redirectAttributes.addAttribute(
-                    "message",
+                redirAttr.addAttribute(
+                    "result",
                     String.format("No team was found by invitation '%s'", invitation)
                 );
-                redirectAttributes.addAttribute("type", "danger");
+                redirAttr.addAttribute("type", "danger");
             }
         );
         return "redirect:/student/team";
