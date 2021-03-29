@@ -59,8 +59,6 @@ public class TeacherTaskController {
     public String addTask(@ModelAttribute Task task,
                           RedirectAttributes redirectAttributes
     ) {
-        String message = "Successfully created",
-            type = "success";
         try {
             sqlTransaction.validationTeacherQuery(task.getDdlScript(), task.getCorrectQuery());
             taskRepo.save(task);
@@ -72,9 +70,6 @@ public class TeacherTaskController {
             redirectAttributes.addAttribute("type", "danger");
             return "redirect:/teacher/task/create";
         }
-        redirectAttributes.addAttribute("message", message);
-        redirectAttributes.addAttribute("type", type);
-        return ("redirect:/teacher/task/create");
     }
 
     @GetMapping("task/{task}/edit")
