@@ -33,8 +33,9 @@ public class TeacherTaskController {
     @GetMapping("tasks")
     public String getAllTasks(@AuthenticationPrincipal User user,
                               Model model) {
-        model.addAttribute("task", task);
-        return "teacher/taskInfo";
+        final Iterable<Task> tasks = taskRepo.findAllTaskByAuthorId(user.getId());
+        model.addAttribute("tasks", tasks);
+        return "teacher/allTasksByTeacher";
     }
 
     @GetMapping("task/{task}")
