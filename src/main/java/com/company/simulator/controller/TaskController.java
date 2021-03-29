@@ -35,7 +35,7 @@ public class TaskController {
         @PathVariable Practice practice,
         @PathVariable Task task,
         @RequestParam(required = false, name = "sentQuery") String query,
-        @RequestParam(required = false) String result,
+        @RequestParam(required = false) String message,
         @RequestParam(required = false) String type,
         RedirectAttributes redirAttr,
         Model model
@@ -44,7 +44,7 @@ public class TaskController {
                 && submRepo.findByUserAndPracticeAndTask(user, practice, task).isPresent()
         ) {
             redirAttr.addAttribute(
-                "result",
+                "message",
                 String.format("You have already solved this task `%s`", task.getName())
             );
             redirAttr.addAttribute("type", "warning");
@@ -52,7 +52,7 @@ public class TaskController {
         } else {
             model.addAttribute("task", task);
             model.addAttribute("sentQuery", query);
-            model.addAttribute("result", result);
+            model.addAttribute("message", message);
             model.addAttribute("type", type);
             return "practice/taskExecution";
         }
@@ -76,13 +76,13 @@ public class TaskController {
             subm.setPractice(practice);
             subm.setUser(user);
             submRepo.save(subm);
-            redirAttr.addAttribute("result", "Query was successfully submitted");
+            redirAttr.addAttribute("message", "Query was successfully submitted");
             redirAttr.addAttribute("type", "success");
             return String.format("redirect:/practice/%d", practice.getId());
         } else if (res.getSqlException().isPresent()) {
-            model.addAttribute("result", res.getSqlException().get());
+            model.addAttribute("message", res.getSqlException().get());
         } else if (res.getInternalError().isPresent()) {
-            model.addAttribute("result", res.getInternalError().get());
+            model.addAttribute("message", res.getInternalError().get());
         }
         model.addAttribute("sentQuery", query);
         model.addAttribute("type", "danger");

@@ -28,6 +28,14 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestParam;
 
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+import java.util.function.Function;
+import java.util.stream.Collectors;
+
 @Controller
 public final class PracticeController {
     @Autowired
@@ -72,7 +80,7 @@ public final class PracticeController {
         @PathVariable Practice practice,
         @RequestParam(required = false) Category category,
         @RequestParam(required = false) String task_status,
-        @RequestParam(required = false) String result,
+        @RequestParam(required = false) String message,
         @RequestParam(required = false) String type,
         Model model
     ) {
@@ -121,6 +129,27 @@ public final class PracticeController {
             }
         }
         return allowed;
+        final Collection<Task> tasks;
+        model.addAttribute("categories", categoryRepo.findAll());
+        model.addAttribute("practice", practice);
+        model.addAttribute("message", message);
+        model.addAttribute("type", type);
+        final String template;
+        if (practice.getId().equals(Practice.COMMON_POOL)) {
+            if (category != null) {
+                tasks = taskRepo.findAllByCategoryAndPractice(category.getId(), practice.getId());
+                model.addAttribute("category_filter", category);
+            } else {
+                tasks = practice.getTasks();
+            }
+            template = "practice/commonPool";
+        } else {
+            tasks = practice.getTasks();
+            template = "practice/tasksByPractice";
+        }
+        final List<Task> markedTasks = tasksWithMarkedStatus(tasks, practice, user);
+        model.addAttribute("tasks", filterTasksByStatus(markedTasks, task_status));
+        return template;
     }
 
     private Collection<Task> filterTasksByStatus(Collection<Task> tasks, String status) {

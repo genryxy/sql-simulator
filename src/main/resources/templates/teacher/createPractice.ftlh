@@ -2,6 +2,8 @@
 <#include "../parts/security.ftlh">
 
 <@c.page>
+    <#include "../parts/alertMessage.ftlh"/>
+
     <h5>Create new Practice: </h5>
 
     <div class="form-row">

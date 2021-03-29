@@ -9,7 +9,7 @@
 <@c.page>
     <p class="text-break ml-3 h5">It's a common pool with tasks.<br/>
         You're able to solve these tasks unlimited number of times.</p>
-    <#include "../parts/alertResult.ftlh"/>
+    <#include "../parts/alertMessage.ftlh"/>
     <#if category_filter??>
         <p class="text-dark h5 alert-info col-4 m-2 p-3">Category: ${category_filter.name}</p>
     </#if>

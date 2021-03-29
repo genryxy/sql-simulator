@@ -6,9 +6,6 @@ import com.company.simulator.model.Team;
 import com.company.simulator.model.User;
 import com.company.simulator.repos.StudentRepo;
 import com.company.simulator.repos.TeamRepo;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
@@ -18,6 +15,10 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
 
 @Controller
 @RequestMapping("/student")
@@ -31,13 +32,13 @@ public class TeamController {
     @GetMapping("/team")
     public String registerToTeam(
         @AuthenticationPrincipal User user,
-        @RequestParam(required = false) String result,
+        @RequestParam(required = false) String message,
         @RequestParam(required = false) String type,
         Model model
     ) {
         final List<Team> teams = teamRepo.findTeamsByStudentId(user.getId())
             .orElseGet(ArrayList::new);
-        model.addAttribute("result", result);
+        model.addAttribute("message", message);
         model.addAttribute("type", type);
         model.addAttribute("teams", teams);
         return "team";

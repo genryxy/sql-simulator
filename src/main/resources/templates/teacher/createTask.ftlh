@@ -25,5 +25,5 @@
         </div>
     </div>
 
-    <#include "../parts/alertResult.ftlh"/>
+    <#include "../parts/alertMessage.ftlh"/>
 </@c.page>

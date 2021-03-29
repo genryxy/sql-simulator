@@ -1,7 +1,7 @@
 <#import "../parts/common.ftlh" as c>
 
 <@c.page>
-    <#include "../parts/alertResult.ftlh"/>
+    <#include "../parts/alertMessage.ftlh"/>
     <b>Task execution</b>
     <form method="post">
         <div class="container-fluid">

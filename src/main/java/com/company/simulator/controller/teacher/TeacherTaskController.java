@@ -49,31 +49,30 @@ public class TeacherTaskController {
     public String addTask(@ModelAttribute Task task,
                           RedirectAttributes redirectAttributes
     ) {
-        String message = "Successfully created",
-            type = "success";
         try {
             sqlTransaction.validationTeacherQuery(task.getDdlScript(), task.getCorrectQuery());
             taskRepo.save(task);
+            redirectAttributes.addAttribute("message", "Task successfully created");
+            redirectAttributes.addAttribute("type", "success");
+            return "redirect:/teacher/practice/create";
         } catch (Exception e) {
-            message = e.getMessage();
-            type = "danger";
+            redirectAttributes.addAttribute("message", e.getMessage());
+            redirectAttributes.addAttribute("type", "danger");
+            return "redirect:/teacher/task/create";
         }
-        redirectAttributes.addAttribute("message", message);
-        redirectAttributes.addAttribute("type", type);
-        return ("redirect:/teacher/task/create");
     }
 
-    @GetMapping("practice/{practice}/task/{task}")
-    public String editTaskById(
-        @PathVariable Task task,
-        Model model
-    ) {
-        model.addAttribute("task", task);
-        // TODO: Form for editing of tasks should be completed.
-        // Probably the path can be "teacher/task/{task}" because one task
-        // can be included in many practices.
-        // For this purpose method for obtaining task by id
-        // in JSON should be removed.
-        return "teacher/taskEdit";
-    }
+//    @GetMapping("practice/{practice}/task/{task}")
+//    public String editTaskById(
+//        @PathVariable Task task,
+//        Model model
+//    ) {
+//        model.addAttribute("task", task);
+//        // TODO: Form for editing of tasks should be completed.
+//        // Probably the path can be "teacher/task/{task}" because one task
+//        // can be included in many practices.
+//        // For this purpose method for obtaining task by id
+//        // in JSON should be removed.
+//        return "teacher/taskEdit";
+//    }
 }
