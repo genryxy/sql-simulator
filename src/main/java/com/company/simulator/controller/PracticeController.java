@@ -9,6 +9,14 @@ import com.company.simulator.repos.CategoryRepo;
 import com.company.simulator.repos.PracticeRepo;
 import com.company.simulator.repos.SubmissionRepo;
 import com.company.simulator.repos.TaskRepo;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestParam;
+
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -16,15 +24,6 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.function.Function;
 import java.util.stream.Collectors;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.security.core.parameters.P;
-import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
-import org.springframework.util.StringUtils;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestParam;
 
 @Controller
 public final class PracticeController {
@@ -53,14 +52,14 @@ public final class PracticeController {
         @PathVariable Practice practice,
         @RequestParam(required = false) Category category,
         @RequestParam(required = false) String task_status,
-        @RequestParam(required = false) String result,
+        @RequestParam(required = false) String message,
         @RequestParam(required = false) String type,
         Model model
     ) {
         final Collection<Task> tasks;
         model.addAttribute("categories", categoryRepo.findAll());
         model.addAttribute("practice", practice);
-        model.addAttribute("result", result);
+        model.addAttribute("message", message);
         model.addAttribute("type", type);
         final String template;
         if (practice.getId().equals(Practice.COMMON_POOL)) {

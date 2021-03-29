@@ -62,17 +62,17 @@ public class TeacherTaskController {
         }
     }
 
-    @GetMapping("practice/{practice}/task/{task}")
-    public String editTaskById(
-        @PathVariable Task task,
-        Model model
-    ) {
-        model.addAttribute("task", task);
-        // TODO: Form for editing of tasks should be completed.
-        // Probably the path can be "teacher/task/{task}" because one task
-        // can be included in many practices.
-        // For this purpose method for obtaining task by id
-        // in JSON should be removed.
-        return "teacher/taskEdit";
-    }
+//    @GetMapping("practice/{practice}/task/{task}")
+//    public String editTaskById(
+//        @PathVariable Task task,
+//        Model model
+//    ) {
+//        model.addAttribute("task", task);
+//        // TODO: Form for editing of tasks should be completed.
+//        // Probably the path can be "teacher/task/{task}" because one task
+//        // can be included in many practices.
+//        // For this purpose method for obtaining task by id
+//        // in JSON should be removed.
+//        return "teacher/taskEdit";
+//    }
 }

@@ -1,7 +1,7 @@
 <div>
-    <#if result??>
+    <#if message??>
         <div class="alert alert-${type}" role="alert">
-            ${result}
+            ${message}
         </div>
     </#if>
 </div>
