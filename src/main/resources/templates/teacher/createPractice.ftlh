@@ -34,10 +34,4 @@
             </form>
         </div>
     </div>
-
-    <div class="form-group col-md-6">
-        <form method="get" action="/teacher/task/create" class="form-inline">
-            <button type="submit" class="btn btn-primary ml-2">Add new Task</button>
-        </form>
-    </div>
 </@c.page>

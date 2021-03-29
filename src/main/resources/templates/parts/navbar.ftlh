@@ -33,7 +33,7 @@
                     <a class="nav-link" href="/student/team">Team</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" href="/teacher/">Teacher</a>
+                    <a class="nav-link" href="/teacher/practice">Teacher</a>
                 </li>
             </#if>
             <#if isAdmin>

@@ -5,12 +5,6 @@ import com.company.simulator.model.Team;
 import com.company.simulator.model.User;
 import com.company.simulator.repos.PracticeRepo;
 import com.company.simulator.repos.TeamRepo;
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.time.LocalTime;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.UUID;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
@@ -22,15 +16,30 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.UUID;
+
 @Controller
 @RequestMapping("/teacher/team")
-public class TeacherTeamStudentsController {
+public class TeacherTeamController {
 
     @Autowired
     TeamRepo teamRepo;
 
     @Autowired
     PracticeRepo practiceRepo;
+
+    @GetMapping
+    public String teamsByAuthor(Model model,
+                                @AuthenticationPrincipal User user) {
+        final List<Team> teamsInPractice = teamRepo.findTeamsByAuthorId(user.getId()).orElseGet(ArrayList::new);
+        model.addAttribute("teams", teamsInPractice);
+        return "teacher/team";
+    }
 
     @GetMapping("/{practice}")
     public String teamsByPractice(Model model,
@@ -44,24 +53,20 @@ public class TeacherTeamStudentsController {
         return "teacher/teamsList";
     }
 
-    @GetMapping("/{practiceId}/create")
-    public String createTeam(Model model,
-                             @PathVariable Long practiceId) {
+    @GetMapping("/create")
+    public String createTeam(Model model) {
         String inviteCode;
         do {
             inviteCode = UUID.randomUUID().toString();
         } while (teamRepo.findTeamByInvitation(inviteCode).isPresent());
         model.addAttribute("inviteCode", inviteCode);
-        model.addAttribute("practiceId", practiceId);
         return "teacher/createTeam";
     }
 
-    @PostMapping("/{practiceId}/create")
-    public String saveTeam(@PathVariable Long practiceId,
-                           @ModelAttribute Team team
-    ) {
+    @PostMapping("/create")
+    public String saveTeam(@ModelAttribute Team team) {
         teamRepo.save(team);
-        return String.format("redirect:/teacher/team/%d", practiceId);
+        return "team";
     }
 
     @PostMapping("/assign")

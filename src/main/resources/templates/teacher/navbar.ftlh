@@ -10,18 +10,15 @@
 
     <div class="collapse navbar-collapse" id="navbarSupportedContent">
         <ul class="navbar-nav mr-auto">
-            <li class="nav-item">
-                <a class="nav-link" href="/main">Home</a>
-            </li>
             <#if user?? && name!="unknown">
                 <li class="nav-item">
-                    <a class="nav-link" href="/teacher/task/">Tasks</a>
+                    <a class="nav-link" href="/teacher/task">Tasks</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" href="/practice">Practices</a>
+                    <a class="nav-link" href="/teacher/practice">Practices</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" href="/student/team">Teams</a>
+                    <a class="nav-link" href="/teacher/team">Teams</a>
                 </li>
                 <li class="nav-item">
                     <a class="nav-link" href="/">Student</a>

@@ -1,6 +1,26 @@
-<#import "common.ftlh" as c>
+<#import 'common.ftlh' as c>
 <#include "../parts/security.ftlh">
 
 <@c.page>
-    Here should be form for task editing
+    <div class="form-row">
+        <div class="form-group col-md-6">
+            <form name="task" method="post" action="/teacher/task/edit" class="form-inline">
+                <input type="hidden" name="_csrf" value="${_csrf.token}">
+                <input type="hidden" name="authorId" value="${currentUserId}">
+                <input type="text" name="name" value="${task.name}">
+                <input type="text" name="text" value="${task.text}">
+                <input type="text" name="ddlScript" value="${task.ddlScript}">
+                <input type="text" name="correctQuery" value="${task.correctQuery}">
+                <input type="int" name="points" value="${task.points}">
+                <input type="hidden" name="isPrivate" value="${task.isPrivate?c}">
+                <select class="form-select form-select-sm" name="category" aria-label=".form-select-sm example">
+                    <#list categories as category>
+                        <option value="${category.id}">${category.name}</option>
+                    </#list>
+                </select>
+                <button type="submit" class="btn btn-primary ml-2">save</button>
+            </form>
+        </div>
+        <#include "../parts/alertResult.ftlh"/>
+    </div>
 </@c.page>

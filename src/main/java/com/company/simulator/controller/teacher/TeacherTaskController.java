@@ -30,12 +30,12 @@ public class TeacherTaskController {
     @Autowired
     private CategoryRepo categoryRepo;
 
-    @GetMapping("tasks")
+    @GetMapping("task")
     public String getAllTasks(@AuthenticationPrincipal User user,
                               Model model) {
         final Iterable<Task> tasks = taskRepo.findAllTaskByAuthorId(user.getId());
         model.addAttribute("tasks", tasks);
-        return "teacher/allTasksByTeacher";
+        return "teacher/task";
     }
 
     @GetMapping("task/{task}")
@@ -72,17 +72,22 @@ public class TeacherTaskController {
         }
     }
 
-    @GetMapping("practice/{practice}/task/{task}")
-    public String editTaskById(
+    @GetMapping("task/{task}/edit")
+    public String editTask(
         @PathVariable Task task,
         Model model
     ) {
+        model.addAttribute("categories", categoryRepo.findAll());
         model.addAttribute("task", task);
-        // TODO: Form for editing of tasks should be completed.
-        // Probably the path can be "teacher/task/{task}" because one task
-        // can be included in many practices.
-        // For this purpose method for obtaining task by id
-        // in JSON should be removed.
         return "teacher/taskEdit";
+    }
+
+    @PostMapping("task/{task}/edit")
+    public String saveEditTask(
+            @PathVariable Task task,
+            Model model
+    ) {
+        model.addAttribute("task", task);
+        return "/teacher/task";
     }
 }
