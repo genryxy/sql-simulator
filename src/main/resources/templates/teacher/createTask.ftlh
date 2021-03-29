@@ -23,7 +23,12 @@
                 <button type="submit" class="btn btn-primary ml-2">save</button>
             </form>
         </div>
+        <#if message??>
+            <div class="alert alert-${type}" role="alert">
+                ${message}
+            </div>
+        </#if>
     </div>
 
-    <#include "../parts/alertResult.ftlh"/>
+<#--    <#include "../parts/alertResult.ftlh"/>-->
 </@c.page>

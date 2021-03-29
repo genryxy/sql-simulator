@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -35,16 +36,22 @@ public class TeacherPracticeController {
             Model model
     ) {
         final List<Task> tasks = new ArrayList<>(practice.getTasks());
+        LocalDateTime deadLine = practiceRepo.getDeadlineByPracticeId(practice.getId());
         model.addAttribute("tasks", tasks);
         model.addAttribute("practice", practice);
+        model.addAttribute("deadLine", deadLine);
         return "teacher/practiceInfo";
     }
 
     @GetMapping("/create")
     public String createPractice(@AuthenticationPrincipal User user,
-                                 Model model) {
+                                 Model model,
+                                 @RequestParam(required = false) String message,
+                                 @RequestParam(required = false) String type) {
         final Iterable<Task> tasks = taskRepo.findAllTaskByAuthorId(user.getId());
         model.addAttribute("tasks", tasks);
+        model.addAttribute("message", message);
+        model.addAttribute("type", type);
         return "teacher/createPractice";
     }
 
@@ -62,15 +69,5 @@ public class TeacherPracticeController {
         }
         return ("redirect:/teacher");
     }
-
-    //TODO get statistic
-//    @GetMapping("/{practice}/statistic")
-//    public String getStatistic(@AuthenticationPrincipal User user,
-//                               Model model,
-//                               @PathVariable Practice practice) {
-//        final Iterable<Task> tasks = taskRepo.getStatistic(user.getId(), new HashSet<>(Collections.singletonList(practice)));
-//        model.addAttribute("tasks", tasks);
-//        return "teacher/statistic";
-//    }
 
 }

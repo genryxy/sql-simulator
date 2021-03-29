@@ -2,7 +2,7 @@
 <#include "../parts/security.ftlh">
 
 <@c.page>
-    DeadLine: In Process
+    <h5 class="card-title">DeadLine: ${deadLine}</h5>
 
     <div class="container">
         <div class="row">
@@ -21,7 +21,7 @@
                 </div>
             </div>
             <div class="col-sm">
-                <form method="get" action="/teacher/practice/${practice.id}/statistic" class="form-inline">
+                <form method="get" action="/teacher/statistic/${practice.id}/" class="form-inline">
                     <button type="submit" class="btn btn-primary ml-2">Statistic</button>
                 </form>
             </div>
