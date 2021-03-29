@@ -1,4 +1,4 @@
-<#import "../parts/common.ftlh" as c>
+<#import "common.ftlh" as c>
 
 <@c.page>
     Archive practices
