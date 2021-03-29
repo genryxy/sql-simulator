@@ -15,13 +15,13 @@
             </li>
             <#if user?? && name!="unknown">
                 <li class="nav-item">
-                    <a class="nav-link" href="/practice/1">Task</a>
+                    <a class="nav-link" href="/teacher/task/">Tasks</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" href="/practice">Practice</a>
+                    <a class="nav-link" href="/practice">Practices</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" href="/student/team">Team</a>
+                    <a class="nav-link" href="/student/team">Teams</a>
                 </li>
                 <li class="nav-item">
                     <a class="nav-link" href="/">Student</a>

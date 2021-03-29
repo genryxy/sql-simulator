@@ -1,10 +1,12 @@
 package com.company.simulator.controller.teacher;
 
 import com.company.simulator.model.Task;
+import com.company.simulator.model.User;
 import com.company.simulator.repos.CategoryRepo;
 import com.company.simulator.repos.TaskRepo;
 import com.company.simulator.sql.SqlTransaction;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -27,6 +29,13 @@ public class TeacherTaskController {
 
     @Autowired
     private CategoryRepo categoryRepo;
+
+    @GetMapping("tasks")
+    public String getAllTasks(@AuthenticationPrincipal User user,
+                              Model model) {
+        model.addAttribute("task", task);
+        return "teacher/taskInfo";
+    }
 
     @GetMapping("task/{task}")
     public String getTask(@PathVariable("task") Task task, Model model) {
