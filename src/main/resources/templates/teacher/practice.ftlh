@@ -7,7 +7,7 @@
         </form>
     </div>
     <div class="form-group col-md-6">
-        <form method="get" action="/teacher/archive" class="form-inline">
+        <form method="get" action="/teacher/practice/archive" class="form-inline">
             <button type="submit" class="btn btn-primary ml-2">Archive</button>
         </form>
     </div>
@@ -38,7 +38,6 @@
                         <div class="card-body">
                             <h5 class="card-title">${practice.name}</h5>
                             <p class="card-text">${practice.description}</p>
-                            <small class="card-text">10:30 21.12.2020</small>
                             <a href="/teacher/practice/${practice.id}" class="btn btn-primary">Info</a>
                         </div>
                     </div>

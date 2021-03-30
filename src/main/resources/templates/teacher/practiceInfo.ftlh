@@ -2,7 +2,11 @@
 <#include "../parts/security.ftlh">
 
 <@c.page>
-    <h5 class="card-title">DeadLine: ${deadLine}</h5>
+    <div>
+        <#if deadLine??>
+            <h5 class="card-title">DeadLine: ${deadLine}</h5>
+        </#if>
+    </div>
 
     <div class="container">
         <div class="row">

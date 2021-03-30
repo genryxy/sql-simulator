@@ -24,7 +24,7 @@ import java.util.List;
 import java.util.UUID;
 
 @Controller
-@RequestMapping("/teacher/team")
+@RequestMapping("/teacher")
 public class TeacherTeamController {
 
     @Autowired
@@ -33,7 +33,7 @@ public class TeacherTeamController {
     @Autowired
     PracticeRepo practiceRepo;
 
-    @GetMapping
+    @GetMapping("/team")
     public String teamsByAuthor(Model model,
                                 @AuthenticationPrincipal User user) {
         final List<Team> teamsInPractice = teamRepo.findTeamsByAuthorId(user.getId()).orElseGet(ArrayList::new);
@@ -41,7 +41,7 @@ public class TeacherTeamController {
         return "teacher/team";
     }
 
-    @GetMapping("/{practice}")
+    @GetMapping("/team/{practice}")
     public String teamsByPractice(Model model,
                                   @PathVariable Practice practice,
                                   @AuthenticationPrincipal User user) {
@@ -53,7 +53,7 @@ public class TeacherTeamController {
         return "teacher/teamsList";
     }
 
-    @GetMapping("/create")
+    @GetMapping("/team/create")
     public String createTeam(Model model) {
         String inviteCode;
         do {
@@ -63,13 +63,13 @@ public class TeacherTeamController {
         return "teacher/createTeam";
     }
 
-    @PostMapping("/create")
+    @PostMapping("/team/create")
     public String saveTeam(@ModelAttribute Team team) {
         teamRepo.save(team);
-        return "team";
+        return "redirect:/teacher/team";
     }
 
-    @PostMapping("/assign")
+    @PostMapping("/team/assign")
     public String assignTeam(@RequestParam Long practiceId,
                              @RequestParam Long teamId
     ) {
@@ -77,7 +77,7 @@ public class TeacherTeamController {
         return String.format("redirect:/teacher/team/%d", practiceId);
     }
 
-    @PostMapping("/remove")
+    @PostMapping("/team/remove")
     public String removePracticeFromTeam(@RequestParam Long practiceId,
                             @RequestParam Long teamId
     ) {
@@ -85,12 +85,12 @@ public class TeacherTeamController {
         return String.format("redirect:/teacher/team/%d", practiceId);
     }
 
-    @PostMapping("{practiceId}/start")
+    @PostMapping("/team/{practiceId}/start")
     public String startPractice(@PathVariable Long practiceId,
                                 @RequestParam String date,
                                 @RequestParam String time,
                                 @RequestParam Boolean sendingAfterDeadLine) {
         practiceRepo.addDeadLineToPractice(practiceId, LocalDateTime.now(), LocalDateTime.of(LocalDate.parse(date), LocalTime.parse(time)), sendingAfterDeadLine);
-        return "redirect:/teacher";
+        return "redirect:/teacher/practice";
     }
 }

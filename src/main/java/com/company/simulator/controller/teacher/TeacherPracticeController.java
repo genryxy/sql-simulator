@@ -30,8 +30,8 @@ public class TeacherPracticeController {
     @Autowired
     private TaskRepo taskRepo;
     @GetMapping
-    public String teacherPanel(@AuthenticationPrincipal User user,
-                               Model model) {
+    public String getTasks(@AuthenticationPrincipal User user,
+                           Model model) {
         final List<Practice> practices = practiceRepo.findAllPracticeNotInProcess(user.getId()).orElseGet(ArrayList::new);
         model.addAttribute("practices", practices);
 
@@ -85,7 +85,6 @@ public class TeacherPracticeController {
                 taskRepo.addTaskToPractice(practice.getId(), taskId);
             }
         }
-        return ("redirect:/teacher");
+        return ("redirect:/teacher/practice");
     }
-
 }

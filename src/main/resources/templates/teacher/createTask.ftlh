@@ -1,10 +1,11 @@
-<#import '../parts/common.ftlh' as c>
+<#import 'common.ftlh' as c>
 <#include "../parts/security.ftlh">
 
 <@c.page>
     <h5>Input Data: </h5>
 
     <div class="form-row">
+        <#include "../parts/alertMessage.ftlh"/>
         <div class="form-group col-md-6">
             <form name="task" method="post" action="create" class="form-inline">
                 <input type="hidden" name="_csrf" value="${_csrf.token}">
@@ -27,6 +28,4 @@
             </form>
         </div>
     </div>
-
-    <#include "../parts/alertMessage.ftlh"/>
 </@c.page>

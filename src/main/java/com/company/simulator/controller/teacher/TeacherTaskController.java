@@ -39,8 +39,13 @@ public class TeacherTaskController {
     }
 
     @GetMapping("task/{task}")
-    public String getTask(@PathVariable("task") Task task, Model model) {
+    public String getTask(@PathVariable("task") Task task,
+                          @RequestParam(required = false) String message,
+                          @RequestParam(required = false) String type,
+                          Model model) {
         model.addAttribute("task", task);
+        model.addAttribute("message", message);
+        model.addAttribute("type", type);
         return "teacher/taskInfo";
     }
 
@@ -64,7 +69,7 @@ public class TeacherTaskController {
             taskRepo.save(task);
             redirectAttributes.addAttribute("message", "Task successfully created");
             redirectAttributes.addAttribute("type", "success");
-            return "redirect:/teacher/practice/create";
+            return "redirect:/teacher/task";
         } catch (Exception e) {
             redirectAttributes.addAttribute("message", e.getMessage());
             redirectAttributes.addAttribute("type", "danger");
@@ -74,33 +79,41 @@ public class TeacherTaskController {
 
     @GetMapping("task/{task}/edit")
     public String editTask(
-        @PathVariable Task task,
-        Model model
+            @PathVariable Task task,
+            Model model,
+            @RequestParam(required = false) String message,
+            @RequestParam(required = false) String type
     ) {
         model.addAttribute("categories", categoryRepo.findAll());
         model.addAttribute("task", task);
+        model.addAttribute("message", message);
+        model.addAttribute("type", type);
         return "teacher/taskEdit";
     }
 
     @PostMapping("task/{task}/edit")
     public String saveEditTask(
             @PathVariable Task task,
-            Model model
+            @RequestParam("authorId") Long authorId,
+            @RequestParam("name") String name,
+            @RequestParam("text") String text,
+            @RequestParam("ddlScript") String ddlScript,
+            @RequestParam("correctQuery") String correctQuery,
+            @RequestParam("points") Integer points,
+            @RequestParam("isPrivate") Boolean isPrivate,
+            @RequestParam("category") Long category,
+            RedirectAttributes redirectAttributes
     ) {
-        model.addAttribute("task", task);
-        return "/teacher/task";
+        try {
+            sqlTransaction.validationTeacherQuery(ddlScript, correctQuery);
+            taskRepo.updateTask(task.getId(), authorId, name, text, ddlScript, correctQuery, points, isPrivate, category);
+            redirectAttributes.addAttribute("message", "Task successfully edited");
+            redirectAttributes.addAttribute("type", "success");
+            return String.format("redirect:/teacher/task/%d", task.getId());
+        } catch (Exception e) {
+            redirectAttributes.addAttribute("message", e.getMessage());
+            redirectAttributes.addAttribute("type", "danger");
+            return String.format("redirect:/teacher/task/%d/edit", task.getId());
+        }
     }
-//    @GetMapping("practice/{practice}/task/{task}")
-//    public String editTaskById(
-//        @PathVariable Task task,
-//        Model model
-//    ) {
-//        model.addAttribute("task", task);
-//        // TODO: Form for editing of tasks should be completed.
-//        // Probably the path can be "teacher/task/{task}" because one task
-//        // can be included in many practices.
-//        // For this purpose method for obtaining task by id
-//        // in JSON should be removed.
-//        return "teacher/taskEdit";
-//    }
 }

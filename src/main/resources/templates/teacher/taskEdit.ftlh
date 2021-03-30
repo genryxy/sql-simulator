@@ -4,7 +4,7 @@
 <@c.page>
     <div class="form-row">
         <div class="form-group col-md-6">
-            <form name="task" method="post" action="/teacher/task/edit" class="form-inline">
+            <form name="task" method="post" action="/teacher/task/${task.id}/edit" class="form-inline">
                 <input type="hidden" name="_csrf" value="${_csrf.token}">
                 <input type="hidden" name="authorId" value="${currentUserId}">
                 <input type="text" name="name" value="${task.name}">
@@ -21,6 +21,6 @@
                 <button type="submit" class="btn btn-primary ml-2">save</button>
             </form>
         </div>
-        <#include "../parts/alertResult.ftlh"/>
+        <#include "../parts/alertMessage.ftlh"/>
     </div>
 </@c.page>

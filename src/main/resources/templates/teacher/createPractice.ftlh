@@ -1,9 +1,8 @@
-<#import '../parts/common.ftlh' as c>
+<#import 'common.ftlh' as c>
 <#include "../parts/security.ftlh">
 
 <@c.page>
     <#include "../parts/alertMessage.ftlh"/>
-
     <h5>Create new Practice: </h5>
 
     <div class="form-row">
@@ -29,11 +28,5 @@
                 <button type="submit" class="btn btn-primary ml-2">save</button>
             </form>
         </div>
-    </div>
-
-    <div class="form-group col-md-6">
-        <form method="get" action="/teacher/task/create" class="form-inline">
-            <button type="submit" class="btn btn-primary ml-2">Add new Task</button>
-        </form>
     </div>
 </@c.page>
