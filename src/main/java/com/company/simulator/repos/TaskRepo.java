@@ -30,25 +30,6 @@ public interface TaskRepo extends CrudRepository<Task, Long> {
             nativeQuery = true)
     Collection<Task> findAllByCategoryAndPractice(Long category, Long practice);
 
-    //
-//    @Modifying
-//    @Query(
-//            value = "update task t set task (id, author_id, name, text, ddl_script, correct_query, points, is_private, category_id)" +
-//                    "values (:id, :authorId, :nameTask, :text, :ddlScript, :correctQuery, :points, :isPrivate, :categoryId)" +
-//                    "where t.id = :id",
-//            nativeQuery = true)
-//    @Transactional
-//    void updateTask(@Param("id") Long id,
-//                    @Param("authorId") Long authorId,
-//                    @Param("nameTask") String nameTask,
-//                    @Param("text") String text,
-//                    @Param("ddlScript") String ddlScript,
-//                    @Param("correctQuery") String correctQuery,
-//                    @Param("points") Integer points,
-//                    @Param("isPrivate") Boolean isPrivate,
-//                    @Param("categoryId") Long categoryId
-//    );
-//
     @Modifying
     @Query(
             value = "update task set " +
