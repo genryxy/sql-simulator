@@ -12,14 +12,6 @@ import com.company.simulator.repos.PracticeRepo;
 import com.company.simulator.repos.StudentRepo;
 import com.company.simulator.repos.SubmissionRepo;
 import com.company.simulator.repos.TaskRepo;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-import java.util.Set;
-import java.util.function.Function;
-import java.util.stream.Collectors;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
@@ -33,6 +25,7 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.Set;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
@@ -88,7 +81,7 @@ public final class PracticeController {
             final Collection<Task> tasks;
             model.addAttribute("categories", categoryRepo.findAll());
             model.addAttribute("practice", practice);
-            model.addAttribute("result", result);
+            model.addAttribute("message", message);
             model.addAttribute("type", type);
             final String template;
             if (practice.getId().equals(Practice.COMMON_POOL)) {
@@ -108,7 +101,7 @@ public final class PracticeController {
             return template;
         } else {
             model.addAttribute(
-                "result",
+                "message",
                 String.format("Access to practice `%d` denied", practice.getId())
             );
             model.addAttribute("type", "danger");
@@ -122,34 +115,13 @@ public final class PracticeController {
         final Set<Team> teams = practice.getTeams();
         final List<Student> students = studentRepo.findAllByUserId(user.getId())
             .orElseGet(ArrayList::new);
-        for (Student student: students) {
+        for (Student student : students) {
             if (teams.contains(student.getTeam())) {
                 allowed = true;
                 break;
             }
         }
         return allowed;
-        final Collection<Task> tasks;
-        model.addAttribute("categories", categoryRepo.findAll());
-        model.addAttribute("practice", practice);
-        model.addAttribute("message", message);
-        model.addAttribute("type", type);
-        final String template;
-        if (practice.getId().equals(Practice.COMMON_POOL)) {
-            if (category != null) {
-                tasks = taskRepo.findAllByCategoryAndPractice(category.getId(), practice.getId());
-                model.addAttribute("category_filter", category);
-            } else {
-                tasks = practice.getTasks();
-            }
-            template = "practice/commonPool";
-        } else {
-            tasks = practice.getTasks();
-            template = "practice/tasksByPractice";
-        }
-        final List<Task> markedTasks = tasksWithMarkedStatus(tasks, practice, user);
-        model.addAttribute("tasks", filterTasksByStatus(markedTasks, task_status));
-        return template;
     }
 
     private Collection<Task> filterTasksByStatus(Collection<Task> tasks, String status) {

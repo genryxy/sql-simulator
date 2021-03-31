@@ -1,10 +1,12 @@
 package com.company.simulator.controller.teacher;
 
 import com.company.simulator.model.Task;
+import com.company.simulator.model.User;
 import com.company.simulator.repos.CategoryRepo;
 import com.company.simulator.repos.TaskRepo;
 import com.company.simulator.sql.SqlTransaction;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -28,9 +30,22 @@ public class TeacherTaskController {
     @Autowired
     private CategoryRepo categoryRepo;
 
+    @GetMapping("task")
+    public String getAllTasks(@AuthenticationPrincipal User user,
+                              Model model) {
+        final Iterable<Task> tasks = taskRepo.findAllTaskByAuthorId(user.getId());
+        model.addAttribute("tasks", tasks);
+        return "teacher/task";
+    }
+
     @GetMapping("task/{task}")
-    public String getTask(@PathVariable("task") Task task, Model model) {
+    public String getTask(@PathVariable("task") Task task,
+                          @RequestParam(required = false) String message,
+                          @RequestParam(required = false) String type,
+                          Model model) {
         model.addAttribute("task", task);
+        model.addAttribute("message", message);
+        model.addAttribute("type", type);
         return "teacher/taskInfo";
     }
 
@@ -54,7 +69,7 @@ public class TeacherTaskController {
             taskRepo.save(task);
             redirectAttributes.addAttribute("message", "Task successfully created");
             redirectAttributes.addAttribute("type", "success");
-            return "redirect:/teacher/practice/create";
+            return "redirect:/teacher/task";
         } catch (Exception e) {
             redirectAttributes.addAttribute("message", e.getMessage());
             redirectAttributes.addAttribute("type", "danger");
@@ -62,17 +77,44 @@ public class TeacherTaskController {
         }
     }
 
-//    @GetMapping("practice/{practice}/task/{task}")
-//    public String editTaskById(
-//        @PathVariable Task task,
-//        Model model
-//    ) {
-//        model.addAttribute("task", task);
-//        // TODO: Form for editing of tasks should be completed.
-//        // Probably the path can be "teacher/task/{task}" because one task
-//        // can be included in many practices.
-//        // For this purpose method for obtaining task by id
-//        // in JSON should be removed.
-//        return "teacher/taskEdit";
-//    }
+    @GetMapping("task/{task}/edit")
+    public String editTask(
+        @PathVariable Task task,
+        Model model,
+        @RequestParam(required = false) String message,
+        @RequestParam(required = false) String type
+    ) {
+        model.addAttribute("categories", categoryRepo.findAll());
+        model.addAttribute("task", task);
+        model.addAttribute("message", message);
+        model.addAttribute("type", type);
+        return "teacher/taskEdit";
+    }
+
+    @PostMapping("task/{task}/edit")
+    public String saveEditTask(
+        @PathVariable Task task,
+        @ModelAttribute Task editedTask,
+        RedirectAttributes redirectAttributes
+    ) {
+        try {
+            sqlTransaction.validationTeacherQuery(editedTask.getDdlScript(), editedTask.getCorrectQuery());
+            taskRepo.updateTask(task.getId(),
+                                editedTask.getAuthorId(),
+                                editedTask.getName(),
+                                editedTask.getText(),
+                                editedTask.getDdlScript(),
+                                editedTask.getCorrectQuery(),
+                                editedTask.getPoints(),
+                                editedTask.getIsPrivate(),
+                                editedTask.getCategory().getId());
+            redirectAttributes.addAttribute("message", "Task successfully edited");
+            redirectAttributes.addAttribute("type", "success");
+            return String.format("redirect:/teacher/task/%d", task.getId());
+        } catch (Exception e) {
+            redirectAttributes.addAttribute("message", e.getMessage());
+            redirectAttributes.addAttribute("type", "danger");
+            return String.format("redirect:/teacher/task/%d/edit", task.getId());
+        }
+    }
 }

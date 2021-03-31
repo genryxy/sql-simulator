@@ -1,20 +1,24 @@
-<#import '../parts/common.ftlh' as c>
+<#import 'common.ftlh' as c>
 <#include "../parts/security.ftlh">
 
 <@c.page>
     <h5>Input Data: </h5>
 
     <div class="form-row">
+        <#include "../parts/alertMessage.ftlh"/>
         <div class="form-group col-md-6">
             <form name="task" method="post" action="create" class="form-inline">
                 <input type="hidden" name="_csrf" value="${_csrf.token}">
                 <input type="hidden" name="authorId" value="${currentUserId}">
                 <input type="text" name="name" placeholder="name">
-                <input type="text" name="text" placeholder="text" >
-                <input type="text" name="ddlScript" placeholder="ddlScript" >
+                <input type="text" name="text" placeholder="text">
+                <input type="text" name="ddlScript" placeholder="ddlScript">
                 <input type="text" name="correctQuery" placeholder="correctQuery">
                 <input type="int" name="points" placeholder="points">
-                <input type="hidden" name="isPrivate" value="${false?c}">
+                <div class="form-check">
+                    <input type="checkbox" class="form-check-input" id="isPrivate" name="isPrivate">
+                    <label class="form-check-label" for="isPrivate">is Private</label>
+                </div>
                 <select class="form-select form-select-sm" name="category" aria-label=".form-select-sm example">
                     <#list categories as category>
                         <option value="${category.id}">${category.name}</option>
@@ -24,6 +28,4 @@
             </form>
         </div>
     </div>
-
-    <#include "../parts/alertMessage.ftlh"/>
 </@c.page>

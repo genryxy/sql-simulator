@@ -29,6 +29,24 @@ public class TeacherPracticeController {
 
     @Autowired
     private TaskRepo taskRepo;
+    @GetMapping
+    public String getPractices(@AuthenticationPrincipal User user,
+                           Model model) {
+        final List<Practice> practices = practiceRepo.findAllPracticeNotInProcess(user.getId()).orElseGet(ArrayList::new);
+        model.addAttribute("practices", practices);
+
+        final List<Practice> practicesInProcess = practiceRepo.findAllPracticeInProcess(user.getId(), LocalDateTime.now()).orElseGet(ArrayList::new);
+        model.addAttribute("practicesInProcess", practicesInProcess);
+        return "teacher/practice";
+    }
+
+    @GetMapping("archive")
+    public String getArchivedPractices(@AuthenticationPrincipal User user,
+                                       Model model) {
+        final List<Practice> practices = practiceRepo.findAllPracticeInArchive(user.getId(), LocalDateTime.now()).orElseGet(ArrayList::new);
+        model.addAttribute("practices", practices);
+        return "teacher/archive";
+    }
 
     @GetMapping("/{practice}")
     public String getPracticeInfo(
@@ -67,7 +85,6 @@ public class TeacherPracticeController {
                 taskRepo.addTaskToPractice(practice.getId(), taskId);
             }
         }
-        return ("redirect:/teacher");
+        return ("redirect:/teacher/practice");
     }
-
 }

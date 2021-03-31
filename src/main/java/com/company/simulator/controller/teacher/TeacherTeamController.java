@@ -5,12 +5,6 @@ import com.company.simulator.model.Team;
 import com.company.simulator.model.User;
 import com.company.simulator.repos.PracticeRepo;
 import com.company.simulator.repos.TeamRepo;
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.time.LocalTime;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.UUID;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
@@ -22,9 +16,16 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.UUID;
+
 @Controller
-@RequestMapping("/teacher/team")
-public class TeacherTeamStudentsController {
+@RequestMapping("/teacher")
+public class TeacherTeamController {
 
     @Autowired
     TeamRepo teamRepo;
@@ -32,7 +33,15 @@ public class TeacherTeamStudentsController {
     @Autowired
     PracticeRepo practiceRepo;
 
-    @GetMapping("/{practice}")
+    @GetMapping("/team")
+    public String teamsByAuthor(Model model,
+                                @AuthenticationPrincipal User user) {
+        final List<Team> teamsInPractice = teamRepo.findTeamsByAuthorId(user.getId()).orElseGet(ArrayList::new);
+        model.addAttribute("teams", teamsInPractice);
+        return "teacher/team";
+    }
+
+    @GetMapping("/team/{practice}")
     public String teamsByPractice(Model model,
                                   @PathVariable Practice practice,
                                   @AuthenticationPrincipal User user) {
@@ -44,27 +53,23 @@ public class TeacherTeamStudentsController {
         return "teacher/teamsList";
     }
 
-    @GetMapping("/{practiceId}/create")
-    public String createTeam(Model model,
-                             @PathVariable Long practiceId) {
+    @GetMapping("/team/create")
+    public String createTeam(Model model) {
         String inviteCode;
         do {
             inviteCode = UUID.randomUUID().toString();
         } while (teamRepo.findTeamByInvitation(inviteCode).isPresent());
         model.addAttribute("inviteCode", inviteCode);
-        model.addAttribute("practiceId", practiceId);
         return "teacher/createTeam";
     }
 
-    @PostMapping("/{practiceId}/create")
-    public String saveTeam(@PathVariable Long practiceId,
-                           @ModelAttribute Team team
-    ) {
+    @PostMapping("/team/create")
+    public String saveTeam(@ModelAttribute Team team) {
         teamRepo.save(team);
-        return String.format("redirect:/teacher/team/%d", practiceId);
+        return "redirect:/teacher/team";
     }
 
-    @PostMapping("/assign")
+    @PostMapping("/team/assign")
     public String assignTeam(@RequestParam Long practiceId,
                              @RequestParam Long teamId
     ) {
@@ -72,20 +77,20 @@ public class TeacherTeamStudentsController {
         return String.format("redirect:/teacher/team/%d", practiceId);
     }
 
-    @PostMapping("/remove")
+    @PostMapping("/team/remove")
     public String removePracticeFromTeam(@RequestParam Long practiceId,
-                            @RequestParam Long teamId
+                                         @RequestParam Long teamId
     ) {
         teamRepo.throwPracticeToTeam(practiceId, teamId);
         return String.format("redirect:/teacher/team/%d", practiceId);
     }
 
-    @PostMapping("{practiceId}/start")
+    @PostMapping("/team/{practiceId}/start")
     public String startPractice(@PathVariable Long practiceId,
                                 @RequestParam String date,
                                 @RequestParam String time,
                                 @RequestParam Boolean sendingAfterDeadLine) {
         practiceRepo.addDeadLineToPractice(practiceId, LocalDateTime.now(), LocalDateTime.of(LocalDate.parse(date), LocalTime.parse(time)), sendingAfterDeadLine);
-        return "redirect:/teacher";
+        return "redirect:/teacher/practice";
     }
 }
