@@ -33,7 +33,6 @@ public interface TaskRepo extends CrudRepository<Task, Long> {
     @Modifying
     @Query(
             value = "update task set " +
-                    "id = :id," +
                     "author_id = :authorId," +
                     "name = :nameTask," +
                     "text = :text," +

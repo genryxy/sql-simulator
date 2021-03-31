@@ -79,10 +79,10 @@ public class TeacherTaskController {
 
     @GetMapping("task/{task}/edit")
     public String editTask(
-            @PathVariable Task task,
-            Model model,
-            @RequestParam(required = false) String message,
-            @RequestParam(required = false) String type
+        @PathVariable Task task,
+        Model model,
+        @RequestParam(required = false) String message,
+        @RequestParam(required = false) String type
     ) {
         model.addAttribute("categories", categoryRepo.findAll());
         model.addAttribute("task", task);
@@ -93,20 +93,21 @@ public class TeacherTaskController {
 
     @PostMapping("task/{task}/edit")
     public String saveEditTask(
-            @PathVariable Task task,
-            @RequestParam("authorId") Long authorId,
-            @RequestParam("name") String name,
-            @RequestParam("text") String text,
-            @RequestParam("ddlScript") String ddlScript,
-            @RequestParam("correctQuery") String correctQuery,
-            @RequestParam("points") Integer points,
-            @RequestParam("isPrivate") Boolean isPrivate,
-            @RequestParam("category") Long category,
-            RedirectAttributes redirectAttributes
+        @PathVariable Task task,
+        @ModelAttribute Task editedTask,
+        RedirectAttributes redirectAttributes
     ) {
         try {
-            sqlTransaction.validationTeacherQuery(ddlScript, correctQuery);
-            taskRepo.updateTask(task.getId(), authorId, name, text, ddlScript, correctQuery, points, isPrivate, category);
+            sqlTransaction.validationTeacherQuery(editedTask.getDdlScript(), editedTask.getCorrectQuery());
+            taskRepo.updateTask(task.getId(),
+                                editedTask.getAuthorId(),
+                                editedTask.getName(),
+                                editedTask.getText(),
+                                editedTask.getDdlScript(),
+                                editedTask.getCorrectQuery(),
+                                editedTask.getPoints(),
+                                editedTask.getIsPrivate(),
+                                editedTask.getCategory().getId());
             redirectAttributes.addAttribute("message", "Task successfully edited");
             redirectAttributes.addAttribute("type", "success");
             return String.format("redirect:/teacher/task/%d", task.getId());
