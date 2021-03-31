@@ -27,9 +27,9 @@ public class SqlTransaction {
 
     @Autowired
     public SqlTransaction(
-            @Value("${db.garbage.url}") String url,
-            @Value(value = "${db.garbage.username}") String username,
-            @Value(value = "${db.garbage.password}") String password
+        @Value("${db.garbage.url}") String url,
+        @Value(value = "${db.garbage.username}") String username,
+        @Value(value = "${db.garbage.password}") String password
     ) {
         this.jdbcTemplate = new JdbcTemplate(dataSource(url, username, password));
     }
@@ -43,7 +43,7 @@ public class SqlTransaction {
     }
 
     public ResponseEntity<ResultQuery> executeQuery(
-            String dslScript, String studentQuery, String correctQuery
+        String dslScript, String studentQuery, String correctQuery
     ) {
         try (Connection connection = Objects.requireNonNull(jdbcTemplate.getDataSource()).getConnection()) {
             connection.setAutoCommit(false);
@@ -64,8 +64,8 @@ public class SqlTransaction {
             final ResultQuery res = new ResultQuery(false);
             res.setInternalError(Optional.of(exc.getMessage()));
             return ResponseEntity
-                    .status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .body(res);
+                .status(HttpStatus.INTERNAL_SERVER_ERROR)
+                .body(res);
         }
     }
 
@@ -83,17 +83,17 @@ public class SqlTransaction {
 
     private String getScriptDeleteTables() {
         String script = String.join("\n", jdbcTemplate.query(
-                "SELECT 'drop table if exists \"' || tablename || '\" cascade;' as pg_tbl_drop\n" +
-                        "FROM pg_tables\n" +
-                        "WHERE schemaname='public'",
-                (rs, rowNum) -> rs.getString("pg_tbl_drop")));
+            "SELECT 'drop table if exists \"' || tablename || '\" cascade;' as pg_tbl_drop\n" +
+                "FROM pg_tables\n" +
+                "WHERE schemaname='public'",
+            (rs, rowNum) -> rs.getString("pg_tbl_drop")));
         System.out.println(script); // debug print
         return script;
     }
 
     private ResponseEntity<ResultQuery> logAngGetResponse(SQLException exc) {
         LoggerFactory.getLogger(SqlTransaction.class)
-                .error(String.format("SQL exception in transaction: %s", exc.getMessage()));
+            .error(String.format("SQL exception in transaction: %s", exc.getMessage()));
         final ResultQuery res = new ResultQuery(false);
         res.setSqlException(Optional.of(exc.getMessage()));
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(res);

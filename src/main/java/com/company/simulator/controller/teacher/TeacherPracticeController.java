@@ -30,7 +30,7 @@ public class TeacherPracticeController {
     @Autowired
     private TaskRepo taskRepo;
     @GetMapping
-    public String getTasks(@AuthenticationPrincipal User user,
+    public String getPractices(@AuthenticationPrincipal User user,
                            Model model) {
         final List<Practice> practices = practiceRepo.findAllPracticeNotInProcess(user.getId()).orElseGet(ArrayList::new);
         model.addAttribute("practices", practices);

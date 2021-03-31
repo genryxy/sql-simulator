@@ -48,18 +48,18 @@ public final class PracticeController {
 
     @GetMapping("/practice")
     public String availablePractices(
-            Model model,
-            @RequestParam(required = false) Team team,
-            @RequestParam(required = false) String result,
-            @RequestParam(required = false) String type
+        Model model,
+        @RequestParam(required = false) Team team,
+        @RequestParam(required = false) String result,
+        @RequestParam(required = false) String type
     ) {
         final Iterable<Practice> practices;
         if (team == null) {
             practices = practiceRepo.findAllByIdIsNot(Practice.COMMON_POOL);
         } else {
             practices = team.getPractices().stream()
-                    .filter(prac -> !prac.getId().equals(Practice.COMMON_POOL))
-                    .collect(Collectors.toList());
+                .filter(prac -> !prac.getId().equals(Practice.COMMON_POOL))
+                .collect(Collectors.toList());
         }
         model.addAttribute("practices", practices);
         model.addAttribute("result", result);
@@ -69,13 +69,13 @@ public final class PracticeController {
 
     @GetMapping("/practice/{practice}")
     public String tasksByPracticeId(
-            @AuthenticationPrincipal User user,
-            @PathVariable Practice practice,
-            @RequestParam(required = false) Category category,
-            @RequestParam(required = false) String task_status,
-            @RequestParam(required = false) String message,
-            @RequestParam(required = false) String type,
-            Model model
+        @AuthenticationPrincipal User user,
+        @PathVariable Practice practice,
+        @RequestParam(required = false) Category category,
+        @RequestParam(required = false) String task_status,
+        @RequestParam(required = false) String message,
+        @RequestParam(required = false) String type,
+        Model model
     ) {
         if (hasAccess(user, practice)) {
             final Collection<Task> tasks;
@@ -101,8 +101,8 @@ public final class PracticeController {
             return template;
         } else {
             model.addAttribute(
-                    "result",
-                    String.format("Access to practice `%d` denied", practice.getId())
+                "message",
+                String.format("Access to practice `%d` denied", practice.getId())
             );
             model.addAttribute("type", "danger");
             model.addAttribute("practices", practiceRepo.findAllByIdIsNot(Practice.COMMON_POOL));
@@ -114,8 +114,8 @@ public final class PracticeController {
         boolean allowed = false;
         final Set<Team> teams = practice.getTeams();
         final List<Student> students = studentRepo.findAllByUserId(user.getId())
-                .orElseGet(ArrayList::new);
-        for (Student student: students) {
+            .orElseGet(ArrayList::new);
+        for (Student student : students) {
             if (teams.contains(student.getTeam())) {
                 allowed = true;
                 break;
@@ -128,7 +128,7 @@ public final class PracticeController {
         final Collection<Task> res;
         if (status != null) {
             res = tasks.stream().filter(
-                    task -> task.getState().value().equals(status)
+                task -> task.getState().value().equals(status)
             ).collect(Collectors.toList());
         } else {
             res = tasks;
@@ -142,24 +142,24 @@ public final class PracticeController {
         subms = submRepo.findByUserAndPractice(user, practice);
         if (subms.isPresent()) {
             final Map<Long, Submission> submsMap = subms.get().stream()
-                    .collect(
-                            Collectors.toMap(
-                                    item -> item.getTask().getId(),
-                                    Function.identity(),
-                                    (dupl1, dupl2) -> dupl2
-                            )
-                    );
+                .collect(
+                    Collectors.toMap(
+                        item -> item.getTask().getId(),
+                        Function.identity(),
+                        (dupl1, dupl2) -> dupl2
+                    )
+                );
             ctasks.stream()
-                    .filter(
-                            task -> submsMap.containsKey(task.getId())
-                    ).forEach(
-                    task -> {
-                        if (submsMap.get(task.getId()).isCorrect()) {
-                            task.setState(Task.Status.CORRECT_SOLVED);
-                        } else {
-                            task.setState(Task.Status.WRONG_SOLVED);
-                        }
+                .filter(
+                    task -> submsMap.containsKey(task.getId())
+                ).forEach(
+                task -> {
+                    if (submsMap.get(task.getId()).isCorrect()) {
+                        task.setState(Task.Status.CORRECT_SOLVED);
+                    } else {
+                        task.setState(Task.Status.WRONG_SOLVED);
                     }
+                }
             );
         }
         return ctasks;

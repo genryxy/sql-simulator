@@ -79,7 +79,7 @@ public class TeacherTeamController {
 
     @PostMapping("/team/remove")
     public String removePracticeFromTeam(@RequestParam Long practiceId,
-                            @RequestParam Long teamId
+                                         @RequestParam Long teamId
     ) {
         teamRepo.throwPracticeToTeam(practiceId, teamId);
         return String.format("redirect:/teacher/team/%d", practiceId);

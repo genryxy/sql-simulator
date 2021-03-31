@@ -15,7 +15,7 @@
                 </a>
             </div>
         <#else>
-            No messages
+            No tasks
         </#list>
     </div>
 </@c.page>
