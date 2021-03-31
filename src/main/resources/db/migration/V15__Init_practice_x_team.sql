@@ -6,8 +6,10 @@ create table practice_x_team (
 
 alter table if exists practice_x_team
     add constraint practice_x_team_practice_fk
-        foreign key (practice_id) references practice;
+        foreign key (practice_id) references practice
+            on delete cascade;
 
 alter table if exists practice_x_team
     add constraint practice_x_team_team_fk
-        foreign key (team_id) references team;
+        foreign key (team_id) references team
+            on delete cascade;

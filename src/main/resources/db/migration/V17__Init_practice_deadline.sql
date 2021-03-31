@@ -7,4 +7,5 @@ create table practice_deadlines(
 
 alter table if exists practice_deadlines
     add constraint practice_deadlines_practice_fk
-        foreign key (practice_id) references practice;
+        foreign key (practice_id) references practice
+            on delete cascade;

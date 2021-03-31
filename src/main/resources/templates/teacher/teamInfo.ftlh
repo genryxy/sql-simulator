@@ -2,35 +2,14 @@
 <#include "../parts/security.ftlh">
 
 <@c.page>
-    <div>
-        <#if deadLine??>
-            <h5 class="card-title">DeadLine: ${deadLine}</h5>
-        </#if>
-    </div>
+    <#include "../parts/alertMessage.ftlh"/>
+    <h5 class="card-title">${team.name}</h5>
 
-    <div class="container">
-        <div class="row">
-            <div class="col-sm">
-                Task list
-                <div>
-                    <#list tasks as task>
-                        <div class="list-group">
-                            <a href="/teacher/task/${task.id}/info" class="list-group-item list-group-item-action">
-                                Task name: ${task.name}
-                            </a>
-                        </div>
-                    <#else>
-                        No messages
-                    </#list>
-                </div>
-            </div>
-            <div class="col-sm">
-                <form method="get" action="/teacher/statistic/${practice.id}/" class="form-inline">
-                    <button type="submit" class="btn btn-primary ml-2">Statistic</button>
-                </form>
-            </div>
-        </div>
-    </div>
+    <form action="/teacher/team/${team.id}/edit" method="get">
+        <input type="hidden" name="_csrf" value="${_csrf.token}">
+        <button type="submit" class="btn btn-primary ml-2">Edit</button>
+    </form>
+
     <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#exampleModal">
         Remove
     </button>
@@ -46,7 +25,7 @@
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                    <form method="post" action="/teacher/practice/${practice.id}/remove" class="form-inline">
+                    <form method="post" action="/teacher/team/${team.id}/remove" class="form-inline">
                         <input type="hidden" name="_csrf" value="${_csrf.token}">
                         <button type="submit" class="btn btn-primary ml-2">
                             Remove

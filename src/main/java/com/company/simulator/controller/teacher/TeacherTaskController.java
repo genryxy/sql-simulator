@@ -3,6 +3,7 @@ package com.company.simulator.controller.teacher;
 import com.company.simulator.model.Task;
 import com.company.simulator.model.User;
 import com.company.simulator.repos.CategoryRepo;
+import com.company.simulator.repos.SubmissionRepo;
 import com.company.simulator.repos.TaskRepo;
 import com.company.simulator.sql.SqlTransaction;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,6 +23,9 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 public class TeacherTaskController {
 
     @Autowired
+    private SubmissionRepo submissionRepo;
+
+    @Autowired
     private TaskRepo taskRepo;
 
     @Autowired
@@ -38,7 +42,7 @@ public class TeacherTaskController {
         return "teacher/task";
     }
 
-    @GetMapping("task/{task}")
+    @GetMapping("task/{task}/info")
     public String getTask(@PathVariable("task") Task task,
                           @RequestParam(required = false) String message,
                           @RequestParam(required = false) String type,
@@ -110,11 +114,19 @@ public class TeacherTaskController {
                                 editedTask.getCategory().getId());
             redirectAttributes.addAttribute("message", "Task successfully edited");
             redirectAttributes.addAttribute("type", "success");
-            return String.format("redirect:/teacher/task/%d", task.getId());
+            return String.format("redirect:/teacher/task/%d/info", task.getId());
         } catch (Exception e) {
             redirectAttributes.addAttribute("message", e.getMessage());
             redirectAttributes.addAttribute("type", "danger");
             return String.format("redirect:/teacher/task/%d/edit", task.getId());
         }
+    }
+
+    @PostMapping("task/{task}/remove")
+    public String removeTask(
+        @PathVariable Task task
+    ) {
+        taskRepo.delete(task);
+        return "redirect:/teacher/task";
     }
 }
