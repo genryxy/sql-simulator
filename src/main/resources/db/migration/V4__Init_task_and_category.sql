@@ -17,8 +17,11 @@ create table category (
 
 alter table if exists task
     add constraint task_person_fk
-        foreign key (author_id) references person;
+        foreign key (author_id) references person
+                on delete cascade;
 
 alter table if exists task
     add constraint task_category_fk
-        foreign key (category_id) references category;
+        foreign key (category_id) references category
+            on delete cascade;
+

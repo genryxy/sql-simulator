@@ -8,7 +8,7 @@
                 <div class="card-body">
                     <h5 class="card-title">${practice.name}</h5>
                     <p class="card-text">${practice.description}</p>
-                    <a href="/teacher/practice/${practice.id}" class="btn btn-primary">Information</a>
+                    <a href="/teacher/practice/${practice.id}/info" class="btn btn-primary">Information</a>
                 </div>
             </div>
         <#else>

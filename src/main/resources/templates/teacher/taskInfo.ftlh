@@ -1,4 +1,5 @@
 <#import "common.ftlh" as c>
+<#import "commonRemove.ftlh" as cr>
 <#include "../parts/security.ftlh">
 
 <@c.page>
@@ -14,4 +15,5 @@
         <input type="hidden" name="_csrf" value="${_csrf.token}">
         <button type="submit" class="btn btn-primary ml-2">Edit</button>
     </form>
+    <@cr.modal "All student submissions will be deleted" "/teacher/task/${task.id}/remove"/>
 </@c.page>

@@ -6,8 +6,10 @@ create table student (
 
 alter table if exists student
     add constraint student_user_fk
-        foreign key (user_id) references person;
+        foreign key (user_id) references person
+            on delete cascade;
 
 alter table if exists student
     add constraint student_team_fk
-        foreign key (team_id) references team;
+        foreign key (team_id) references team
+            on delete cascade;

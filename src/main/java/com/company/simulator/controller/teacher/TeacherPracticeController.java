@@ -29,9 +29,10 @@ public class TeacherPracticeController {
 
     @Autowired
     private TaskRepo taskRepo;
+
     @GetMapping
     public String getPractices(@AuthenticationPrincipal User user,
-                           Model model) {
+                               Model model) {
         final List<Practice> practices = practiceRepo.findAllPracticeNotInProcess(user.getId()).orElseGet(ArrayList::new);
         model.addAttribute("practices", practices);
 
@@ -48,10 +49,10 @@ public class TeacherPracticeController {
         return "teacher/archive";
     }
 
-    @GetMapping("/{practice}")
-    public String getPracticeInfo(
-            @PathVariable Practice practice,
-            Model model
+    @GetMapping("/{practice}/info")
+    public String getPractice(
+        @PathVariable Practice practice,
+        Model model
     ) {
         final List<Task> tasks = new ArrayList<>(practice.getTasks());
         LocalDateTime deadLine = practiceRepo.getDeadlineByPracticeId(practice.getId());
@@ -79,12 +80,20 @@ public class TeacherPracticeController {
     ) {
         practiceRepo.save(practice);
         final Iterable<Task> tasks = taskRepo.findAll();
-        for (Task task: tasks) {
+        for (Task task : tasks) {
             Long taskId = task.getId();
-            if(checkBoxes.get("checkBox" + taskId) != null){
+            if (checkBoxes.get("checkBox" + taskId) != null) {
                 taskRepo.addTaskToPractice(practice.getId(), taskId);
             }
         }
         return ("redirect:/teacher/practice");
+    }
+
+    @PostMapping("/{practice}/remove")
+    public String removePractice(
+        @PathVariable Practice practice
+    ) {
+        practiceRepo.delete(practice);
+        return "redirect:/teacher/practice";
     }
 }

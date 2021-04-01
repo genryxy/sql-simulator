@@ -9,15 +9,13 @@
     </div>
     <div>
         <#list teams as team>
-            <div class="card my-3">
-                <div class="card-body">
-                    <h5 class="card-title">${team.name}</h5>
-                    <p class="card-text">${team.invitation}</p>
-                </div>
+            <div class="list-group">
+                <a href="/teacher/team/${team.id}/info" class="list-group-item list-group-item-action">
+                    Task name: ${team.name} ${team.invitation}
+                </a>
             </div>
         <#else>
-            No available teams
+            No team
         </#list>
-    </div>
     </div>
 </@c.page>

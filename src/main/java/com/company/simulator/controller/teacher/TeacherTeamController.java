@@ -41,6 +41,17 @@ public class TeacherTeamController {
         return "teacher/team";
     }
 
+    @GetMapping("team/{team}/info")
+    public String getTeam(@PathVariable("team") Team team,
+                          @RequestParam(required = false) String message,
+                          @RequestParam(required = false) String type,
+                          Model model) {
+        model.addAttribute("team", team);
+        model.addAttribute("message", message);
+        model.addAttribute("type", type);
+        return "teacher/teamInfo";
+    }
+
     @GetMapping("/team/{practice}")
     public String teamsByPractice(Model model,
                                   @PathVariable Practice practice,
@@ -78,7 +89,7 @@ public class TeacherTeamController {
     }
 
     @PostMapping("/team/remove")
-    public String removePracticeFromTeam(@RequestParam Long practiceId,
+    public String removeTeamFromPractice(@RequestParam Long practiceId,
                                          @RequestParam Long teamId
     ) {
         teamRepo.throwPracticeToTeam(practiceId, teamId);
@@ -92,5 +103,13 @@ public class TeacherTeamController {
                                 @RequestParam Boolean sendingAfterDeadLine) {
         practiceRepo.addDeadLineToPractice(practiceId, LocalDateTime.now(), LocalDateTime.of(LocalDate.parse(date), LocalTime.parse(time)), sendingAfterDeadLine);
         return "redirect:/teacher/practice";
+    }
+
+    @PostMapping("team/{team}/remove")
+    public String removeTeam(
+        @PathVariable Team team
+    ) {
+        teamRepo.delete(team);
+        return "redirect:/teacher/team";
     }
 }

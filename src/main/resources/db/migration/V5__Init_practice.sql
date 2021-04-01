@@ -7,4 +7,5 @@ create table practice (
 
 alter table if exists practice
     add constraint practice_person_fk
-        foreign key (author_id) references person;
+        foreign key (author_id) references person
+            on delete cascade;

@@ -1,4 +1,5 @@
 <#import "common.ftlh" as c>
+<#import "commonRemove.ftlh" as cr>
 <#include "../parts/security.ftlh">
 
 <@c.page>
@@ -15,7 +16,7 @@
                 <div>
                     <#list tasks as task>
                         <div class="list-group">
-                            <a href="/teacher/task/${task.id}" class="list-group-item list-group-item-action">
+                            <a href="/teacher/task/${task.id}/info" class="list-group-item list-group-item-action">
                                 Task name: ${task.name}
                             </a>
                         </div>
@@ -31,4 +32,5 @@
             </div>
         </div>
     </div>
+    <@cr.modal "All student submissions will be deleted" "/teacher/practice/${practice.id}/remove"/>
 </@c.page>
