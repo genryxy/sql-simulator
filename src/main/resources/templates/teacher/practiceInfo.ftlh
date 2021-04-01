@@ -3,7 +3,12 @@
 <#include "../parts/security.ftlh">
 
 <@c.page>
+    <#include "../parts/alertMessage.ftlh"/>
+
     <div>
+        <h5 class="card-title">${practice.name}</h5>
+        <h5 class="card-title">${practice.description}</h5>
+
         <#if deadLine??>
             <h5 class="card-title">DeadLine: ${deadLine}</h5>
         </#if>
@@ -28,6 +33,9 @@
             <div class="col-sm">
                 <form method="get" action="/teacher/statistic/${practice.id}/" class="form-inline">
                     <button type="submit" class="btn btn-primary ml-2">Statistic</button>
+                </form>
+                <form method="get" action="/teacher/practice/${practice.id}/edit" class="form-inline">
+                    <button type="submit" class="btn btn-primary ml-2">Edit</button>
                 </form>
             </div>
         </div>

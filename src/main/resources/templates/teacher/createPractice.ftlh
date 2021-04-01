@@ -9,8 +9,8 @@
         <div class="form-group col-md-6">
             <form name="task" method="post" action="/teacher/practice/create" class="form-inline">
                 <input type="hidden" name="_csrf" value="${_csrf.token}">
-                <input type="text" name="name" placeholder="name">
-                <input type="text" name="description" placeholder="description">
+                <input type="text" name="name" placeholder="name" required>
+                <input type="text" name="description" placeholder="description" required>
                 <input type="hidden" name="authorId" value="${currentUserId}">
                 Task list
                 <div>

@@ -56,11 +56,11 @@
                 <div>
                     <form action="/teacher/team/${practiceId}/start" method="post">
                         <div class="form-group">
-                            <input type="date" name="date" class="form-control">
+                            <input type="date" name="date" class="form-control" required>
                             <label>Input Date</label>
                         </div>
                         <div class="md-form mx-5 my-5">
-                            <input type="time" name="time" class="form-control">
+                            <input type="time" name="time" class="form-control" required>
                             <label>Choose DEADLINE</label>
                         </div>
                         <div class="form-check">

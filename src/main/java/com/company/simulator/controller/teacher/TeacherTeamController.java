@@ -100,8 +100,8 @@ public class TeacherTeamController {
     public String startPractice(@PathVariable Long practiceId,
                                 @RequestParam String date,
                                 @RequestParam String time,
-                                @RequestParam Boolean sendingAfterDeadLine) {
-        practiceRepo.addDeadLineToPractice(practiceId, LocalDateTime.now(), LocalDateTime.of(LocalDate.parse(date), LocalTime.parse(time)), sendingAfterDeadLine);
+                                @RequestParam(required = false) Boolean sendingAfterDeadLine) {
+        practiceRepo.addDeadLineToPractice(practiceId, LocalDateTime.now(), LocalDateTime.of(LocalDate.parse(date), LocalTime.parse(time)), sendingAfterDeadLine != null);
         return "redirect:/teacher/practice";
     }
 
