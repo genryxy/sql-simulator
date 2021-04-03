@@ -149,7 +149,7 @@ public class TeacherPracticeController {
             redirectAttributes.addAttribute("message", "Practice successfully edited");
             redirectAttributes.addAttribute("type", "success");
             return String.format("redirect:/teacher/practice/%d/info", practice.getId());
-        } catch (Exception e) {
+        } catch (NullPointerException e) {
             redirectAttributes.addAttribute("message", e.getMessage());
             redirectAttributes.addAttribute("type", "danger");
             return String.format("redirect:/teacher/practice/%d/edit", practice.getId());
