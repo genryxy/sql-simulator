@@ -51,7 +51,6 @@ public class TeacherTeamController {
                           @RequestParam(required = false) String message,
                           @RequestParam(required = false) String type,
                           Model model) {
-        final int countStudents = team.getStudents().size();
         model.addAttribute("team", team);
         model.addAttribute("message", message);
         model.addAttribute("type", type);
