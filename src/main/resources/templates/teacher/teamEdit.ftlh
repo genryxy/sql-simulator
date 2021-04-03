@@ -9,7 +9,7 @@
                 <input type="hidden" name="_csrf" value="${_csrf.token}">
                 <input type="hidden" name="authorId" value="${currentUserId}">
                 <input type="text" name="name" value="${team.name}" required>
-                <button type="submit" class="btn btn-primary ml-2">save</button>
+                <button type="submit" class="btn btn-primary ml-2">Save</button>
             </form>
         </div>
     </div>

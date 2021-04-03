@@ -151,7 +151,7 @@ public class TeacherTeamController {
     }
 
     @PostMapping("team/{team}/remove/{user}")
-    public String removeTeam(
+    public String removeUserFromTeam(
         @PathVariable User user,
         @PathVariable Team team) {
         studentRepo.deleteByUserAndTeam(user, team);
