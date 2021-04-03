@@ -11,7 +11,7 @@
         <#list tasks as task>
             <div class="list-group">
                 <a href="/teacher/task/${task.id}/info" class="list-group-item list-group-item-action">
-                    Task name: ${task.name} ${task.authorId}
+                    Task name: ${task.name} ${task.text}
                 </a>
             </div>
         <#else>
