@@ -4,6 +4,7 @@ import com.company.simulator.model.Practice;
 import com.company.simulator.model.Team;
 import com.company.simulator.model.User;
 import com.company.simulator.repos.PracticeRepo;
+import com.company.simulator.repos.StudentRepo;
 import com.company.simulator.repos.TeamRepo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -15,6 +16,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -29,6 +31,9 @@ public class TeacherTeamController {
 
     @Autowired
     TeamRepo teamRepo;
+
+    @Autowired
+    StudentRepo studentRepo;
 
     @Autowired
     PracticeRepo practiceRepo;
@@ -46,6 +51,7 @@ public class TeacherTeamController {
                           @RequestParam(required = false) String message,
                           @RequestParam(required = false) String type,
                           Model model) {
+        final int countStudents = team.getStudents().size();
         model.addAttribute("team", team);
         model.addAttribute("message", message);
         model.addAttribute("type", type);
@@ -105,11 +111,51 @@ public class TeacherTeamController {
         return "redirect:/teacher/practice";
     }
 
+    @GetMapping("team/{team}/edit")
+    public String editTeam(
+        @PathVariable Team team,
+        Model model,
+        @RequestParam(required = false) String message,
+        @RequestParam(required = false) String type
+    ) {
+        model.addAttribute("task", team);
+        model.addAttribute("message", message);
+        model.addAttribute("type", type);
+        return "teacher/teamEdit";
+    }
+
+    @PostMapping("team/{team}/edit")
+    public String saveEditTask(
+        @PathVariable Team team,
+        @ModelAttribute Team editedTeam,
+        RedirectAttributes redirectAttributes
+    ) {
+        try {
+            teamRepo.updateTeam(team.getId(),
+                                editedTeam.getName());
+            redirectAttributes.addAttribute("message", "Team successfully edited");
+            redirectAttributes.addAttribute("type", "success");
+            return String.format("redirect:/teacher/team/%d/info", team.getId());
+        } catch (NullPointerException e) {
+            redirectAttributes.addAttribute("message", e.getMessage());
+            redirectAttributes.addAttribute("type", "danger");
+            return String.format("redirect:/teacher/team/%d/edit", team.getId());
+        }
+    }
+
     @PostMapping("team/{team}/remove")
     public String removeTeam(
         @PathVariable Team team
     ) {
         teamRepo.delete(team);
         return "redirect:/teacher/team";
+    }
+
+    @PostMapping("team/{team}/remove/{user}")
+    public String removeTeam(
+        @PathVariable User user,
+        @PathVariable Team team) {
+        studentRepo.deleteByUserAndTeam(user, team);
+        return String.format("redirect:/teacher/team/%d/info", team.getId());
     }
 }
