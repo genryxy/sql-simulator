@@ -10,7 +10,7 @@
     <div>
         <#list teams as team>
             <div class="list-group">
-                <a href="/teacher/team/${team.id}/info" class="list-group-item list-group-item-action">
+                <a href="/teacher/team/${team.id}/info" class="list-group-item list-group-item-action" style="margin-top: 1%">
                     Task name: ${team.name} ${team.invitation}
                 </a>
             </div>

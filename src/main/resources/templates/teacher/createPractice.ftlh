@@ -3,30 +3,28 @@
 
 <@c.page>
     <#include "../parts/alertMessage.ftlh"/>
-    <h5>Create new Practice: </h5>
-
-    <div class="form-row">
-        <div class="form-group col-md-6">
-            <form name="task" method="post" action="/teacher/practice/create" class="form-inline">
-                <input type="hidden" name="_csrf" value="${_csrf.token}">
-                <input type="text" name="name" placeholder="name" required>
-                <input type="text" name="description" placeholder="description" required>
-                <input type="hidden" name="authorId" value="${currentUserId}">
-                Task list
-                <div>
-                    <#list tasks as task>
-                        <div class="list-group">
-                            <a href="/teacher/task/${task.id}/info" class="list-group-item list-group-item-action">
-                                Task name: ${task.name}
-                            </a>
-                            <input class="form-check-input" type="checkbox" name="checkBox${task.id}">
-                        </div>
-                    <#else>
-                        No messages
-                    </#list>
+    <h5>Creating new Practice </h5>
+    <form name="task" method="post" action="/teacher/practice/create">
+        <input type="hidden" name="_csrf" value="${_csrf.token}">
+        <textarea rows="1" name="name" placeholder="Name"
+                  style="width: 30%"
+                  required></textarea>
+        <textarea class="form-control" rows="2" name="description" placeholder="Description" style="margin-top: 1%"
+                  required></textarea>
+        <input type="hidden" name="authorId" value="${currentUserId}">
+        <h6 style="margin-top: 2%">Choose tasks</h6>
+        <div>
+            <#list tasks as task>
+                <div class="list-group" style="margin-left: 3%; margin-top: 1%">
+                    <a href="/teacher/task/${task.id}/info" class="list-group-item list-group-item-action" style="margin-left: 40px">
+                        Task name: ${task.name}
+                    </a>
+                    <input class="form-check-input" type="checkbox" name="checkBox${task.id}" style="width: 40px; height: 40px;">
                 </div>
-                <button type="submit" class="btn btn-primary ml-2">save</button>
-            </form>
+            <#else>
+                No messages
+            </#list>
         </div>
-    </div>
+        <button type="submit" class="btn btn-primary ml-2" style="margin-top: 2%; margin-bottom: 2%">save</button>
+    </form>
 </@c.page>

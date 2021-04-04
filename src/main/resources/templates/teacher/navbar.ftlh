@@ -12,6 +12,9 @@
         <ul class="navbar-nav mr-auto">
             <#if user?? && name!="unknown">
                 <li class="nav-item">
+                    <a class="nav-link" href="/user/profile">Profile</a>
+                </li>
+                <li class="nav-item">
                     <a class="nav-link" href="/teacher/task">Tasks</a>
                 </li>
                 <li class="nav-item">
@@ -20,13 +23,13 @@
                 <li class="nav-item">
                     <a class="nav-link" href="/teacher/team">Teams</a>
                 </li>
-
                 <li class="nav-item dropdown">
                     <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                        Teacher
+                        Role
                     </a>
                     <div class="dropdown-menu" aria-labelledby="navbarDropdown">
                         <a class="dropdown-item" href="/">Student</a>
+                        <a class="dropdown-item" href="/teacher/practice">Teacher</a>
                     </div>
                 </li>
             </#if>
