@@ -1,19 +1,13 @@
 <#import "common.ftlh" as c>
 
 <@c.page>
-    <div class="form-group row">
-        <div class="form-group col-md-6">
-            <form method="get" action="/teacher/practice/create" class="form-inline">
-                <button type="submit" class="btn btn-primary ml-2">Create new practice</button>
-            </form>
-        </div>
-    <div class="form-group col-md-6">
-            <form method="get" action="/teacher/practice/archive" class="form-inline">
-                <button type="submit" class="btn btn-primary ml-2">Archive</button>
-            </form>
-        </div>
-    </div>
-    <div class="container">
+    <form method="get" action="/teacher/practice/create">
+        <button type="submit" class="btn btn-primary ml-2">Create new practice</button>
+    </form>
+    <form method="get" action="/teacher/practice/archive" style="margin-top: 1%">
+        <button type="submit" class="btn btn-primary ml-2">Archive</button>
+    </form>
+    <div class="container" style="margin-top: 3%">
         <div class="row">
             <div class="col-sm">
                 <h5 class="card-title">Ready to assign practices</h5>
@@ -23,7 +17,7 @@
                             <div class="card-body">
                                 <h5 class="card-title">${practice.name}</h5>
                                 <p class="card-text">${practice.description}</p>
-                                <a href="/teacher/practice/${practice.id}/info" class="btn btn-primary">Info</a>
+                                <a href="/teacher/practice/${practice.id}/info" class="btn btn-primary">Information</a>
                                 <a href="/teacher/team/${practice.id}" class="btn btn-primary">Start</a>
                             </div>
                         </div>
@@ -39,7 +33,7 @@
                         <div class="card-body">
                             <h5 class="card-title">${practice.name}</h5>
                             <p class="card-text">${practice.description}</p>
-                            <a href="/teacher/practice/${practice.id}/info" class="btn btn-primary">Info</a>
+                            <a href="/teacher/practice/${practice.id}/info" class="btn btn-primary">Information</a>
                         </div>
                     </div>
                 <#else>

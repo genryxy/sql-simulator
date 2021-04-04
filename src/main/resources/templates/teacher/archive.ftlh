@@ -1,7 +1,7 @@
 <#import "common.ftlh" as c>
 
 <@c.page>
-    Archive practices
+    <h5>Archive practices</h5>
     <div>
         <#list practices as practice>
             <div class="card my-3">

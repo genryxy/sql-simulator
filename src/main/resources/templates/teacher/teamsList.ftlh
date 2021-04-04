@@ -17,7 +17,7 @@
                                 <input type="hidden" name="_csrf" value="${_csrf.token}">
                                 <input type="hidden" name="practiceId" value="${practiceId}">
                                 <input type="hidden" name="teamId" value="${team.id}">
-                                <button type="submit" class="btn btn-primary ml-2">Assign</button>
+                                <button type="submit" class="btn btn-lg btn-block btn-outline-primary">Assign</button>
                             </form>
                         </div>
                     <#else>
@@ -38,7 +38,7 @@
                                 <input type="hidden" name="_csrf" value="${_csrf.token}">
                                 <input type="hidden" name="practiceId" value="${practiceId}">
                                 <input type="hidden" name="teamId" value="${team.id}">
-                                <button type="submit" class="btn btn-primary ml-2">Remove</button>
+                                <button type="submit" class="btn btn-lg btn-block btn-outline-primary">Remove</button>
                             </form>
                         </div>
                     <#else>
@@ -47,23 +47,23 @@
                 </div>
             </div>
             <div class="col-sm">
-                DeadLine
+                <h5 class="card-title">DeadLine</h5>
                 <div>
                     <form action="/teacher/team/${practiceId}/start" method="post">
-                        <label>Choose DeadLine</label>
                         <div class="form-group">
                             <input type="date" name="date" class="form-control" required>
                         </div>
                         <div class="form-group">
                             <input type="time" name="time" class="form-control" required>
                         </div>
-                        <div class="form-check">
-                            <input type="checkbox" class="form-check-input" id="exampleCheck1" name="sendingAfterDeadLine">
-                            <label class="form-check-label" for="exampleCheck1">Solving after deadline</label>
-                        </div>
+                        <label style="margin-left: 50%">
+                            <input type="checkbox" class="form-check-input" id="exampleCheck1"
+                                   name="sendingAfterDeadLine">
+                            Solving after deadline
+                        </label>
                         <input type="hidden" name="_csrf" value="${_csrf.token}">
                         <input type="hidden" name="practiceId" value="${practiceId}">
-                        <button type="submit" class="btn btn-primary ml-2">Ready!</button>
+                        <button type="submit" class="btn btn-lg btn-primary btn-block">Ready!</button>
                     </form>
                 </div>
             </div>
