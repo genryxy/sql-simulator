@@ -5,11 +5,21 @@
     <#include "../parts/alertMessage.ftlh"/>
     <form name="task" method="post" action="/teacher/practice/${practice.id}/edit">
         <input type="hidden" name="_csrf" value="${_csrf.token}">
-        Name:
-        <input type="text" name="name" value="${practice.name}" class="form-inline" style="width: 50%" required>
-        <div style="margin-top: 1%">Description:</div>
-        <input type="text" name="description" value="${practice.description}" class="form-inline"
-               style="width: 100%" required>
+
+        <div class="input-group-prepend" style="margin-top: 1%">
+            <div class="input-group-text">Name</div>
+            <textarea class="form-control" rows="1" name="name"
+                      required>${practice.name}
+            </textarea>
+        </div>
+
+        <div class="input-group-prepend" style="margin-top: 1%">
+            <div class="input-group-text">Description</div>
+            <textarea class="form-control" rows="4" name="description"
+                      required>${practice.description}
+            </textarea>
+        </div>
+
         <input type="hidden" name="authorId" value="${currentUserId}">
         <div class="form-inline" style="margin-top: 1%">
             <#if deadline??>
