@@ -59,12 +59,12 @@ public class TeamController {
                     group
                 );
                 studentRepo.save(student);
-                redirAttr.addAttribute("result", "Successfully joined");
+                redirAttr.addAttribute("message", "Successfully joined");
                 redirAttr.addAttribute("type", "success");
             },
             () -> {
                 redirAttr.addAttribute(
-                    "result",
+                    "message",
                     String.format("No team was found by invitation '%s'", invitation)
                 );
                 redirAttr.addAttribute("type", "danger");
