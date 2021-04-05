@@ -32,6 +32,9 @@
                 <li class="nav-item">
                     <a class="nav-link" href="/student/team">Team</a>
                 </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="/result">Result</a>
+                </li>
                 <#if isAdmin>
                     <li class="nav-item">
                         <a class="nav-link" href="/user">User list</a>

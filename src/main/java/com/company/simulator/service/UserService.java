@@ -1,7 +1,9 @@
 package com.company.simulator.service;
 
 import com.company.simulator.model.Role;
+import com.company.simulator.model.Team;
 import com.company.simulator.model.User;
+import com.company.simulator.repos.StudentRepo;
 import com.company.simulator.repos.UserRepo;
 import java.util.Arrays;
 import java.util.Collections;
@@ -32,6 +34,9 @@ public class UserService implements UserDetailsService {
     @Autowired
     private PasswordEncoder passwordEncoder;
 
+    @Autowired
+    private StudentRepo studentRepo;
+
     @Value("${url.activation.path}")
     private String urlForActivation;
 
@@ -58,7 +63,7 @@ public class UserService implements UserDetailsService {
         return true;
     }
 
-    public boolean activateUser(String code) {
+    public boolean activateUserAndAddToCommonTeam(String code) {
         final User user = userRepo.findByActivationCode(code);
         if (user == null) {
             return false;
@@ -66,6 +71,7 @@ public class UserService implements UserDetailsService {
         user.setActivationCode(null);
         user.setActive(true);
         userRepo.save(user);
+        studentRepo.addUserToTeam(user.getId(), Team.COMMON_TEAM);
         return true;
     }
 

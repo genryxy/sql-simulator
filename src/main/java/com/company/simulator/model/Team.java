@@ -20,6 +20,11 @@ import lombok.ToString;
 @ToString(of = {"id", "author", "invitation", "name"})
 @Data
 public class Team {
+    /**
+     * ID for common team for access to tasks from common pool.
+     */
+    public static Long COMMON_TEAM = 1L;
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
