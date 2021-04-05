@@ -74,7 +74,6 @@ public class TaskController {
             submRepo.findByUserAndPracticeAndTask(user, practice, task).orElseGet(ArrayList::new)
         );
         return String.format("redirect:/practice/%d/task/%d", practice.getId(), task.getId());
-//        return "practice/taskExecution";
     }
 
     private void addAttributesAboutResult(Model model, SqlTransaction.ResultQuery res) {
