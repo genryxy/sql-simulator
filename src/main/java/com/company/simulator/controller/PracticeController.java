@@ -1,8 +1,8 @@
 package com.company.simulator.controller;
 
+import com.company.simulator.access.Access;
 import com.company.simulator.model.Category;
 import com.company.simulator.model.Practice;
-import com.company.simulator.model.Student;
 import com.company.simulator.model.Submission;
 import com.company.simulator.model.Task;
 import com.company.simulator.model.Team;
@@ -12,6 +12,13 @@ import com.company.simulator.repos.PracticeRepo;
 import com.company.simulator.repos.StudentRepo;
 import com.company.simulator.repos.SubmissionRepo;
 import com.company.simulator.repos.TaskRepo;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
@@ -19,15 +26,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestParam;
-
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-import java.util.Set;
-import java.util.function.Function;
-import java.util.stream.Collectors;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 @Controller
 public final class PracticeController {
@@ -50,7 +49,7 @@ public final class PracticeController {
     public String availablePractices(
         Model model,
         @RequestParam(required = false) Team team,
-        @RequestParam(required = false) String result,
+        @RequestParam(required = false) String message,
         @RequestParam(required = false) String type
     ) {
         final Iterable<Practice> practices;
@@ -62,7 +61,7 @@ public final class PracticeController {
                 .collect(Collectors.toList());
         }
         model.addAttribute("practices", practices);
-        model.addAttribute("result", result);
+        model.addAttribute("message", message);
         model.addAttribute("type", type);
         return "practice/practiceList";
     }
@@ -75,9 +74,10 @@ public final class PracticeController {
         @RequestParam(required = false) String task_status,
         @RequestParam(required = false) String message,
         @RequestParam(required = false) String type,
+        RedirectAttributes redirAttr,
         Model model
     ) {
-        if (hasAccess(user, practice)) {
+        if (new Access(user, studentRepo).toPractice(practice)) {
             final Collection<Task> tasks;
             model.addAttribute("categories", categoryRepo.findAll());
             model.addAttribute("practice", practice);
@@ -100,28 +100,13 @@ public final class PracticeController {
             model.addAttribute("tasks", filterTasksByStatus(markedTasks, task_status));
             return template;
         } else {
-            model.addAttribute(
+            redirAttr.addAttribute(
                 "message",
-                String.format("Access to practice `%d` denied", practice.getId())
+                String.format("Access to practice `%d` is denied", practice.getId())
             );
-            model.addAttribute("type", "danger");
-            model.addAttribute("practices", practiceRepo.findAllByIdIsNot(Practice.COMMON_POOL));
-            return "practice/practiceList";
+            redirAttr.addAttribute("type", "danger");
+            return "redirect:/practice";
         }
-    }
-
-    private boolean hasAccess(User user, Practice practice) {
-        boolean allowed = false;
-        final Set<Team> teams = practice.getTeams();
-        final List<Student> students = studentRepo.findAllByUserId(user.getId())
-            .orElseGet(ArrayList::new);
-        for (Student student : students) {
-            if (teams.contains(student.getTeam())) {
-                allowed = true;
-                break;
-            }
-        }
-        return allowed;
     }
 
     private Collection<Task> filterTasksByStatus(Collection<Task> tasks, String status) {
