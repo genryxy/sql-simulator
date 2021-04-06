@@ -20,16 +20,14 @@ public class Access {
     }
 
     public boolean toPractice(Practice practice) {
-        boolean allowed = false;
         final Set<Team> teams = practice.getTeams();
         final List<Student> students = studentRepo.findAllByUserId(user.getId())
             .orElseGet(ArrayList::new);
         for (Student student : students) {
             if (teams.contains(student.getTeam())) {
-                allowed = true;
-                break;
+                return true;
             }
         }
-        return allowed;
+        return false;
     }
 }
