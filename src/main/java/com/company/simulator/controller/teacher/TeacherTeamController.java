@@ -40,8 +40,12 @@ public class TeacherTeamController {
 
     @GetMapping("/team")
     public String teamsByAuthor(Model model,
+                                @RequestParam(required = false) String message,
+                                @RequestParam(required = false) String type,
                                 @AuthenticationPrincipal User user) {
         final List<Team> teamsInPractice = teamRepo.findTeamsByAuthorId(user.getId()).orElseGet(ArrayList::new);
+        model.addAttribute("message", message);
+        model.addAttribute("type", type);
         model.addAttribute("teams", teamsInPractice);
         return "teacher/team";
     }
@@ -51,14 +55,24 @@ public class TeacherTeamController {
                           @AuthenticationPrincipal User user,
                           @RequestParam(required = false) String message,
                           @RequestParam(required = false) String type,
-                          Model model) {
-        if (user.getId().equals(team.getAuthor().getId())) {
-            model.addAttribute("team", team);
-            model.addAttribute("message", message);
-            model.addAttribute("type", type);
-            return "teacher/teamInfo";
+                          RedirectAttributes redirectAttributes,
+                          Model model
+    ) {
+        try {
+            if (user.getId().equals(team.getAuthor().getId())) {
+                model.addAttribute("team", team);
+                model.addAttribute("message", message);
+                model.addAttribute("type", type);
+                return "teacher/teamInfo";
+            }
+            redirectAttributes.addAttribute("message", "No Access");
+            redirectAttributes.addAttribute("type", "danger");
+            return "redirect:/teacher/team";
+        } catch (NullPointerException ex) {
+            redirectAttributes.addAttribute("message", "There is no such team");
+            redirectAttributes.addAttribute("type", "danger");
+            return "redirect:/teacher/team";
         }
-        return "redirect:/teacher/team";
     }
 
     @GetMapping("/team/{practice}")
@@ -66,20 +80,28 @@ public class TeacherTeamController {
                                   @PathVariable Practice practice,
                                   @AuthenticationPrincipal User user,
                                   @RequestParam(required = false) String message,
-                                  @RequestParam(required = false) String type
+                                  @RequestParam(required = false) String type,
+                                  RedirectAttributes redirectAttributes
     ) {
-        model.addAttribute("message", message);
-        model.addAttribute("type", type);
-        if (user.getId().equals(practice.getAuthorId())) {
-            final List<Team> teamsInPractice = teamRepo.findTeamsByPracticesContains(practice).orElseGet(ArrayList::new);
-            final List<Team> allAnotherTeamsByAuthor = teamRepo.findTeamsByPracticesNotContainsAndAuthorId(practice, user.getId()).orElseGet(ArrayList::new);
-            model.addAttribute("teamsInPractice", teamsInPractice);
-            model.addAttribute("allAnotherTeamsByAuthor", allAnotherTeamsByAuthor);
-            model.addAttribute("practice", practice);
-            return "teacher/teamsList";
+        try {
+            model.addAttribute("message", message);
+            model.addAttribute("type", type);
+            if (user.getId().equals(practice.getAuthorId())) {
+                final List<Team> teamsInPractice = teamRepo.findTeamsByPracticesContains(practice).orElseGet(ArrayList::new);
+                final List<Team> allAnotherTeamsByAuthor = teamRepo.findTeamsByPracticesNotContainsAndAuthorId(practice, user.getId()).orElseGet(ArrayList::new);
+                model.addAttribute("teamsInPractice", teamsInPractice);
+                model.addAttribute("allAnotherTeamsByAuthor", allAnotherTeamsByAuthor);
+                model.addAttribute("practice", practice);
+                return "teacher/teamsList";
+            }
+            redirectAttributes.addAttribute("message", "No Access");
+            redirectAttributes.addAttribute("type", "danger");
+            return "redirect:/teacher/practice";
+        } catch (NullPointerException ex) {
+            redirectAttributes.addAttribute("message", "There is no such practice");
+            redirectAttributes.addAttribute("type", "danger");
+            return "redirect:/teacher/team";
         }
-        return "redirect:/teacher/practice";
-
     }
 
     @GetMapping("/team/create")
@@ -101,26 +123,32 @@ public class TeacherTeamController {
     @PostMapping("/team/assign")
     public String assignTeam(@RequestParam Practice practice,
                              @RequestParam Team team,
-                             @AuthenticationPrincipal User user
+                             @AuthenticationPrincipal User user,
+                             RedirectAttributes redirectAttributes
     ) {
         if (user.getId().equals(practice.getAuthorId())
             && user.getId().equals(team.getAuthor().getId())) {
             teamRepo.assignPracticeToTeam(practice.getId(), team.getId());
             return String.format("redirect:/teacher/team/%d", practice.getId());
         }
+        redirectAttributes.addAttribute("message", "No Access");
+        redirectAttributes.addAttribute("type", "danger");
         return "redirect:/teacher/practice";
     }
 
     @PostMapping("/team/remove")
     public String removeTeamFromPractice(@RequestParam Practice practice,
                                          @RequestParam Team team,
-                                         @AuthenticationPrincipal User user
+                                         @AuthenticationPrincipal User user,
+                                         RedirectAttributes redirectAttributes
     ) {
         if (user.getId().equals(practice.getAuthorId())
             && user.getId().equals(team.getAuthor().getId())) {
             teamRepo.throwPracticeToTeam(practice.getId(), team.getId());
             return String.format("redirect:/teacher/team/%d", practice.getId());
         }
+        redirectAttributes.addAttribute("message", "No Access");
+        redirectAttributes.addAttribute("type", "danger");
         return "redirect:/teacher/practice";
     }
 
@@ -132,19 +160,27 @@ public class TeacherTeamController {
                                 @RequestParam(required = false) Boolean sendingAfterDeadLine,
                                 RedirectAttributes redirectAttributes
     ) {
-        if (user.getId().equals(practice.getAuthorId())) {
-            LocalDateTime newTimestamp = LocalDateTime.of(LocalDate.parse(date), LocalTime.parse(time));
-            if (newTimestamp.isBefore(LocalDateTime.now())) {
-                redirectAttributes.addAttribute("message", "Incorrect Deadline");
-                redirectAttributes.addAttribute("type", "danger");
+        try {
+            if (user.getId().equals(practice.getAuthorId())) {
+                LocalDateTime newTimestamp = LocalDateTime.of(LocalDate.parse(date), LocalTime.parse(time));
+                if (newTimestamp.isBefore(LocalDateTime.now())) {
+                    redirectAttributes.addAttribute("message", "Incorrect Deadline");
+                    redirectAttributes.addAttribute("type", "danger");
+                    return "redirect:/teacher/practice";
+                }
+                redirectAttributes.addAttribute("message", "Practice successfully assigned");
+                redirectAttributes.addAttribute("type", "success");
+                practiceRepo.addDeadLineToPractice(practice.getId(), LocalDateTime.now(), newTimestamp, sendingAfterDeadLine != null);
                 return "redirect:/teacher/practice";
             }
-            redirectAttributes.addAttribute("message", "Practice successfully assigned");
-            redirectAttributes.addAttribute("type", "success");
-            practiceRepo.addDeadLineToPractice(practice.getId(), LocalDateTime.now(), newTimestamp, sendingAfterDeadLine != null);
-            return "redirect:/teacher/practice";
+            redirectAttributes.addAttribute("message", "No Access");
+            redirectAttributes.addAttribute("type", "danger");
+            return String.format("redirect:/teacher/team/%d", practice.getId());
+        } catch (NullPointerException ex) {
+            redirectAttributes.addAttribute("message", "There is no such practice");
+            redirectAttributes.addAttribute("type", "danger");
+            return "redirect:/teacher/team";
         }
-        return String.format("redirect:/teacher/team/%d", practice.getId());
     }
 
     @GetMapping("team/{team}/edit")
@@ -153,15 +189,25 @@ public class TeacherTeamController {
         @AuthenticationPrincipal User user,
         Model model,
         @RequestParam(required = false) String message,
-        @RequestParam(required = false) String type
+        @RequestParam(required = false) String type,
+        RedirectAttributes redirectAttributes
     ) {
-        if (user.getId().equals(team.getAuthor().getId())) {
-            model.addAttribute("task", team);
-            model.addAttribute("message", message);
-            model.addAttribute("type", type);
-            return "teacher/teamEdit";
+        try {
+            if (user.getId().equals(team.getAuthor().getId())) {
+                model.addAttribute("task", team);
+                model.addAttribute("message", message);
+                model.addAttribute("type", type);
+                return "teacher/teamEdit";
+            }
+            redirectAttributes.addAttribute("message", "No Access");
+            redirectAttributes.addAttribute("type", "danger");
+            return "redirect:/teacher/team";
+        } catch (NullPointerException ex) {
+            redirectAttributes.addAttribute("message", "There is no such team");
+            redirectAttributes.addAttribute("type", "danger");
+            return "redirect:/teacher/team";
         }
-        return "redirect:/teacher/team";
+
     }
 
     @PostMapping("team/{team}/edit")
@@ -184,17 +230,22 @@ public class TeacherTeamController {
                 return String.format("redirect:/teacher/team/%d/edit", team.getId());
             }
         }
+        redirectAttributes.addAttribute("message", "No Access");
+        redirectAttributes.addAttribute("type", "danger");
         return "redirect:/teacher/team";
     }
 
     @PostMapping("team/{team}/remove")
     public String removeTeam(
         @PathVariable Team team,
-        @AuthenticationPrincipal User user
+        @AuthenticationPrincipal User user,
+        RedirectAttributes redirectAttributes
     ) {
         if (user.getId().equals(team.getAuthor().getId())) {
             teamRepo.delete(team);
         }
+        redirectAttributes.addAttribute("message", "No Access");
+        redirectAttributes.addAttribute("type", "danger");
         return "redirect:/teacher/team";
     }
 
@@ -202,11 +253,14 @@ public class TeacherTeamController {
     public String removeUserFromTeam(
         @PathVariable User student,
         @PathVariable Team team,
-        @AuthenticationPrincipal User user) {
+        @AuthenticationPrincipal User user,
+        RedirectAttributes redirectAttributes) {
         if (user.getId().equals(team.getAuthor().getId())) {
             studentRepo.deleteByUserAndTeam(student, team);
             return String.format("redirect:/teacher/team/%d/info", team.getId());
         }
+        redirectAttributes.addAttribute("message", "No Access");
+        redirectAttributes.addAttribute("type", "danger");
         return "redirect:/teacher/team";
     }
 }

@@ -48,14 +48,24 @@ public class TeacherTaskController {
                           @AuthenticationPrincipal User user,
                           @RequestParam(required = false) String message,
                           @RequestParam(required = false) String type,
-                          Model model) {
-        if (user.getId().equals(task.getAuthorId())) {
-            model.addAttribute("task", task);
-            model.addAttribute("message", message);
-            model.addAttribute("type", type);
-            return "teacher/taskInfo";
+                          RedirectAttributes redirectAttributes,
+                          Model model
+    ) {
+        try {
+            if (user.getId().equals(task.getAuthorId())) {
+                model.addAttribute("task", task);
+                model.addAttribute("message", message);
+                model.addAttribute("type", type);
+                return "teacher/taskInfo";
+            }
+            redirectAttributes.addAttribute("message", "No Access");
+            redirectAttributes.addAttribute("type", "danger");
+            return "redirect:/teacher/task";
+        } catch (NullPointerException ex) {
+            redirectAttributes.addAttribute("message", "There is no such task");
+            redirectAttributes.addAttribute("type", "danger");
+            return "redirect:/teacher/task";
         }
-        return "redirect:/teacher/task";
     }
 
     @GetMapping("task/create")
@@ -92,16 +102,26 @@ public class TeacherTaskController {
         @AuthenticationPrincipal User user,
         Model model,
         @RequestParam(required = false) String message,
-        @RequestParam(required = false) String type
+        @RequestParam(required = false) String type,
+        RedirectAttributes redirectAttributes
     ) {
-        if(user.getId().equals(task.getAuthorId())){
-            model.addAttribute("categories", categoryRepo.findAll());
-            model.addAttribute("task", task);
-            model.addAttribute("message", message);
-            model.addAttribute("type", type);
-            return "teacher/taskEdit";
+        try {
+            if (user.getId().equals(task.getAuthorId())) {
+                model.addAttribute("categories", categoryRepo.findAll());
+                model.addAttribute("task", task);
+                model.addAttribute("message", message);
+                model.addAttribute("type", type);
+                return "teacher/taskEdit";
+            }
+            redirectAttributes.addAttribute("message", "No Access");
+            redirectAttributes.addAttribute("type", "danger");
+            return "redirect:/teacher/task";
+        } catch (NullPointerException ex) {
+            redirectAttributes.addAttribute("message", "There is no such task");
+            redirectAttributes.addAttribute("type", "danger");
+            return "redirect:/teacher/task";
         }
-        return "redirect:/teacher/task";
+
     }
 
     @PostMapping("task/{task}/edit")
@@ -111,7 +131,7 @@ public class TeacherTaskController {
         @ModelAttribute Task editedTask,
         RedirectAttributes redirectAttributes
     ) {
-        if(user.getId().equals(task.getAuthorId())) {
+        if (user.getId().equals(task.getAuthorId())) {
             try {
                 sqlTransaction.validationTeacherQuery(editedTask.getDdlScript(), editedTask.getCorrectQuery());
                 taskRepo.updateTask(task.getId(),
@@ -132,18 +152,23 @@ public class TeacherTaskController {
                 return String.format("redirect:/teacher/task/%d/edit", task.getId());
             }
         }
+        redirectAttributes.addAttribute("message", "No Access");
+        redirectAttributes.addAttribute("type", "danger");
         return "redirect:/teacher/task";
     }
 
     @PostMapping("task/{task}/remove")
     public String removeTask(
         @PathVariable Task task,
-        @AuthenticationPrincipal User user
+        @AuthenticationPrincipal User user,
+        RedirectAttributes redirectAttributes
     ) {
-        if(user.getId().equals(task.getAuthorId())){
+        if (user.getId().equals(task.getAuthorId())) {
             taskRepo.delete(task);
             return "redirect:/teacher/task";
         }
+        redirectAttributes.addAttribute("message", "No Access");
+        redirectAttributes.addAttribute("type", "danger");
         return "redirect:/teacher/task";
     }
 }

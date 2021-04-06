@@ -2,6 +2,7 @@
 <#include "../parts/security.ftlh">
 
 <@c.page>
+    <#include "../parts/alertMessage.ftlh"/>
     <div class="form-group col-md-6">
         <form action="/teacher/team/create" method="get">
             <button type="submit" class="btn btn-primary ml-2">Create new Team</button>
