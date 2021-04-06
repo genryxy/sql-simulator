@@ -1,6 +1,7 @@
 package com.company.simulator.controller;
 
 import com.company.simulator.access.AccessStudent;
+import com.company.simulator.exception.AccessDeniedException;
 import com.company.simulator.model.Category;
 import com.company.simulator.model.Practice;
 import com.company.simulator.model.Task;
@@ -23,7 +24,6 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 @Controller
 public final class PracticeController {
@@ -52,7 +52,6 @@ public final class PracticeController {
         @RequestParam(required = false) String status,
         @RequestParam(required = false) String message,
         @RequestParam(required = false) String type,
-        RedirectAttributes redirAttr,
         Model model
     ) {
         final List<Practice> practices;
@@ -60,16 +59,14 @@ public final class PracticeController {
             practices = practiceRepo.findAllForUserExcept(user.getId(), Practice.COMMON_POOL)
                 .orElseGet(ArrayList::new);
         } else {
-            if (new AccessStudent(user, studentRepo).toTeam(team)) {
-                practices = team.getPractices().stream()
-                    .filter(prac -> !prac.getId().equals(Practice.COMMON_POOL))
-                    .collect(Collectors.toList());
-            } else {
-                return redirectToPractice(
-                    redirAttr,
-                    String.format("Access to practices for team `%d` is denied", team.getId())
+            if (!new AccessStudent(user, studentRepo).toTeam(team)) {
+                throw new AccessDeniedException(
+                    String.format("Access to practices for team id `%d` is denied", team.getId())
                 );
             }
+            practices = team.getPractices().stream()
+                .filter(prac -> !prac.getId().equals(Practice.COMMON_POOL))
+                .collect(Collectors.toList());
         }
         model.addAttribute("practices", pracFilter.filterByStatus(practices, status));
         model.addAttribute("message", message);
@@ -85,7 +82,6 @@ public final class PracticeController {
         @RequestParam(required = false) String task_status,
         @RequestParam(required = false) String message,
         @RequestParam(required = false) String type,
-        RedirectAttributes redirAttr,
         Model model
     ) {
         if (new AccessStudent(user, studentRepo).toPractice(practice)) {
@@ -110,18 +106,10 @@ public final class PracticeController {
             final List<Task> markedTasks = tasksMarked.markedStatus(tasks, practice, user);
             model.addAttribute("tasks", filterTasksByStatus(markedTasks, task_status));
             return template;
-        } else {
-            return redirectToPractice(
-                redirAttr,
-                String.format("Access to practice `%d` is denied", practice.getId())
-            );
         }
-    }
-
-    private String redirectToPractice(RedirectAttributes redirAttr, String msg) {
-        redirAttr.addAttribute("message", msg);
-        redirAttr.addAttribute("type", "danger");
-        return "redirect:/practice";
+        throw new AccessDeniedException(
+            String.format("Access to practice with id `%d` is denied", practice.getId())
+        );
     }
 
     private Collection<Task> filterTasksByStatus(Collection<Task> tasks, String status) {
