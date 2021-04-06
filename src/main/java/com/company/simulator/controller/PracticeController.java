@@ -1,23 +1,20 @@
 package com.company.simulator.controller;
 
-import com.company.simulator.access.Access;
+import com.company.simulator.access.AccessStudent;
 import com.company.simulator.model.Category;
 import com.company.simulator.model.Practice;
-import com.company.simulator.model.Submission;
 import com.company.simulator.model.Task;
 import com.company.simulator.model.Team;
 import com.company.simulator.model.User;
+import com.company.simulator.processing.PracticeFilter;
+import com.company.simulator.processing.TasksMarked;
 import com.company.simulator.repos.CategoryRepo;
 import com.company.simulator.repos.PracticeRepo;
 import com.company.simulator.repos.StudentRepo;
-import com.company.simulator.repos.SubmissionRepo;
 import com.company.simulator.repos.TaskRepo;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-import java.util.function.Function;
 import java.util.stream.Collectors;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -34,7 +31,10 @@ public final class PracticeController {
     private PracticeRepo practiceRepo;
 
     @Autowired
-    private SubmissionRepo submRepo;
+    private TasksMarked tasksMarked;
+
+    @Autowired
+    private PracticeFilter pracFilter;
 
     @Autowired
     private CategoryRepo categoryRepo;
@@ -47,20 +47,31 @@ public final class PracticeController {
 
     @GetMapping("/practice")
     public String availablePractices(
-        Model model,
+        @AuthenticationPrincipal User user,
         @RequestParam(required = false) Team team,
+        @RequestParam(required = false) String status,
         @RequestParam(required = false) String message,
-        @RequestParam(required = false) String type
+        @RequestParam(required = false) String type,
+        RedirectAttributes redirAttr,
+        Model model
     ) {
-        final Iterable<Practice> practices;
+        final List<Practice> practices;
         if (team == null) {
-            practices = practiceRepo.findAllByIdIsNot(Practice.COMMON_POOL);
+            practices = practiceRepo.findAllForUserExcept(user.getId(), Practice.COMMON_POOL)
+                .orElseGet(ArrayList::new);
         } else {
-            practices = team.getPractices().stream()
-                .filter(prac -> !prac.getId().equals(Practice.COMMON_POOL))
-                .collect(Collectors.toList());
+            if (new AccessStudent(user, studentRepo).toTeam(team)) {
+                practices = team.getPractices().stream()
+                    .filter(prac -> !prac.getId().equals(Practice.COMMON_POOL))
+                    .collect(Collectors.toList());
+            } else {
+                return redirectToPractice(
+                    redirAttr,
+                    String.format("Access to practices for team `%d` is denied", team.getId())
+                );
+            }
         }
-        model.addAttribute("practices", practices);
+        model.addAttribute("practices", pracFilter.filterByStatus(practices, status));
         model.addAttribute("message", message);
         model.addAttribute("type", type);
         return "practice/practiceList";
@@ -77,7 +88,7 @@ public final class PracticeController {
         RedirectAttributes redirAttr,
         Model model
     ) {
-        if (new Access(user, studentRepo).toPractice(practice)) {
+        if (new AccessStudent(user, studentRepo).toPractice(practice)) {
             final Collection<Task> tasks;
             model.addAttribute("categories", categoryRepo.findAll());
             model.addAttribute("practice", practice);
@@ -96,17 +107,21 @@ public final class PracticeController {
                 tasks = practice.getTasks();
                 template = "practice/tasksByPractice";
             }
-            final List<Task> markedTasks = tasksWithMarkedStatus(tasks, practice, user);
+            final List<Task> markedTasks = tasksMarked.markedStatus(tasks, practice, user);
             model.addAttribute("tasks", filterTasksByStatus(markedTasks, task_status));
             return template;
         } else {
-            redirAttr.addAttribute(
-                "message",
+            return redirectToPractice(
+                redirAttr,
                 String.format("Access to practice `%d` is denied", practice.getId())
             );
-            redirAttr.addAttribute("type", "danger");
-            return "redirect:/practice";
         }
+    }
+
+    private String redirectToPractice(RedirectAttributes redirAttr, String msg) {
+        redirAttr.addAttribute("message", msg);
+        redirAttr.addAttribute("type", "danger");
+        return "redirect:/practice";
     }
 
     private Collection<Task> filterTasksByStatus(Collection<Task> tasks, String status) {
@@ -121,32 +136,4 @@ public final class PracticeController {
         return res;
     }
 
-    private List<Task> tasksWithMarkedStatus(Collection<Task> tasks, Practice practice, User user) {
-        final List<Task> ctasks = new ArrayList<>(tasks);
-        final Optional<List<Submission>> subms;
-        subms = submRepo.findByUserAndPractice(user, practice);
-        if (subms.isPresent()) {
-            final Map<Long, Submission> submsMap = subms.get().stream()
-                .collect(
-                    Collectors.toMap(
-                        item -> item.getTask().getId(),
-                        Function.identity(),
-                        (dupl1, dupl2) -> dupl2
-                    )
-                );
-            ctasks.stream()
-                .filter(
-                    task -> submsMap.containsKey(task.getId())
-                ).forEach(
-                task -> {
-                    if (submsMap.get(task.getId()).isCorrect()) {
-                        task.setState(Task.Status.CORRECT_SOLVED);
-                    } else {
-                        task.setState(Task.Status.WRONG_SOLVED);
-                    }
-                }
-            );
-        }
-        return ctasks;
-    }
 }

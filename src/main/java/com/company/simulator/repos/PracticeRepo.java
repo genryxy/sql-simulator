@@ -35,10 +35,17 @@ public interface PracticeRepo extends CrudRepository<Practice, Long> {
         nativeQuery = true)
     Optional<List<Practice>> findAllPracticeInProcess(Long authorId, LocalDateTime dateTime);
 
-    List<Practice> findAllByIdIsNot(Long id);
+    @Query(
+        value = "SELECT * FROM practice p WHERE p.id IN ( " +
+                "SELECT pt.practice_id FROM practice_x_team pt " +
+                "JOIN student s ON pt.team_id = s.team_id " +
+                "WHERE s.user_id = ?1) and p.id != ?2",
+        nativeQuery = true
+    )
+    Optional<List<Practice>> findAllForUserExcept(Long userId, Long practiceId);
 
     @Query(
-        value = "SELECT date_end, after_deadline FROM practice_deadlines where practice_id = ?1",
+        value = "SELECT date_end FROM practice_deadlines where practice_id = ?1",
         nativeQuery = true)
     LocalDateTime getDeadlineByPracticeId(Long practiceId);
 
