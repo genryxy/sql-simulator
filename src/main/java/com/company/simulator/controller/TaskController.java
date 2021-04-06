@@ -1,9 +1,11 @@
 package com.company.simulator.controller;
 
+import com.company.simulator.access.Access;
 import com.company.simulator.model.Practice;
 import com.company.simulator.model.Submission;
 import com.company.simulator.model.Task;
 import com.company.simulator.model.User;
+import com.company.simulator.repos.StudentRepo;
 import com.company.simulator.repos.SubmissionRepo;
 import com.company.simulator.sql.SqlTransaction;
 import java.util.ArrayList;
@@ -25,6 +27,9 @@ public class TaskController {
     @Autowired
     private SqlTransaction sqlTransaction;
 
+    @Autowired
+    private StudentRepo studentRepo;
+
     @GetMapping("practice/{practice}/task/{task}")
     public String taskById(
         @AuthenticationPrincipal User user,
@@ -33,17 +38,31 @@ public class TaskController {
         @RequestParam(required = false, name = "sentQuery") String query,
         @RequestParam(required = false) String message,
         @RequestParam(required = false) String type,
+        RedirectAttributes redirAttr,
         Model model
     ) {
-        model.addAttribute("task", task);
-        model.addAttribute("sentQuery", query);
-        model.addAttribute(
-            "submissions",
-            submRepo.findByUserAndPracticeAndTask(user, practice, task).orElseGet(ArrayList::new)
-        );
-        model.addAttribute("message", message);
-        model.addAttribute("type", type);
-        return "practice/taskExecution";
+        if (new Access(user, studentRepo).toPractice(practice)) {
+            model.addAttribute("task", task);
+            model.addAttribute("sentQuery", query);
+            model.addAttribute(
+                "submissions",
+                submRepo.findByUserAndPracticeAndTask(user, practice, task).orElseGet(ArrayList::new)
+            );
+            model.addAttribute("message", message);
+            model.addAttribute("type", type);
+            return "practice/taskExecution";
+        } else {
+            redirAttr.addAttribute(
+                "message",
+                String.format(
+                    "Access to task `%d` from practice `%d` is denied",
+                    task.getId(),
+                    practice.getId()
+                )
+            );
+            redirAttr.addAttribute("type", "danger");
+            return "redirect:/practice";
+        }
     }
 
     @PostMapping("practice/{practice}/task/{task}")
