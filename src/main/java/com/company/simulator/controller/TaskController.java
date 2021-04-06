@@ -1,6 +1,7 @@
 package com.company.simulator.controller;
 
 import com.company.simulator.access.AccessStudent;
+import com.company.simulator.exception.AccessDeniedException;
 import com.company.simulator.model.Practice;
 import com.company.simulator.model.Submission;
 import com.company.simulator.model.Task;
@@ -38,7 +39,6 @@ public class TaskController {
         @RequestParam(required = false, name = "sentQuery") String query,
         @RequestParam(required = false) String message,
         @RequestParam(required = false) String type,
-        RedirectAttributes redirAttr,
         Model model
     ) {
         if (new AccessStudent(user, studentRepo).toPractice(practice)) {
@@ -51,18 +51,14 @@ public class TaskController {
             model.addAttribute("message", message);
             model.addAttribute("type", type);
             return "practice/taskExecution";
-        } else {
-            redirAttr.addAttribute(
-                "message",
+        }
+            throw new AccessDeniedException(
                 String.format(
-                    "Access to task `%d` from practice `%d` is denied",
+                    "Access to task id `%d` from practice id `%d` is denied",
                     task.getId(),
                     practice.getId()
                 )
             );
-            redirAttr.addAttribute("type", "danger");
-            return "redirect:/practice";
-        }
     }
 
     @PostMapping("practice/{practice}/task/{task}")
