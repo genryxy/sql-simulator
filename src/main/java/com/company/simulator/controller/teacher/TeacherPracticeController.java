@@ -126,7 +126,7 @@ public class TeacherPracticeController {
     ) {
         LocalDateTime deadline = practiceRepo.getDeadlineByPracticeId(practice.getId());
         model.addAttribute("practice", practice);
-        model.addAttribute("deadLine", deadline);
+        model.addAttribute("deadline", deadline);
         model.addAttribute("message", message);
         model.addAttribute("type", type);
         return "teacher/practiceEdit";
