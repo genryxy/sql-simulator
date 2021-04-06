@@ -47,7 +47,7 @@ public interface PracticeRepo extends CrudRepository<Practice, Long> {
     @Query(
         value = "SELECT date_end FROM practice_deadlines where practice_id = ?1",
         nativeQuery = true)
-    Optional<LocalDateTime> getDeadlineByPracticeId(Long practiceId);
+    LocalDateTime getDeadlineByPracticeId(Long practiceId);
 
     @Modifying
     @Query(

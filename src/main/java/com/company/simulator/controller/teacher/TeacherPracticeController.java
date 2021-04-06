@@ -5,7 +5,6 @@ import com.company.simulator.model.Task;
 import com.company.simulator.model.User;
 import com.company.simulator.repos.PracticeRepo;
 import com.company.simulator.repos.TaskRepo;
-import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
@@ -61,12 +60,10 @@ public class TeacherPracticeController {
         Model model
     ) {
         final List<Task> tasks = new ArrayList<>(practice.getTasks());
-        Optional<LocalDateTime> deadLine = practiceRepo.getDeadlineByPracticeId(practice.getId());
-        if (deadLine.isPresent()) {
-            model.addAttribute("deadLine", deadLine);
-        }
+        LocalDateTime deadLine = practiceRepo.getDeadlineByPracticeId(practice.getId());
         model.addAttribute("tasks", tasks);
         model.addAttribute("practice", practice);
+        model.addAttribute("deadLine", deadLine);
         model.addAttribute("message", message);
         model.addAttribute("type", type);
         return "teacher/practiceInfo";
@@ -127,11 +124,9 @@ public class TeacherPracticeController {
         @RequestParam(required = false) String message,
         @RequestParam(required = false) String type
     ) {
-        Optional<LocalDateTime> deadline = practiceRepo.getDeadlineByPracticeId(practice.getId());
-        if (deadline.isPresent()) {
-            model.addAttribute("deadline", deadline);
-        }
+        LocalDateTime deadline = practiceRepo.getDeadlineByPracticeId(practice.getId());
         model.addAttribute("practice", practice);
+        model.addAttribute("deadLine", deadline);
         model.addAttribute("message", message);
         model.addAttribute("type", type);
         return "teacher/practiceEdit";
@@ -148,7 +143,7 @@ public class TeacherPracticeController {
     ) {
         try {
             practiceRepo.updatePractice(practice.getId(), editedPractice.getName(), editedPractice.getDescription());
-            if (practiceRepo.getDeadlineByPracticeId(practice.getId()).isPresent()) {
+            if (practiceRepo.getDeadlineByPracticeId(practice.getId()) != null) {
                 practiceRepo.updateDeadLineToPractice(practice.getId(), LocalDateTime.of(LocalDate.parse(date), LocalTime.parse(time)), sendingAfterDeadLine != null);
             }
             redirectAttributes.addAttribute("message", "Practice successfully edited");
