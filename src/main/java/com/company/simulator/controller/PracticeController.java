@@ -2,6 +2,7 @@ package com.company.simulator.controller;
 
 import com.company.simulator.access.AccessStudent;
 import com.company.simulator.exception.AccessDeniedException;
+import com.company.simulator.exception.NotFoundException;
 import com.company.simulator.model.Category;
 import com.company.simulator.model.Practice;
 import com.company.simulator.model.Task;
@@ -13,9 +14,11 @@ import com.company.simulator.repos.CategoryRepo;
 import com.company.simulator.repos.PracticeRepo;
 import com.company.simulator.repos.StudentRepo;
 import com.company.simulator.repos.TaskRepo;
+import com.company.simulator.repos.TeamRepo;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -45,26 +48,33 @@ public final class PracticeController {
     @Autowired
     private StudentRepo studentRepo;
 
+    @Autowired
+    private TeamRepo teamRepo;
+
     @GetMapping("/practice")
     public String availablePractices(
         @AuthenticationPrincipal User user,
-        @RequestParam(required = false) Team team,
+        @RequestParam(required = false, name = "team") Long teamId,
         @RequestParam(required = false) String status,
         @RequestParam(required = false) String message,
         @RequestParam(required = false) String type,
         Model model
     ) {
         final List<Practice> practices;
-        if (team == null) {
+        if (teamId == null) {
             practices = practiceRepo.findAllForUserExcept(user.getId(), Practice.COMMON_POOL)
                 .orElseGet(ArrayList::new);
         } else {
-            if (!new AccessStudent(user, studentRepo).toTeam(team)) {
+            final Optional<Team> team = teamRepo.findById(teamId);
+            if (team.isEmpty()) {
+                throw new NotFoundException("There is no such team");
+            }
+            if (!new AccessStudent(user, studentRepo).toTeam(team.get())) {
                 throw new AccessDeniedException(
-                    String.format("Access to practices for team id `%d` is denied", team.getId())
+                    String.format("Access to practices for team id `%d` is denied", teamId)
                 );
             }
-            practices = team.getPractices().stream()
+            practices = team.get().getPractices().stream()
                 .filter(prac -> !prac.getId().equals(Practice.COMMON_POOL))
                 .collect(Collectors.toList());
         }
@@ -84,6 +94,9 @@ public final class PracticeController {
         @RequestParam(required = false) String type,
         Model model
     ) {
+        if (practice == null) {
+            throw new NotFoundException("There is no such practice");
+        }
         if (new AccessStudent(user, studentRepo).toPractice(practice)) {
             final Collection<Task> tasks;
             model.addAttribute("categories", categoryRepo.findAll());
