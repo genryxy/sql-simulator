@@ -1,6 +1,6 @@
 package com.company.simulator.controller;
 
-import com.company.simulator.access.Access;
+import com.company.simulator.access.AccessStudent;
 import com.company.simulator.model.Practice;
 import com.company.simulator.model.Submission;
 import com.company.simulator.model.Task;
@@ -41,7 +41,7 @@ public class TaskController {
         RedirectAttributes redirAttr,
         Model model
     ) {
-        if (new Access(user, studentRepo).toPractice(practice)) {
+        if (new AccessStudent(user, studentRepo).toPractice(practice)) {
             model.addAttribute("task", task);
             model.addAttribute("sentQuery", query);
             model.addAttribute(
