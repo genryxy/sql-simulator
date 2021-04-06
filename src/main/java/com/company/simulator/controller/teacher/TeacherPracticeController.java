@@ -111,7 +111,7 @@ public class TeacherPracticeController {
                     taskRepo.addTaskToPractice(practice.getId(), taskId);
                 }
             }
-            redirectAttributes.addAttribute("message", "Practice successfully edited");
+            redirectAttributes.addAttribute("message", "Practice successfully created");
             redirectAttributes.addAttribute("type", "success");
             return ("redirect:/teacher/practice");
         } catch (NullPointerException e) {
