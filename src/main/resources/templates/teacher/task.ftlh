@@ -7,6 +7,7 @@
             <button type="submit" class="btn btn-primary ml-2">Create new Task</button>
         </form>
     </div>
+    <#include "../parts/alertMessage.ftlh"/>
     <div>
         <#list tasks as task>
             <div class="list-group">

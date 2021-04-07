@@ -1,6 +1,7 @@
 <#import "common.ftlh" as c>
 
 <@c.page>
+    <#include "../parts/alertMessage.ftlh"/>
     <form method="get" action="/teacher/practice/create">
         <button type="submit" class="btn btn-primary ml-2">Create new practice</button>
     </form>

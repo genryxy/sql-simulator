@@ -2,6 +2,7 @@
 <#include "../parts/security.ftlh">
 
 <@c.page>
+    <#include "../parts/alertMessage.ftlh"/>
     <div class="container" xmlns="http://www.w3.org/1999/html">
         <div class="row">
             <div class="col-sm">
@@ -15,8 +16,8 @@
                             </div>
                             <form action="/teacher/team/assign" method="post">
                                 <input type="hidden" name="_csrf" value="${_csrf.token}">
-                                <input type="hidden" name="practiceId" value="${practiceId}">
-                                <input type="hidden" name="teamId" value="${team.id}">
+                                <input type="hidden" name="practice" value="${practice.id}">
+                                <input type="hidden" name="team" value="${team.id}">
                                 <button type="submit" class="btn btn-lg btn-block btn-outline-primary">Assign</button>
                             </form>
                         </div>
@@ -36,8 +37,8 @@
                             </div>
                             <form action="/teacher/team/remove" method="post">
                                 <input type="hidden" name="_csrf" value="${_csrf.token}">
-                                <input type="hidden" name="practiceId" value="${practiceId}">
-                                <input type="hidden" name="teamId" value="${team.id}">
+                                <input type="hidden" name="practice" value="${practice.id}">
+                                <input type="hidden" name="team" value="${team.id}">
                                 <button type="submit" class="btn btn-lg btn-block btn-outline-primary">Remove</button>
                             </form>
                         </div>
@@ -49,7 +50,7 @@
             <div class="col-sm">
                 <h5 class="card-title">DeadLine</h5>
                 <div>
-                    <form action="/teacher/team/${practiceId}/start" method="post">
+                    <form action="/teacher/team/${practice.id}/start" method="post">
                         <div class="form-group">
                             <input type="date" name="date" class="form-control" required>
                         </div>
@@ -62,7 +63,7 @@
                             Solving after deadline
                         </label>
                         <input type="hidden" name="_csrf" value="${_csrf.token}">
-                        <input type="hidden" name="practiceId" value="${practiceId}">
+                        <input type="hidden" name="practiceId" value="${practice.id}">
                         <button type="submit" class="btn btn-lg btn-primary btn-block">Ready!</button>
                     </form>
                 </div>

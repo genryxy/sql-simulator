@@ -35,12 +35,15 @@ public class TeacherPracticeController {
 
     @GetMapping
     public String getPractices(@AuthenticationPrincipal User user,
+                               @RequestParam(required = false) String message,
+                               @RequestParam(required = false) String type,
                                Model model) {
         final List<Practice> practices = practiceRepo.findAllPracticeNotInProcess(user.getId()).orElseGet(ArrayList::new);
-        model.addAttribute("practices", practices);
-
         final List<Practice> practicesInProcess = practiceRepo.findAllPracticeInProcess(user.getId(), LocalDateTime.now()).orElseGet(ArrayList::new);
+        model.addAttribute("practices", practices);
         model.addAttribute("practicesInProcess", practicesInProcess);
+        model.addAttribute("message", message);
+        model.addAttribute("type", type);
         return "teacher/practice";
     }
 
@@ -57,16 +60,29 @@ public class TeacherPracticeController {
         @PathVariable Practice practice,
         @RequestParam(required = false) String message,
         @RequestParam(required = false) String type,
+        RedirectAttributes redirectAttributes,
+        @AuthenticationPrincipal User user,
         Model model
     ) {
-        final List<Task> tasks = new ArrayList<>(practice.getTasks());
-        LocalDateTime deadLine = practiceRepo.getDeadlineByPracticeId(practice.getId());
-        model.addAttribute("tasks", tasks);
-        model.addAttribute("practice", practice);
-        model.addAttribute("deadLine", deadLine);
-        model.addAttribute("message", message);
-        model.addAttribute("type", type);
-        return "teacher/practiceInfo";
+        try {
+            if (user.getId().equals(practice.getAuthorId())) {
+                final List<Task> tasks = new ArrayList<>(practice.getTasks());
+                LocalDateTime deadLine = practiceRepo.getDeadlineByPracticeId(practice.getId());
+                model.addAttribute("tasks", tasks);
+                model.addAttribute("practice", practice);
+                model.addAttribute("deadLine", deadLine);
+                model.addAttribute("message", message);
+                model.addAttribute("type", type);
+                return "teacher/practiceInfo";
+            }
+            redirectAttributes.addAttribute("message", "No Access");
+            redirectAttributes.addAttribute("type", "danger");
+            return "redirect:/teacher/practice";
+        } catch (NullPointerException ex) {
+            redirectAttributes.addAttribute("message", "There is no such practice");
+            redirectAttributes.addAttribute("type", "danger");
+            return "redirect:/teacher/practice";
+        }
     }
 
     @GetMapping("/create")
@@ -95,10 +111,10 @@ public class TeacherPracticeController {
                     taskRepo.addTaskToPractice(practice.getId(), taskId);
                 }
             }
-            redirectAttributes.addAttribute("message", "Practice successfully edited");
+            redirectAttributes.addAttribute("message", "Practice successfully created");
             redirectAttributes.addAttribute("type", "success");
             return ("redirect:/teacher/practice");
-        } catch (NullPointerException e){
+        } catch (NullPointerException e) {
             redirectAttributes.addAttribute("message", "Input all data!");
             redirectAttributes.addAttribute("type", "danger");
             return "redirect:/teacher/practice/create";
@@ -111,48 +127,83 @@ public class TeacherPracticeController {
 
     @PostMapping("/{practice}/remove")
     public String removePractice(
-        @PathVariable Practice practice
+        @PathVariable Practice practice,
+        @AuthenticationPrincipal User user,
+        Model model,
+        RedirectAttributes redirectAttributes
     ) {
-        practiceRepo.delete(practice);
+        if (user.getId().equals(practice.getAuthorId())) {
+            practiceRepo.delete(practice);
+            model.addAttribute("message", "Practice removed");
+            model.addAttribute("type", "success");
+        } else {
+            redirectAttributes.addAttribute("message", "No Access");
+            redirectAttributes.addAttribute("type", "danger");
+        }
         return "redirect:/teacher/practice";
     }
 
     @GetMapping("{practice}/edit")
     public String editPractice(
         @PathVariable Practice practice,
+        @AuthenticationPrincipal User user,
         Model model,
         @RequestParam(required = false) String message,
-        @RequestParam(required = false) String type
+        @RequestParam(required = false) String type,
+        RedirectAttributes redirectAttributes
     ) {
-        LocalDateTime deadline = practiceRepo.getDeadlineByPracticeId(practice.getId());
-        model.addAttribute("practice", practice);
-        model.addAttribute("deadline", deadline);
-        model.addAttribute("message", message);
-        model.addAttribute("type", type);
-        return "teacher/practiceEdit";
+        try {
+            if (user.getId().equals(practice.getAuthorId())) {
+                LocalDateTime deadline = practiceRepo.getDeadlineByPracticeId(practice.getId());
+                model.addAttribute("practice", practice);
+                model.addAttribute("deadline", deadline);
+                model.addAttribute("message", message);
+                model.addAttribute("type", type);
+                return "teacher/practiceEdit";
+            }
+            redirectAttributes.addAttribute("message", "No Access");
+            redirectAttributes.addAttribute("type", "danger");
+            return "redirect:/teacher/practice";
+        } catch (NullPointerException ex) {
+            redirectAttributes.addAttribute("message", "There is no such practice");
+            redirectAttributes.addAttribute("type", "danger");
+            return "redirect:/teacher/practice";
+        }
     }
 
     @PostMapping("{practice}/edit")
     public String saveEditTask(
         @PathVariable Practice practice,
+        @AuthenticationPrincipal User user,
         @ModelAttribute Practice editedPractice,
         @RequestParam(required = false) String date,
         @RequestParam(required = false) String time,
         @RequestParam(required = false) Boolean sendingAfterDeadLine,
         RedirectAttributes redirectAttributes
     ) {
-        try {
-            practiceRepo.updatePractice(practice.getId(), editedPractice.getName(), editedPractice.getDescription());
-            if (practiceRepo.getDeadlineByPracticeId(practice.getId()) != null) {
-                practiceRepo.updateDeadLineToPractice(practice.getId(), LocalDateTime.of(LocalDate.parse(date), LocalTime.parse(time)), sendingAfterDeadLine != null);
+        if (user.getId().equals(practice.getAuthorId())) {
+            try {
+                if (practiceRepo.getDeadlineByPracticeId(practice.getId()) != null) {
+                    LocalDateTime newTimestamp = LocalDateTime.of(LocalDate.parse(date), LocalTime.parse(time));
+                    if (newTimestamp.isBefore(LocalDateTime.now())) {
+                        redirectAttributes.addAttribute("message", "Incorrect Deadline");
+                        redirectAttributes.addAttribute("type", "danger");
+                        return String.format("redirect:/teacher/practice/%d/edit", practice.getId());
+                    }
+                    practiceRepo.updateDeadLineToPractice(practice.getId(), newTimestamp, sendingAfterDeadLine != null);
+                }
+                practiceRepo.updatePractice(practice.getId(), editedPractice.getName(), editedPractice.getDescription());
+                redirectAttributes.addAttribute("message", "Practice successfully edited");
+                redirectAttributes.addAttribute("type", "success");
+                return String.format("redirect:/teacher/practice/%d/info", practice.getId());
+            } catch (NullPointerException e) {
+                redirectAttributes.addAttribute("message", e.getMessage());
+                redirectAttributes.addAttribute("type", "danger");
+                return String.format("redirect:/teacher/practice/%d/edit", practice.getId());
             }
-            redirectAttributes.addAttribute("message", "Practice successfully edited");
-            redirectAttributes.addAttribute("type", "success");
-            return String.format("redirect:/teacher/practice/%d/info", practice.getId());
-        } catch (NullPointerException e) {
-            redirectAttributes.addAttribute("message", e.getMessage());
-            redirectAttributes.addAttribute("type", "danger");
-            return String.format("redirect:/teacher/practice/%d/edit", practice.getId());
         }
+        redirectAttributes.addAttribute("message", "No Access");
+        redirectAttributes.addAttribute("type", "danger");
+        return "redirect:/teacher/practice";
     }
 }

@@ -2,6 +2,7 @@
 <#include "../parts/security.ftlh">
 
 <@c.page>
+    <#include "../parts/alertMessage.ftlh"/>
     <div class="form-group col-md-6">
         <form action="/teacher/team/create" method="get">
             <button type="submit" class="btn btn-primary ml-2">Create new Team</button>
@@ -11,7 +12,7 @@
         <#list teams as team>
             <div class="list-group">
                 <a href="/teacher/team/${team.id}/info" class="list-group-item list-group-item-action" style="margin-top: 1%">
-                    Task name: ${team.name} ${team.invitation}
+                    <h6>${team.name}</h6> ${team.invitation}
                 </a>
             </div>
         <#else>
