@@ -14,6 +14,8 @@ public interface SubmissionRepo extends CrudRepository<Submission, Long> {
 
     Optional<List<Submission>> findByUserAndPractice(User user, Practice practice);
 
+    Optional<List<Submission>> findByPracticeAndTask(Practice practice, Task task);
+
     Optional<List<Submission>> findByUser(User user);
 
     Optional<List<Submission>> findByPractice(Practice practice);
