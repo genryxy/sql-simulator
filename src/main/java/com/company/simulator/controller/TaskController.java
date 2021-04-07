@@ -2,6 +2,7 @@ package com.company.simulator.controller;
 
 import com.company.simulator.access.AccessStudent;
 import com.company.simulator.exception.AccessDeniedException;
+import com.company.simulator.exception.NotFoundException;
 import com.company.simulator.model.Practice;
 import com.company.simulator.model.Submission;
 import com.company.simulator.model.Task;
@@ -41,6 +42,12 @@ public class TaskController {
         @RequestParam(required = false) String type,
         Model model
     ) {
+        if (practice == null) {
+            throw new NotFoundException("There is no such practice");
+        }
+        if (task == null) {
+            throw new NotFoundException("There is no such task");
+        }
         if (new AccessStudent(user, studentRepo).toPractice(practice)) {
             model.addAttribute("task", task);
             model.addAttribute("sentQuery", query);

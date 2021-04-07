@@ -1,5 +1,6 @@
 package com.company.simulator.controller;
 
+import com.company.simulator.exception.NotFoundException;
 import com.company.simulator.model.Role;
 import com.company.simulator.model.User;
 import com.company.simulator.service.UserService;
@@ -33,7 +34,9 @@ public class UserController {
     @PreAuthorize("hasAuthority('ADMIN')")
     @GetMapping("{user}")
     public String userEditForm(@PathVariable User user, Model model) {
-        // Convert implicitly long to user by fetching from db
+        if (user == null) {
+            throw new NotFoundException("There is no such user");
+        }
         model.addAttribute("user", user);
         model.addAttribute("roles", Role.values());
         return "userEdit";

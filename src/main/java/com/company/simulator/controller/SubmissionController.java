@@ -1,5 +1,6 @@
 package com.company.simulator.controller;
 
+import com.company.simulator.exception.NotFoundException;
 import com.company.simulator.model.Submission;
 import com.company.simulator.model.User;
 import com.company.simulator.repos.SubmissionRepo;
@@ -42,6 +43,9 @@ public class SubmissionController {
         RedirectAttributes redirAttr,
         Model model
     ) {
+        if (subm == null) {
+            throw new NotFoundException("There is no such submission");
+        }
         if (subm.getUser().equals(user)) {
             model.addAttribute("submission", subm);
             return "result/submissionInfo";

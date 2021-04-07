@@ -58,6 +58,9 @@ public class RegistrationController {
 
     @GetMapping("/activate/{code}")
     public String activate(Model model, @PathVariable String code) {
+        if (code == null) {
+            throw new IllegalStateException("Activation should be specified");
+        }
         final boolean isActivated = userService.activateUserAndAddToCommonTeam(code);
         if (isActivated) {
             model.addAttribute("messageType", "success");
