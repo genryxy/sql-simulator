@@ -30,6 +30,9 @@
                     <div class="dropdown-menu" aria-labelledby="navbarDropdown">
                         <a class="dropdown-item" href="/">Student</a>
                         <a class="dropdown-item" href="/teacher/practice">Teacher</a>
+                        <#if isAdmin>
+                            <a class="dropdown-item" href="/admin/user">Admin</a>
+                        </#if>
                     </div>
                 </li>
             </#if>
