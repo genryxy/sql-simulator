@@ -3,6 +3,10 @@
 
 <@c.page>
 
+    <form method="get" action="/teacher/statistic/${practice.id}/table" style="margin-left: 1%">
+        <button type="submit" class="btn btn-primary my-2">Table</button>
+    </form>
+
     <div class="row">
         <div class="col-sm">
             <h5>By Tasks</h5>
