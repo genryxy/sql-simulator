@@ -92,7 +92,7 @@ public class TeacherStatisticController {
                 for(Task task: practice.getTasks()) {
                     totalSum += task.getPoints();
                 }
-                students.forEach(student -> resultsList.add(new Result(student, submissionRepo.findPointsByUserAndPractice(practice.getId(), student.getId().getUserId()))));
+                students.forEach(student -> resultsList.add(new Result(student, submissionRepo.findPointsByPracticeAndUser(practice.getId(), student.getId().getUserId()))));
                 model.addAttribute("resultsList", resultsList);
                 model.addAttribute("totalSum", totalSum);
                 return "teacher/studentsByTeamStatistic";

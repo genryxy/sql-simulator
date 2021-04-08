@@ -8,7 +8,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 public class Result {
-    Student student;
-    int points;
+    private Student student;
+    private int points;
 }
 

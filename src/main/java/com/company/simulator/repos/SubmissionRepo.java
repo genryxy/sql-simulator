@@ -29,6 +29,6 @@ public interface SubmissionRepo extends CrudRepository<Submission, Long> {
             "    )\n" +
             "select coalesce(sum(points), 0) from (select points from tas) as res",
         nativeQuery = true)
-    int findPointsByUserAndPractice(Long practiceId, Long userId);
+    int findPointsByPracticeAndUser(Long practiceId, Long userId);
 
 }
