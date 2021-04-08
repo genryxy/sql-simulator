@@ -84,6 +84,9 @@ public class TeacherTaskController {
                           RedirectAttributes redirectAttributes
     ) {
         try {
+            if (task.getIsPrivate() == null) {
+                task.setIsPrivate(false);
+            }
             sqlTransaction.validationTeacherQuery(task.getDdlScript(), task.getCorrectQuery());
             taskRepo.save(task);
             redirectAttributes.addAttribute("message", "Task successfully created");
@@ -121,7 +124,6 @@ public class TeacherTaskController {
             redirectAttributes.addAttribute("type", "danger");
             return "redirect:/teacher/task";
         }
-
     }
 
     @PostMapping("task/{task}/edit")
