@@ -26,7 +26,7 @@
                 Creator: <b>${team.author.username}</b>
             </div>
         <#else>
-            No messages
+            No teams
         </#list>
     </div>
 </@c.page>
