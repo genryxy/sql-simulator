@@ -1,6 +1,7 @@
 package com.company.simulator.controller.teacher;
 
 import com.company.simulator.model.Practice;
+import com.company.simulator.model.Result;
 import com.company.simulator.model.Student;
 import com.company.simulator.model.Submission;
 import com.company.simulator.model.Task;
@@ -77,16 +78,23 @@ public class TeacherStatisticController {
 
     @GetMapping("/{practice}/team/{team}/student")
     public String getStudentByTeam(@PathVariable Practice practice,
-                                    @PathVariable Team team,
-                                    @AuthenticationPrincipal User user,
-                                    Model model,
-                                    RedirectAttributes redirectAttributes
+                                   @PathVariable Team team,
+                                   @AuthenticationPrincipal User user,
+                                   Model model,
+                                   RedirectAttributes redirectAttributes
 
     ) {
         try {
             if (user.getId().equals(practice.getAuthorId()) && user.getId().equals(team.getAuthor().getId())) {
                 final Set<Student> students = team.getStudents();
-                model.addAttribute("students", students);
+                List<Result> resultsList = new ArrayList<>();
+                int totalSum = 0;
+                for(Task task: practice.getTasks()) {
+                    totalSum += task.getPoints();
+                }
+                students.forEach(student -> resultsList.add(new Result(student, submissionRepo.findPointsByUserAndPractice(practice.getId(), student.getId().getUserId()))));
+                model.addAttribute("resultsList", resultsList);
+                model.addAttribute("totalSum", totalSum);
                 return "teacher/studentsByTeamStatistic";
             }
             redirectAttributes.addAttribute("message", "No Access");

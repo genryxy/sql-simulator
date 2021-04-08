@@ -4,11 +4,12 @@
 
 <@c.page>
     <#include "../parts/alertMessage.ftlh"/>
-        <#list students as student>
+        <#list resultsList as result>
             <div class="list-group">
-                <a href="/teacher/statistic/${practice.id}/team/${team.id}/student/${student.user.id}" class="list-group-item list-group-item-action">
-                    <h6>${student.user.username}</h6>
-                    ${student.user.email}
+                <a href="/teacher/statistic/${practice.id}/team/${team.id}/student/${result.student.user.id}" class="list-group-item list-group-item-action">
+                    <h6>${result.student.user.username}</h6>
+                    ${result.student.user.email}
+                    <h6>Result: ${result.points} / ${totalSum}</h6>
                 </a>
             </div>
         <#else>
