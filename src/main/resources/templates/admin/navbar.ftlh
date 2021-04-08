@@ -1,5 +1,5 @@
-<#include "security.ftlh">
-<#import "authentication.ftlh" as auth>
+<#include "../parts/security.ftlh">
+<#import "../parts/authentication.ftlh" as auth>
 
 <nav class="navbar nav-tabs navbar-expand-lg navbar-light bg-light">
     <a class="navbar-brand" href="/">Sql-simulator</a>
@@ -15,36 +15,20 @@
             </li>
             <#if user?? && name!="unknown">
                 <li class="nav-item">
-                    <a class="nav-link" href="/main">Messages</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="/user-messages/${currentUserId}">My messages</a>
-                </li>
-                <li class="nav-item">
                     <a class="nav-link" href="/user/profile">Profile</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" href="/practice/1">Task</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="/practice">Practice</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="/student/team">Team</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="/result">Result</a>
+                    <a class="nav-link" href="/user">User list</a>
                 </li>
                 <li class="nav-item dropdown">
-                    <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                    <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button"
+                       data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                         Role
                     </a>
                     <div class="dropdown-menu" aria-labelledby="navbarDropdown">
                         <a class="dropdown-item" href="/">Student</a>
                         <a class="dropdown-item" href="/teacher/practice">Teacher</a>
-                        <#if isAdmin>
-                            <a class="dropdown-item" href="/admin/user">Admin</a>
-                        </#if>
+                        <a class="dropdown-item" href="/admin/user">Admin</a>
                     </div>
                 </li>
             </#if>
