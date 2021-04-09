@@ -58,10 +58,12 @@
             </div>
         </#if>
         <input type="hidden" name="_csrf" value="${_csrf.token}">
-        <#if !isRegisterForm>
-            <a href="/registration">Add new user</a>
-        </#if>
-        <button class="btn btn-primary" type="submit">
+        <div class="row">
+            <#if !isRegisterForm>
+                <a class="nav-link ml-5" href="/registration">Create an account</a>
+            </#if>
+        </div>
+        <button class="btn btn-primary ml-5 mt-2" type="submit">
             <#if isRegisterForm>Create<#else>Sign In</#if>
         </button>
     </form>

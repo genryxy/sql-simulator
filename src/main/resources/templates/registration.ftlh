@@ -2,7 +2,7 @@
 <#import "parts/authentication.ftlh" as auth>
 
 <@c.page>
-    <div class="mb-1"> Add new user </div>
+    <div class="text-dark mb-1 h5"> Create an account </div>
     <#if message??>
        ${message!}
     </#if>
