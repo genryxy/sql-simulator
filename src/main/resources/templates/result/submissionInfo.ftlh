@@ -4,9 +4,9 @@
 <@c.page>
     <#include "../parts/alertMessage.ftlh"/>
     <div class="text-dark mt-5">
-        <h5>Practice: ${submission.practice.name}</h5>
-        <h5 class="mt-2">Task: ${submission.task.name}</h5>
-        <h5 class="mt-2">Send date: ${submission.sendDate}</h5>
+        <h6>Practice: ${submission.practice.name}</h6>
+        <h6 class="mt-2">Task: ${submission.task.name}</h6>
+        <h6 class="mt-2">Send date: ${submission.sendDate}</h6>
         <div class="text-dark mt-2 mb-2">
             ${submission.task.text}
         </div>

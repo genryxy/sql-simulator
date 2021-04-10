@@ -8,7 +8,7 @@
         <form name="task" method="post" action="create" style="width: 100%">
             <div class="form-inline">
                 <input type="hidden" name="_csrf" value="${_csrf.token}">
-                <input type="hidden" name="authorId" value="${currentUserId}">
+                <input type="hidden" name="author" value="${currentUserId}">
                 <textarea rows="1" name="name" placeholder="Name"
                           style="width: 30%"
                           required></textarea>

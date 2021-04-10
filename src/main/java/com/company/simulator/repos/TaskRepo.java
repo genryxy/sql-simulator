@@ -1,6 +1,8 @@
 package com.company.simulator.repos;
 
 import com.company.simulator.model.Task;
+import java.util.List;
+import java.util.Optional;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
@@ -29,6 +31,17 @@ public interface TaskRepo extends CrudRepository<Task, Long> {
                     "WHERE t.category_id=?1 and p.practice_id=?2",
             nativeQuery = true)
     Collection<Task> findAllByCategoryAndPractice(Long category, Long practice);
+
+    @Query(
+        value = "select * from task t " +
+            "   where t.id in ( " +
+            "     select distinct task_id from student s " +
+            "     join practice_x_team pt on pt.team_id = s.team_id " +
+            "     join practice_x_task ptsk on pt.practice_id = ptsk.practice_id " +
+            "     where s.user_id = ?1 )",
+        nativeQuery = true
+    )
+    Optional<List<Task>> findAllForUser(Long userId);
 
     @Modifying
     @Query(

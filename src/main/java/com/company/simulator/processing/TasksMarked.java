@@ -22,6 +22,14 @@ public class TasksMarked {
     @Autowired
     public TasksMarked(SubmissionRepo submRepo) {this.submRepo = submRepo;}
 
+    /**
+     * Marked tasks. If task was solved correct once, it would be marked as `correct`.
+     * If there are not submissions for this task, this task will be marked as `not solved`.
+     * @param tasks Collection of tasks which should be marked
+     * @param practice Practice for which it is necessary to check
+     * @param user User for whom it is necessary to check
+     * @return Collection with marked tasks
+     */
     public List<Task> markedStatus(Collection<Task> tasks, Practice practice, User user) {
         final List<Task> ctasks = new ArrayList<>(tasks);
         final Optional<List<Submission>> subms;
@@ -32,7 +40,12 @@ public class TasksMarked {
                     Collectors.toMap(
                         item -> item.getTask().getId(),
                         Function.identity(),
-                        (dupl1, dupl2) -> dupl2
+                        (dupl1, dupl2) -> {
+                            if (dupl1.isCorrect()) {
+                                return dupl1;
+                            }
+                            return dupl2;
+                        }
                     )
                 );
             ctasks.stream()
@@ -42,7 +55,7 @@ public class TasksMarked {
                 task -> {
                     if (submsMap.get(task.getId()).isCorrect()) {
                         task.setState(Task.Status.CORRECT_SOLVED);
-                    } else {
+                    } else if (!task.getState().equals(Task.Status.CORRECT_SOLVED)) {
                         task.setState(Task.Status.WRONG_SOLVED);
                     }
                 }

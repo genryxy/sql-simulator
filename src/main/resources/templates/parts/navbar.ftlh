@@ -27,7 +27,7 @@
                     <a class="nav-link" href="/student/team">Team</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" href="/result">Result</a>
+                    <a class="nav-link" href="/result/submission">Result</a>
                 </li>
                 <#if isTeacher>
                     <li class="nav-item dropdown">

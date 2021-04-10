@@ -11,7 +11,7 @@
                   required></textarea>
         <textarea class="form-control" rows="2" name="description" placeholder="Description" style="margin-top: 1%"
                   required></textarea>
-        <input type="hidden" name="authorId" value="${currentUserId}">
+        <input type="hidden" name="author" value="${currentUserId}">
         <h6 style="margin-top: 2%">Choose tasks</h6>
         <div>
             <#list tasks as task>

@@ -3,7 +3,10 @@
 
 <@c.page>
     <#include "../parts/alertMessage.ftlh"/>
-    <h5>Task execution</h5>
+    <div class="row">
+        <div class="col-4 h5">Task execution</div>
+        <div class="col-4">Number of attempts for all users: ${correctAttempts}/${totalAttempts}</div>
+    </div>
     <form method="post">
         <div class="container-fluid">
             <div class="row flex-nowrap">
