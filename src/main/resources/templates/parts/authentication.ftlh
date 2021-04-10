@@ -56,6 +56,18 @@
                     </div>
                 </#if>
             </div>
+            <div class="form-group row">
+                <label class="col-sm-2 col-form-label"> Role:</label>
+                <div class="btn-group mt-2" role="group">
+                    <input type="radio" class="btn-check mr-2" name="btnradio" id="student" value="student"
+                           autocomplete="off" checked>
+                    <label class="text-dark mr-5" for="student">Student</label>
+
+                    <input type="radio" class="btn-check ml-5" name="btnradio" id="teacher" value="teacher"
+                           autocomplete="off">
+                    <label class="text-dark ml-2" for="teacher">Teacher</label>
+                </div>
+            </div>
         </#if>
         <input type="hidden" name="_csrf" value="${_csrf.token}">
         <div class="row">

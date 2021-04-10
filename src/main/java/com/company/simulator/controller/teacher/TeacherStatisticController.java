@@ -9,6 +9,7 @@ import com.company.simulator.model.Team;
 import com.company.simulator.model.User;
 import com.company.simulator.repos.SubmissionRepo;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -22,6 +23,7 @@ import java.util.List;
 import java.util.Set;
 
 @Controller
+@PreAuthorize("hasAuthority('TEACHER')")
 @RequestMapping("/teacher/statistic")
 public class TeacherStatisticController {
 

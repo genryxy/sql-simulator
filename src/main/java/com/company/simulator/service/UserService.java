@@ -49,13 +49,18 @@ public class UserService implements UserDetailsService {
         return user;
     }
 
-    public boolean addUser(User user) {
+    public boolean addUser(User user, String role) {
         final User userFromDb = userRepo.findByUsername(user.getUsername());
         if (userFromDb != null) {
             return false;
         }
+        if (role.equalsIgnoreCase(Role.USER.name())) {
+            user.setRoles(Collections.singleton(Role.USER));
+        }
+        if (role.equalsIgnoreCase(Role.TEACHER.name())) {
+            user.setRoles(Set.of(Role.USER, Role.TEACHER));
+        }
         user.setActive(false);
-        user.setRoles(Collections.singleton(Role.USER));
         user.setActivationCode(UUID.randomUUID().toString());
         user.setPassword(passwordEncoder.encode(user.getPassword()));
         userRepo.save(user);

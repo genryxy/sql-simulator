@@ -7,6 +7,7 @@ import com.company.simulator.repos.PracticeRepo;
 import com.company.simulator.repos.StudentRepo;
 import com.company.simulator.repos.TeamRepo;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -26,6 +27,7 @@ import java.util.List;
 import java.util.UUID;
 
 @Controller
+@PreAuthorize("hasAuthority('TEACHER')")
 @RequestMapping("/teacher")
 public class TeacherTeamController {
 

@@ -16,19 +16,18 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
 @Controller
+@PreAuthorize("hasAuthority('ADMIN')")
 @RequestMapping("/admin/user")
 public class AdminUsersController {
     @Autowired
     private UserService userService;
 
-    @PreAuthorize("hasAuthority('ADMIN')")
     @GetMapping
     public String userList(Model model) {
         model.addAttribute("users", userService.findAll());
         return "admin/userList";
     }
 
-    @PreAuthorize("hasAuthority('ADMIN')")
     @GetMapping("{user}")
     public String userEditForm(@PathVariable User user, Model model) {
         if (user == null) {
@@ -39,7 +38,6 @@ public class AdminUsersController {
         return "admin/userEdit";
     }
 
-    @PreAuthorize("hasAuthority('ADMIN')")
     @PostMapping
     public String userSave(
         @RequestParam String username,
