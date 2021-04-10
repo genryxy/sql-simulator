@@ -29,6 +29,7 @@ public class RegistrationController {
     @PostMapping("/registration")
     public String addUser(
         @RequestParam("passwordConfirm") String passwordConfirm,
+        @RequestParam("btnradio") String role,
         @Valid User user,
         BindingResult bindingResult,
         Model model
@@ -49,7 +50,7 @@ public class RegistrationController {
             model.mergeAttributes(errors);
             return "registration";
         }
-        if (!userService.addUser(user)) {
+        if (!userService.addUser(user, role)) {
             model.addAttribute("usernameError", "User exists!");
             return "registration";
         }
