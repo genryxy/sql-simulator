@@ -35,7 +35,7 @@ public class TeacherStatisticController {
                                RedirectAttributes redirectAttributes
     ) {
         try {
-            if (user.getId().equals(practice.getAuthorId())) {
+            if (user.equals(practice.getAuthor())) {
                 final Set<Task> tasks = practice.getTasks();
                 final Set<Team> teams = practice.getTeams();
                 model.addAttribute("tasks", tasks);
@@ -61,7 +61,7 @@ public class TeacherStatisticController {
                                      RedirectAttributes redirectAttributes
     ) {
         try {
-            if (user.getId().equals(practice.getAuthorId()) && user.getId().equals(task.getAuthorId())) {
+            if (user.equals(practice.getAuthor()) && user.equals(task.getAuthor())) {
                 final List<Submission> submissions = submissionRepo.findByPracticeAndTask(practice, task).orElseGet(ArrayList::new);
                 model.addAttribute("submissions", submissions);
                 return "teacher/statisticByTask";
@@ -85,7 +85,7 @@ public class TeacherStatisticController {
 
     ) {
         try {
-            if (user.getId().equals(practice.getAuthorId()) && user.getId().equals(team.getAuthor().getId())) {
+            if (user.equals(practice.getAuthor()) && user.equals(team.getAuthor())) {
                 final Set<Student> students = team.getStudents();
                 List<Result> resultsList = new ArrayList<>();
                 int totalSum = 0;
@@ -116,7 +116,7 @@ public class TeacherStatisticController {
                                     RedirectAttributes redirectAttributes
     ) {
         try {
-            if (user.getId().equals(practice.getAuthorId()) && user.getId().equals(team.getAuthor().getId())) {
+            if (user.equals(practice.getAuthor()) && user.equals(team.getAuthor())) {
                 final List<Submission> submissions = submissionRepo.findByUserAndPractice(student, practice).orElseGet(ArrayList::new);
                 model.addAttribute("submissions", submissions);
                 return "teacher/statisticByStudent";
@@ -141,7 +141,7 @@ public class TeacherStatisticController {
                                          RedirectAttributes redirectAttributes
     ) {
         try {
-            if (user.getId().equals(practice.getAuthorId()) && user.getId().equals(team.getAuthor().getId())) {
+            if (user.equals(practice.getAuthor()) && user.equals(team.getAuthor())) {
                 int countOfLength = submission.getQuery().split("\n").length;
                 model.addAttribute("countOfLength", countOfLength);
                 model.addAttribute("submission", submission);

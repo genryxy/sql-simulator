@@ -52,7 +52,7 @@ public class TeacherTaskController {
                           Model model
     ) {
         try {
-            if (user.getId().equals(task.getAuthorId())) {
+            if (user.equals(task.getAuthor())) {
                 model.addAttribute("task", task);
                 model.addAttribute("message", message);
                 model.addAttribute("type", type);
@@ -109,7 +109,7 @@ public class TeacherTaskController {
         RedirectAttributes redirectAttributes
     ) {
         try {
-            if (user.getId().equals(task.getAuthorId())) {
+            if (user.equals(task.getAuthor())) {
                 model.addAttribute("categories", categoryRepo.findAll());
                 model.addAttribute("task", task);
                 model.addAttribute("message", message);
@@ -133,11 +133,11 @@ public class TeacherTaskController {
         @ModelAttribute Task editedTask,
         RedirectAttributes redirectAttributes
     ) {
-        if (user.getId().equals(task.getAuthorId())) {
+        if (user.equals(task.getAuthor())) {
             try {
                 sqlTransaction.validationTeacherQuery(editedTask.getDdlScript(), editedTask.getCorrectQuery());
                 taskRepo.updateTask(task.getId(),
-                                    editedTask.getAuthorId(),
+                                    editedTask.getAuthor().getId(),
                                     editedTask.getName(),
                                     editedTask.getText(),
                                     editedTask.getDdlScript(),
@@ -165,7 +165,7 @@ public class TeacherTaskController {
         @AuthenticationPrincipal User user,
         RedirectAttributes redirectAttributes
     ) {
-        if (user.getId().equals(task.getAuthorId())) {
+        if (user.equals(task.getAuthor())) {
             taskRepo.delete(task);
             return "redirect:/teacher/task";
         }

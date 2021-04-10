@@ -1,4 +1,4 @@
-<#import "../parts/common.ftlh" as c>
+<#import "common.ftlh" as c>
 
 <@c.page>
     <p class="text-dark h5 mb-4">User editor</p>

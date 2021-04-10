@@ -1,22 +1,24 @@
 package com.company.simulator.model;
 
+import java.io.Serializable;
+import java.util.Set;
+import javax.persistence.CollectionTable;
+import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
+import javax.persistence.ManyToMany;
+import javax.persistence.ManyToOne;
+import javax.persistence.Table;
+import javax.validation.constraints.NotBlank;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
-
-import java.util.Set;
-import javax.persistence.CollectionTable;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToMany;
-import javax.persistence.Table;
-import javax.validation.constraints.NotBlank;
 
 @Entity
 @NoArgsConstructor
@@ -25,7 +27,7 @@ import javax.validation.constraints.NotBlank;
 @Data
 @ToString(of = {"id", "name"})
 @Table(name = "practice")
-public class Practice {
+public class Practice implements Serializable {
     /**
      * ID of practice which is included common tasks. It is a common pool.
      * All students are available to solve tasks from this one.
@@ -42,8 +44,8 @@ public class Practice {
     @NotBlank(message = "Practice description cannot be empty")
     private String description;
 
-    @CollectionTable(name = "person", joinColumns = @JoinColumn(name = "user_id"))
-    private Long authorId;
+    @ManyToOne(fetch = FetchType.EAGER)
+    private User author;
 
     @ManyToMany
     @JoinTable(

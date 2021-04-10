@@ -2,7 +2,6 @@ package com.company.simulator.model;
 
 import java.io.Serializable;
 import java.util.Set;
-import javax.persistence.CollectionTable;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
@@ -33,8 +32,8 @@ public class Task implements Serializable {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @CollectionTable(name = "person", joinColumns = @JoinColumn(name = "user_id"))
-    private Long authorId;
+    @ManyToOne(fetch = FetchType.EAGER)
+    private User author;
 
     private String name;
 

@@ -1,5 +1,6 @@
-package com.company.simulator.controller;
+package com.company.simulator.controller.result;
 
+import com.company.simulator.exception.AccessDeniedException;
 import com.company.simulator.exception.NotFoundException;
 import com.company.simulator.model.Submission;
 import com.company.simulator.model.User;
@@ -14,15 +15,14 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 @Controller
-@RequestMapping("submission")
-public class SubmissionController {
+@RequestMapping("/result/submission")
+public class ResultSubmissionController {
     @Autowired
     private SubmissionRepo submRepo;
 
-    @GetMapping("")
+    @GetMapping
     public String allSubmissions(
         @AuthenticationPrincipal User user,
         @RequestParam(required = false) String message,
@@ -33,29 +33,24 @@ public class SubmissionController {
         model.addAttribute("submissions", subms);
         model.addAttribute("message", message);
         model.addAttribute("type", type);
-        return "result/submission";
+        return "result/resultSubmission";
     }
 
     @GetMapping("{subm}")
     public String submissionById(
         @AuthenticationPrincipal User user,
         @PathVariable Submission subm,
-        RedirectAttributes redirAttr,
         Model model
     ) {
         if (subm == null) {
             throw new NotFoundException("There is no such submission");
         }
-        if (subm.getUser().equals(user)) {
-            model.addAttribute("submission", subm);
-            return "result/submissionInfo";
-        } else {
-            redirAttr.addAttribute(
-                "message",
+        if (!subm.getUser().equals(user)) {
+            throw new AccessDeniedException(
                 String.format("Access to submission `%d` denied", subm.getId())
             );
-            redirAttr.addAttribute("type", "danger");
-            return "redirect:/submission";
         }
+        model.addAttribute("submission", subm);
+        return "result/submissionInfo";
     }
 }

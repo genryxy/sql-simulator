@@ -36,11 +36,6 @@ public class Team {
 
     private String invitation;
 
-    /**
-     * @TODO: Here should be an embeddable class because we need to
-     * specify start and end dates in a separate table according to our
-     * entity relationship diagram.
-     */
     @ManyToMany(mappedBy = "teams")
     private Set<Practice> practices;
 

@@ -11,6 +11,7 @@ import com.company.simulator.repos.StudentRepo;
 import com.company.simulator.repos.SubmissionRepo;
 import com.company.simulator.sql.SqlTransaction;
 import java.util.ArrayList;
+import java.util.Map;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
@@ -55,6 +56,9 @@ public class TaskController {
                 "submissions",
                 submRepo.findByUserAndPracticeAndTask(user, practice, task).orElseGet(ArrayList::new)
             );
+            final Map<String, Integer> attempts = submRepo.findNumberAttemptsForTask(task.getId());
+            model.addAttribute("totalAttempts", attempts.get("total"));
+            model.addAttribute("correctAttempts", attempts.get("correct"));
             model.addAttribute("message", message);
             model.addAttribute("type", type);
             return "practice/taskExecution";
