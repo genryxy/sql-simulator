@@ -45,7 +45,7 @@ public class TeacherTeamController {
                                 @RequestParam(required = false) String message,
                                 @RequestParam(required = false) String type,
                                 @AuthenticationPrincipal User user) {
-        final List<Team> teamsInPractice = teamRepo.findTeamsByAuthorIdAndIdNot(user.getId(), 1L).orElseGet(ArrayList::new);
+        final List<Team> teamsInPractice = teamRepo.findTeamsByAuthorIdAndIdNot(user.getId(), Team.COMMON_TEAM).orElseGet(ArrayList::new);
         model.addAttribute("message", message);
         model.addAttribute("type", type);
         model.addAttribute("teams", teamsInPractice);
@@ -61,7 +61,7 @@ public class TeacherTeamController {
                           Model model
     ) {
         try {
-            if (user.equals(team.getAuthor()) && team.getId() != 1) {
+            if (user.equals(team.getAuthor()) && !team.getId().equals(Team.COMMON_TEAM)) {
                 model.addAttribute("team", team);
                 model.addAttribute("message", message);
                 model.addAttribute("type", type);
@@ -88,7 +88,8 @@ public class TeacherTeamController {
         try {
             model.addAttribute("message", message);
             model.addAttribute("type", type);
-            if (user.equals(practice.getAuthor())) {
+            if (user.equals(practice.getAuthor())
+                && !practice.getId().equals(Practice.COMMON_POOL)) {
                 final List<Team> teamsInPractice = teamRepo.findTeamsByPracticesContains(practice).orElseGet(ArrayList::new);
                 final List<Team> allAnotherTeamsByAuthor = teamRepo.findTeamsByPracticesNotContainsAndAuthorId(practice, user.getId()).orElseGet(ArrayList::new);
                 model.addAttribute("teamsInPractice", teamsInPractice);
@@ -146,8 +147,8 @@ public class TeacherTeamController {
     ) {
         if (user.equals(practice.getAuthor())
             && user.equals(team.getAuthor())
-            && team.getId() != 1
-            && practice.getId() != 1
+            && !team.getId().equals(Team.COMMON_TEAM)
+            && !practice.getId().equals(Practice.COMMON_POOL)
         ) {
             teamRepo.throwPracticeToTeam(practice.getId(), team.getId());
             return String.format("redirect:/teacher/team/%d", practice.getId());
@@ -166,7 +167,7 @@ public class TeacherTeamController {
                                 RedirectAttributes redirectAttributes
     ) {
         try {
-            if (user.equals(practice.getAuthor()) && practice.getId() != 1) {
+            if (user.equals(practice.getAuthor()) && !practice.getId().equals(Practice.COMMON_POOL)) {
                 LocalDateTime newTimestamp = LocalDateTime.of(LocalDate.parse(date), LocalTime.parse(time));
                 if (newTimestamp.isBefore(LocalDateTime.now())) {
                     redirectAttributes.addAttribute("message", "Incorrect Deadline");
@@ -198,7 +199,7 @@ public class TeacherTeamController {
         RedirectAttributes redirectAttributes
     ) {
         try {
-            if (user.equals(team.getAuthor()) && team.getId() != 1) {
+            if (user.equals(team.getAuthor()) && !team.getId().equals(Team.COMMON_TEAM)) {
                 model.addAttribute("task", team);
                 model.addAttribute("message", message);
                 model.addAttribute("type", type);
@@ -222,7 +223,7 @@ public class TeacherTeamController {
         @AuthenticationPrincipal User user,
         RedirectAttributes redirectAttributes
     ) {
-        if (user.equals(team.getAuthor()) && team.getId() != 1) {
+        if (user.equals(team.getAuthor()) && !team.getId().equals(Team.COMMON_TEAM)) {
             try {
                 teamRepo.updateTeam(team.getId(),
                                     editedTeam.getName());
@@ -246,7 +247,7 @@ public class TeacherTeamController {
         @AuthenticationPrincipal User user,
         RedirectAttributes redirectAttributes
     ) {
-        if (user.equals(team.getAuthor()) && team.getId() != 1) {
+        if (user.equals(team.getAuthor()) && !team.getId().equals(Team.COMMON_TEAM)) {
             teamRepo.delete(team);
         }
         redirectAttributes.addAttribute("message", "No Access");
@@ -260,7 +261,7 @@ public class TeacherTeamController {
         @PathVariable Team team,
         @AuthenticationPrincipal User user,
         RedirectAttributes redirectAttributes) {
-        if (user.equals(team.getAuthor()) && team.getId() != 1) {
+        if (user.equals(team.getAuthor()) && !team.getId().equals(Team.COMMON_TEAM)) {
             studentRepo.deleteByUserAndTeam(student, team);
             return String.format("redirect:/teacher/team/%d/info", team.getId());
         }

@@ -67,7 +67,7 @@ public class TeacherPracticeController {
         Model model
     ) {
         try {
-            if (user.equals(practice.getAuthor()) && practice.getId() != 1) {
+            if (user.equals(practice.getAuthor()) && !practice.getId().equals(Practice.COMMON_POOL)) {
                 final List<Task> tasks = new ArrayList<>(practice.getTasks());
                 LocalDateTime deadLine = practiceRepo.getDeadlineByPracticeId(practice.getId());
                 model.addAttribute("tasks", tasks);
@@ -134,7 +134,7 @@ public class TeacherPracticeController {
         Model model,
         RedirectAttributes redirectAttributes
     ) {
-        if (user.equals(practice.getAuthor()) && practice.getId() != 1) {
+        if (user.equals(practice.getAuthor()) && !practice.getId().equals(Practice.COMMON_POOL)) {
             practiceRepo.delete(practice);
             model.addAttribute("message", "Practice removed");
             model.addAttribute("type", "success");
@@ -155,7 +155,7 @@ public class TeacherPracticeController {
         RedirectAttributes redirectAttributes
     ) {
         try {
-            if (user.equals(practice.getAuthor()) && practice.getId() != 1) {
+            if (user.equals(practice.getAuthor()) && !practice.getId().equals(Practice.COMMON_POOL)) {
                 LocalDateTime deadline = practiceRepo.getDeadlineByPracticeId(practice.getId());
                 model.addAttribute("practice", practice);
                 model.addAttribute("deadline", deadline);
@@ -183,7 +183,7 @@ public class TeacherPracticeController {
         @RequestParam(required = false) Boolean sendingAfterDeadLine,
         RedirectAttributes redirectAttributes
     ) {
-        if (user.equals(practice.getAuthor()) && practice.getId() != 1) {
+        if (user.equals(practice.getAuthor()) && !practice.getId().equals(Practice.COMMON_POOL)) {
             try {
                 if (practiceRepo.getDeadlineByPracticeId(practice.getId()) != null) {
                     LocalDateTime newTimestamp = LocalDateTime.of(LocalDate.parse(date), LocalTime.parse(time));
