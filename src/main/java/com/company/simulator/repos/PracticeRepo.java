@@ -21,17 +21,17 @@ public interface PracticeRepo extends CrudRepository<Practice, Long> {
     void addDeadLineToPractice(@Param("practiceId") Long practiceId, @Param("startDate") LocalDateTime startDate, @Param("endDate") LocalDateTime endDate, @Param("afterDeadline") Boolean afterDeadline);
 
     @Query(
-        value = "SELECT * FROM practice p WHERE p.author_id = ?1 AND p.id NOT IN (SELECT practice_id FROM practice_deadlines)",
+        value = "SELECT * FROM practice p WHERE p.author_id = ?1 AND p.id NOT IN (SELECT practice_id FROM practice_deadlines) AND p.id <> 1",
         nativeQuery = true)
     Optional<List<Practice>> findAllPracticeNotInProcess(Long authorId);
 
     @Query(
-        value = "SELECT * FROM practice p WHERE p.author_id = ?1 AND p.id IN (SELECT practice_id FROM practice_deadlines WHERE date_end < ?2)",
+        value = "SELECT * FROM practice p WHERE p.author_id = ?1 AND p.id IN (SELECT practice_id FROM practice_deadlines WHERE date_end < ?2 AND practice_id <> 1)",
         nativeQuery = true)
     Optional<List<Practice>> findAllPracticeInArchive(Long authorId, LocalDateTime dateTime);
 
     @Query(
-        value = "SELECT * FROM practice p WHERE p.author_id = ?1 AND p.id IN (SELECT practice_id FROM practice_deadlines WHERE date_end > ?2)",
+        value = "SELECT * FROM practice p WHERE p.author_id = ?1 AND p.id IN (SELECT practice_id FROM practice_deadlines WHERE date_end > ?2 AND practice_id <> 1)",
         nativeQuery = true)
     Optional<List<Practice>> findAllPracticeInProcess(Long authorId, LocalDateTime dateTime);
 
