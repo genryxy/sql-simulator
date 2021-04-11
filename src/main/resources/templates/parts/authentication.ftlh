@@ -1,7 +1,7 @@
 <#macro login path isRegisterForm>
     <form action="${path}" method="post">
         <div class="form-group row">
-            <label class="col-sm-2 col-form-label"> User Name :</label>
+            <label class="col-sm-2 col-form-label"> Username :</label>
             <div class="col-sm-5">
                 <input type="text" name="username"
                        value="<#if user??>${user.username}</#if>"
@@ -43,18 +43,46 @@
                 </div>
             </div>
             <div class="form-group row">
+                <label class="col-sm-2 col-form-label"> First name:</label>
+                <div class="col-sm-5">
+                    <input type="text" name="firstname"
+                           value="<#if user??>${user.firstname}</#if>"
+                           class="form-control ${(firstnameError??)?string('is-invalid', '')}"
+                           placeholder="Firstname"/>
+                    <#if firstnameError??>
+                        <div class="invalid-feedback">
+                            ${firstnameError}
+                        </div>
+                    </#if>
+                </div>
+            </div>
+            <div class="form-group row">
+                <label class="col-sm-2 col-form-label"> Last name:</label>
+                <div class="col-sm-5">
+                    <input type="text" name="lastname"
+                           value="<#if user??>${user.lastname}</#if>"
+                           class="form-control ${(lastnameError??)?string('is-invalid', '')}"
+                           placeholder="Lastname"/>
+                    <#if lastnameError??>
+                        <div class="invalid-feedback">
+                            ${lastnameError}
+                        </div>
+                    </#if>
+                </div>
+            </div>
+            <div class="form-group row">
                 <label class="col-sm-2 col-form-label"> Email:</label>
                 <div class="col-sm-5">
                     <input type="email" name="email"
                            value="<#if user??>${user.email}</#if>"
                            class="form-control ${(emailError??)?string('is-invalid', '')}"
                            placeholder="example@example.com"/>
+                    <#if emailError??>
+                        <div class="invalid-feedback">
+                            ${emailError}
+                        </div>
+                    </#if>
                 </div>
-                <#if emailError??>
-                    <div class="invalid-feedback">
-                        ${emailError}
-                    </div>
-                </#if>
             </div>
             <div class="form-group row">
                 <label class="col-sm-2 col-form-label"> Role:</label>

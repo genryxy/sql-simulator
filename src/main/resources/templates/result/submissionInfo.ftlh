@@ -7,6 +7,7 @@
         <h6>Practice: ${submission.practice.name}</h6>
         <h6 class="mt-2">Task: ${submission.task.name}</h6>
         <h6 class="mt-2">Send date: ${submission.sendDate}</h6>
+        <h6 class="mt-2">Status: <#if submission.correct>correct solution<#else>wrong solution</#if></h6>
         <div class="text-dark mt-2 mb-2">
             ${submission.task.text}
         </div>
