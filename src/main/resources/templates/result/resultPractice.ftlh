@@ -23,6 +23,7 @@
             </div>
         </div>
         <div class="col-4 ml-2">
+            <a href="/result/practice/export" class="btn btn-primary mb-2 mt-2">Export CSV</a>
             <@ts.selectionMenu />
         </div>
     </div>

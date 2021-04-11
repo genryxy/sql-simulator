@@ -61,6 +61,7 @@ public class TaskController {
             model.addAttribute("correctAttempts", attempts.get("correct"));
             model.addAttribute("message", message);
             model.addAttribute("type", type);
+            model.addAttribute("practice", practice);
             return "practice/taskExecution";
         }
             throw new AccessDeniedException(
@@ -89,17 +90,16 @@ public class TaskController {
             subm.setPractice(practice);
             subm.setUser(user);
             submRepo.save(subm);
-            redirAttr.addAttribute("message", "Query was successfully submitted");
-            redirAttr.addAttribute("type", "success");
         } else {
             addAttributesAboutResult(redirAttr, res);
+            redirAttr.addAttribute("sentQuery", query);
+            redirAttr.addAttribute(
+                "submissions",
+                submRepo.findByUserAndPracticeAndTask(user, practice, task).orElseGet(ArrayList::new)
+            );
+            return String.format("redirect:/practice/%d/task/%d", practice.getId(), task.getId());
         }
-        redirAttr.addAttribute("sentQuery", query);
-        redirAttr.addAttribute(
-            "submissions",
-            submRepo.findByUserAndPracticeAndTask(user, practice, task).orElseGet(ArrayList::new)
-        );
-        return String.format("redirect:/practice/%d/task/%d", practice.getId(), task.getId());
+        return String.format("redirect:/practice/%d", practice.getId());
     }
 
     private void addAttributesAboutResult(Model model, SqlTransaction.ResultQuery res) {
