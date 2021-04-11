@@ -1,7 +1,9 @@
 package com.company.simulator.controller.teacher;
 
+import com.company.simulator.exception.SqlDropDbException;
 import com.company.simulator.model.Task;
 import com.company.simulator.model.User;
+import com.company.simulator.processing.QueryProcess;
 import com.company.simulator.repos.CategoryRepo;
 import com.company.simulator.repos.TaskRepo;
 import com.company.simulator.sql.SqlTransaction;
@@ -88,6 +90,12 @@ public class TeacherTaskController {
         try {
             if (task.getIsPrivate() == null) {
                 task.setIsPrivate(false);
+            }
+            if (new QueryProcess(task.getDdlScript()).malformed()) {
+                throw new SqlDropDbException("Please, don't try to drop our database in DDL script");
+            }
+            if (new QueryProcess(task.getCorrectQuery()).malformed()) {
+                throw new SqlDropDbException("Please, don't try to drop our database in correct query");
             }
             sqlTransaction.validationTeacherQuery(task.getDdlScript(), task.getCorrectQuery());
             taskRepo.save(task);

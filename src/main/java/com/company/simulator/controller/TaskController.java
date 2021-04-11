@@ -3,10 +3,12 @@ package com.company.simulator.controller;
 import com.company.simulator.access.AccessStudent;
 import com.company.simulator.exception.AccessDeniedException;
 import com.company.simulator.exception.NotFoundException;
+import com.company.simulator.exception.SqlDropDbException;
 import com.company.simulator.model.Practice;
 import com.company.simulator.model.Submission;
 import com.company.simulator.model.Task;
 import com.company.simulator.model.User;
+import com.company.simulator.processing.QueryProcess;
 import com.company.simulator.repos.StudentRepo;
 import com.company.simulator.repos.SubmissionRepo;
 import com.company.simulator.sql.SqlTransaction;
@@ -85,6 +87,9 @@ public class TaskController {
         res = sqlTransaction.executeQuery(
             task.getDdlScript(), query, task.getCorrectQuery()
         ).getBody();
+        if (new QueryProcess(query).malformed()) {
+            throw new SqlDropDbException("Please, don't try to drop our database in your query");
+        }
         if (res.getInternalError().isEmpty() && res.getSqlException().isEmpty()) {
             final Submission subm = new Submission(query, res.isCorrect(), task);
             subm.setPractice(practice);
