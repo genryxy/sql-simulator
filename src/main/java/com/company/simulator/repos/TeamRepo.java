@@ -18,7 +18,7 @@ public interface TeamRepo extends CrudRepository<Team, Long> {
 
     Optional<List<Team>> findTeamsByPracticesNotContainsAndAuthorId(Practice practice, Long id);
 
-    Optional<List<Team>> findTeamsByAuthorId(Long authorId);
+    Optional<List<Team>> findTeamsByAuthorIdAndIdNot(Long authorId, Long id);
 
     @Query(
         value = "SELECT * FROM team t " +
