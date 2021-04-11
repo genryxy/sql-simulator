@@ -41,15 +41,17 @@ public class RegistrationController {
                 "Password confirmation cannot be empty"
             );
         }
-        if (!Objects.equals(user.getPassword(), passwordConfirm)) {
+        boolean pswdDiff = !Objects.equals(user.getPassword(), passwordConfirm);
+        if (pswdDiff) {
             model.addAttribute("passwordError", "Passwords are different!");
-            return "registration";
         }
-        if (isConfirmEmpty || bindingResult.hasErrors()) {
+        if (isConfirmEmpty || pswdDiff || bindingResult.hasErrors()) {
             final Map<String, String> errors = ControllerUtils.getErrors(bindingResult);
             model.mergeAttributes(errors);
+            System.out.println("errors: " + errors);
             return "registration";
         }
+        System.out.println("we were here");
         if (!userService.addUser(user, role)) {
             model.addAttribute("usernameError", "User exists!");
             return "registration";

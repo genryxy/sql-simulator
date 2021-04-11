@@ -36,6 +36,12 @@ public class User implements UserDetails, Serializable {
     @NotBlank(message = "Username cannot be empty")
     private String username;
 
+    @NotBlank(message = "Firstname cannot be empty")
+    private String firstname;
+
+    @NotBlank(message = "Lastname cannot be empty")
+    private String lastname;
+
     @NotBlank(message = "Password cannot be empty")
     private String password;
 
