@@ -12,7 +12,8 @@
         <#list tasks as task>
             <div class="list-group">
                 <a href="/teacher/task/${task.id}/info" class="list-group-item list-group-item-action" style="margin-top: 1%">
-                    Task name: ${task.name} ${task.text}
+                    <h6>${task.name}</h6>
+                    ${task.text}
                 </a>
             </div>
         <#else>
