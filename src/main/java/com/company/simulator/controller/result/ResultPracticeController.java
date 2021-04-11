@@ -11,19 +11,29 @@ import com.company.simulator.processing.TasksMarked;
 import com.company.simulator.repos.PracticeRepo;
 import com.company.simulator.repos.StudentRepo;
 import com.company.simulator.repos.SubmissionRepo;
+import java.io.IOException;
+import java.io.UncheckedIOException;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
+import javax.servlet.http.HttpServletResponse;
+import org.apache.commons.csv.CSVFormat;
+import org.apache.commons.csv.CSVPrinter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RequestMapping;
 
 @Controller
+@RequestMapping("/result/practice")
 public class ResultPracticeController {
     @Autowired
     private SubmissionRepo submRepo;
@@ -37,30 +47,51 @@ public class ResultPracticeController {
     @Autowired
     private TasksMarked tasksMarked;
 
-    @GetMapping("/result/practice")
+    @GetMapping
     public String resultsForPractices(
         @AuthenticationPrincipal User user,
         Model model
     ) {
-        final List<ResultPractice> resPracs;
-        resPracs = practiceRepo.findAllForUserExcept(user.getId(), Practice.COMMON_POOL)
-            .orElseGet(ArrayList::new).stream()
-            .map(
-                prac -> {
-                    final Map<String, Number> res;
-                    res = submRepo.findScoreToTotalForPracticeByUser(prac.getId(), user.getId());
-                    return new ResultPractice(
-                        prac,
-                        res.get("total").intValue(),
-                        res.get("score").intValue()
-                    );
-                }
-            ).collect(Collectors.toList());
+        final List<ResultPractice> resPracs = resultsOfPracticesFor(user);
         model.addAttribute("results", resPracs);
         return "result/resultPractice";
     }
 
-    @GetMapping("/result/practice/{practice}")
+    @GetMapping("export")
+    public void exportResultsForPractices(
+        @AuthenticationPrincipal User user,
+        HttpServletResponse response
+    ) {
+        response.setContentType("text/csv");
+        final DateFormat dateFormatter = new SimpleDateFormat("yyyy-MM-dd_HH-mm-ss");
+        final String currDate = dateFormatter.format(new Date());
+        response.setHeader(
+            "Content-Disposition",
+            String.format("attachment; filename=practices_%s.csv", currDate)
+        );
+        final List<ResultPractice> resPracs = resultsOfPracticesFor(user);
+        final String[] csvHeader = {"Practice_ID", "Practice_name", "Score", "Total"};
+        try (CSVPrinter csvPrinter = new CSVPrinter(
+            response.getWriter(),
+            CSVFormat.DEFAULT.withHeader(csvHeader)
+        )) {
+            for (ResultPractice res : resPracs) {
+                csvPrinter.printRecord(
+                    Arrays.asList(
+                        res.getPractice().getId(),
+                        res.getPractice().getName(),
+                        res.getScore(),
+                        res.getTotal()
+                    )
+                );
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+            throw new UncheckedIOException(e);
+        }
+    }
+
+    @GetMapping("{practice}")
     public String resultsByPractice(
         @AuthenticationPrincipal User user,
         @PathVariable Practice practice,
@@ -83,7 +114,7 @@ public class ResultPracticeController {
         return "result/onePractice";
     }
 
-    @GetMapping("/result/practice/{practice}/task/{task}")
+    @GetMapping("{practice}/task/{task}")
     public String resultsByPracticeAndTask(
         @AuthenticationPrincipal User user,
         @PathVariable Practice practice,
@@ -109,5 +140,21 @@ public class ResultPracticeController {
             submRepo.findByUserAndPracticeAndTask(user, practice, task).orElseGet(ArrayList::new)
         );
         return "result/oneTaskFromPractice";
+    }
+
+    private List<ResultPractice> resultsOfPracticesFor(User user) {
+        return practiceRepo.findAllForUserExcept(user.getId(), Practice.COMMON_POOL)
+            .orElseGet(ArrayList::new).stream()
+            .map(
+                prac -> {
+                    final Map<String, Number> res;
+                    res = submRepo.findScoreToTotalForPracticeByUser(prac.getId(), user.getId());
+                    return new ResultPractice(
+                        prac,
+                        res.get("total").intValue(),
+                        res.get("score").intValue()
+                    );
+                }
+            ).collect(Collectors.toList());
     }
 }

@@ -3,6 +3,7 @@
 
 <@c.page>
     <#include "../parts/alertMessage.ftlh"/>
+    <a class="btn btn-primary mb-2" href="/practice/${practice.id}">Back to practice</a>
     <div class="row">
         <div class="col-4 h5">Task execution</div>
         <div class="col-4">Number of attempts for all users: ${correctAttempts}/${totalAttempts}</div>
