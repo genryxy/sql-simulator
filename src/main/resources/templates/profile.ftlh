@@ -1,12 +1,9 @@
 <#import "parts/common.ftlh" as c>
+<#include "parts/security.ftlh">
 
 <@c.page>
-    <h5>${username}</h5>
-    <#if message??>
-        <div class="alert alert-success" role="alert">
-            ${message}
-        </div>
-    </#if>
+    <h5>${name}</h5>
+    <#include "parts/alertMessage.ftlh"/>
     <form method="post">
         <div class="form-group row">
             <label class="col-sm-2 col-form-label"> Password:</label>
