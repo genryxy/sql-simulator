@@ -1,6 +1,7 @@
 package com.company.simulator.controller.teacher;
 
 import com.company.simulator.exception.SqlDropDbException;
+import com.company.simulator.model.Practice;
 import com.company.simulator.model.Task;
 import com.company.simulator.model.User;
 import com.company.simulator.processing.QueryProcess;
@@ -99,6 +100,9 @@ public class TeacherTaskController {
             }
             sqlTransaction.validationTeacherQuery(task.getDdlScript(), task.getCorrectQuery());
             taskRepo.save(task);
+            if (!task.getIsPrivate()) {
+                taskRepo.addTaskToPractice(Practice.COMMON_POOL, task.getId());
+            }
             redirectAttributes.addAttribute("message", "Task successfully created");
             redirectAttributes.addAttribute("type", "success");
             return "redirect:/teacher/task";
