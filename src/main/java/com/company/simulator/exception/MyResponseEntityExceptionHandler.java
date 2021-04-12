@@ -21,6 +21,17 @@ public class MyResponseEntityExceptionHandler extends ResponseEntityExceptionHan
         );
     }
 
+    @ExceptionHandler(value = SqlDropDbException.class)
+    protected ResponseEntity<Object> handleAccessDeniedDropDb(RuntimeException exc, WebRequest request) {
+        return handleExceptionInternal(
+            exc,
+            String.format("You are prohibited to remove database. \nReason: %s", exc.getMessage()),
+            HttpHeaders.EMPTY,
+            HttpStatus.FORBIDDEN,
+            request
+        );
+    }
+
     @ExceptionHandler(value = NotFoundException.class)
     protected ResponseEntity<Object> handleNotFound(RuntimeException exc, WebRequest request) {
         return handleExceptionInternal(
@@ -38,7 +49,10 @@ public class MyResponseEntityExceptionHandler extends ResponseEntityExceptionHan
     ) {
         return handleExceptionInternal(
             exc,
-            String.format("Sorry, something goes wrong. Try later. Reason: %s", exc.getMessage()),
+            String.format(
+                "Sorry, something goes wrong. Probably, try later. Reason: %s",
+                exc.getMessage()
+            ),
             HttpHeaders.EMPTY,
             HttpStatus.INTERNAL_SERVER_ERROR,
             request

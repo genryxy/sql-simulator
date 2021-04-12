@@ -1,7 +1,10 @@
 package com.company.simulator.controller.teacher;
 
+import com.company.simulator.exception.SqlDropDbException;
+import com.company.simulator.model.Practice;
 import com.company.simulator.model.Task;
 import com.company.simulator.model.User;
+import com.company.simulator.processing.QueryProcess;
 import com.company.simulator.repos.CategoryRepo;
 import com.company.simulator.repos.TaskRepo;
 import com.company.simulator.sql.SqlTransaction;
@@ -89,8 +92,17 @@ public class TeacherTaskController {
             if (task.getIsPrivate() == null) {
                 task.setIsPrivate(false);
             }
+            if (new QueryProcess(task.getDdlScript()).malformed()) {
+                throw new SqlDropDbException("Please, don't try to drop our database in DDL script");
+            }
+            if (new QueryProcess(task.getCorrectQuery()).malformed()) {
+                throw new SqlDropDbException("Please, don't try to drop our database in correct query");
+            }
             sqlTransaction.validationTeacherQuery(task.getDdlScript(), task.getCorrectQuery());
             taskRepo.save(task);
+            if (!task.getIsPrivate()) {
+                taskRepo.addTaskToPractice(Practice.COMMON_POOL, task.getId());
+            }
             redirectAttributes.addAttribute("message", "Task successfully created");
             redirectAttributes.addAttribute("type", "success");
             return "redirect:/teacher/task";

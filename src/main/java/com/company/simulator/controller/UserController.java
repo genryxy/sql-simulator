@@ -1,6 +1,7 @@
 package com.company.simulator.controller;
 
 import com.company.simulator.model.User;
+import com.company.simulator.repos.UserRepo;
 import com.company.simulator.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -11,10 +12,13 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 @Controller
 @RequestMapping("/user")
 public class UserController {
+    @Autowired
+    private UserRepo userRepo;
 
     @Autowired
     private UserService userService;
@@ -23,13 +27,14 @@ public class UserController {
     public String getProfile(
         Model model,
         @AuthenticationPrincipal User user,
-        @RequestParam(required = false, defaultValue = "") String message
+        @RequestParam(required = false) String message,
+        @RequestParam(required = false) String type
     ) {
-        model.addAttribute("username", user.getUsername());
-        model.addAttribute("email", user.getEmail());
-        if (message.length() > 0) {
-            model.addAttribute("message", message);
-        }
+        final User upd = userRepo.findById(user.getId()).orElse(user);
+        model.addAttribute("user", upd);
+        model.addAttribute("email", upd.getEmail());
+        model.addAttribute("message", message);
+        model.addAttribute("type", type);
         return "profile";
     }
 
@@ -38,6 +43,7 @@ public class UserController {
         @AuthenticationPrincipal User user,
         @RequestParam String password,
         @RequestParam String email,
+        RedirectAttributes redirAttr,
         Model model
     ) {
         if (StringUtils.isEmpty(password)) {
@@ -47,11 +53,13 @@ public class UserController {
             model.addAttribute("emailError", "Email cannot be empty");
         }
         if (model.asMap().size() > 0) {
-            model.addAttribute("username", user.getUsername());
+            model.addAttribute("user", user);
             model.addAttribute("email", email);
             return "profile";
         }
         userService.updateProfile(user, password, email);
-        return "redirect:/user/profile?message=Data was successfully updated";
+        redirAttr.addAttribute("message", "Data was successfully updated");
+        redirAttr.addAttribute("type", "success");
+        return "redirect:/user/profile";
     }
 }
