@@ -48,10 +48,8 @@ public class RegistrationController {
         if (isConfirmEmpty || pswdDiff || bindingResult.hasErrors()) {
             final Map<String, String> errors = ControllerUtils.getErrors(bindingResult);
             model.mergeAttributes(errors);
-            System.out.println("errors: " + errors);
             return "registration";
         }
-        System.out.println("we were here");
         if (!userService.addUser(user, role)) {
             model.addAttribute("usernameError", "User exists!");
             return "registration";

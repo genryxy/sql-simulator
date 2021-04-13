@@ -54,7 +54,7 @@ public class UserService implements UserDetailsService {
         if (userFromDb != null) {
             return false;
         }
-        if (role.equalsIgnoreCase(Role.USER.name())) {
+        if (role.equalsIgnoreCase("student")) {
             user.setRoles(Collections.singleton(Role.USER));
         }
         if (role.equalsIgnoreCase(Role.TEACHER.name())) {
