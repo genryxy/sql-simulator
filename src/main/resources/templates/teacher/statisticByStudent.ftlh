@@ -13,7 +13,7 @@
                 </a>
             </div>
         <#else>
-            No messages
+            No submissions
         </#list>
     </div>
 </@c.page>

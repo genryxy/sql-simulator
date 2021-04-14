@@ -14,9 +14,9 @@ import java.util.Optional;
 public interface TeamRepo extends CrudRepository<Team, Long> {
     Optional<Team> findTeamByInvitation(String invitation);
 
-    Optional<List<Team>> findTeamsByPracticesContains(Practice practice);
+    Optional<List<Team>> findTeamsByPracticesContainsAndIdNot(Practice practice, Long id);
 
-    Optional<List<Team>> findTeamsByPracticesNotContainsAndAuthorId(Practice practice, Long id);
+    Optional<List<Team>> findTeamsByPracticesNotContainsAndAuthorIdAndIdNot(Practice practice, Long authorId, Long id);
 
     Optional<List<Team>> findTeamsByAuthorIdAndIdNot(Long authorId, Long id);
 

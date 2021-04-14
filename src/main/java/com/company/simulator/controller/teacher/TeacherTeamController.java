@@ -90,8 +90,8 @@ public class TeacherTeamController {
             model.addAttribute("type", type);
             if (user.equals(practice.getAuthor())
                 && !practice.getId().equals(Practice.COMMON_POOL)) {
-                final List<Team> teamsInPractice = teamRepo.findTeamsByPracticesContains(practice).orElseGet(ArrayList::new);
-                final List<Team> allAnotherTeamsByAuthor = teamRepo.findTeamsByPracticesNotContainsAndAuthorId(practice, user.getId()).orElseGet(ArrayList::new);
+                final List<Team> teamsInPractice = teamRepo.findTeamsByPracticesContainsAndIdNot(practice, Team.COMMON_TEAM).orElseGet(ArrayList::new);
+                final List<Team> allAnotherTeamsByAuthor = teamRepo.findTeamsByPracticesNotContainsAndAuthorIdAndIdNot(practice, user.getId(), Team.COMMON_TEAM).orElseGet(ArrayList::new);
                 model.addAttribute("teamsInPractice", teamsInPractice);
                 model.addAttribute("allAnotherTeamsByAuthor", allAnotherTeamsByAuthor);
                 model.addAttribute("practice", practice);
@@ -130,7 +130,9 @@ public class TeacherTeamController {
                              RedirectAttributes redirectAttributes
     ) {
         if (user.equals(practice.getAuthor())
-            && user.equals(team.getAuthor())) {
+            && user.equals(team.getAuthor())
+            && !team.getId().equals(Team.COMMON_TEAM)
+            && !practice.getId().equals(Practice.COMMON_POOL)) {
             teamRepo.assignPracticeToTeam(practice.getId(), team.getId());
             return String.format("redirect:/teacher/team/%d", practice.getId());
         }

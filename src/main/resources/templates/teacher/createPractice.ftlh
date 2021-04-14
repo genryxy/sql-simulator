@@ -17,7 +17,8 @@
             <#list tasks as task>
                 <div class="list-group" style="margin-left: 3%; margin-top: 1%">
                     <a href="/teacher/task/${task.id}/info" class="list-group-item list-group-item-action" style="margin-left: 40px">
-                        Task name: ${task.name}
+                        <h6>${task.name}</h6>
+                        ${task.text}
                     </a>
                     <input class="form-check-input" type="checkbox" name="checkBox${task.id}" style="width: 40px; height: 40px;">
                 </div>
