@@ -26,6 +26,6 @@
             <input type="hidden" name="_csrf" value="${_csrf.token}">
             <button type="submit" class="btn btn-primary ml-2">Edit</button>
         </form>
-        <@cr.modal "message" "/teacher/team/${team.id}/remove"/>
+        <@cr.modal "Students will be removed" "/teacher/team/${team.id}/remove"/>
     </div>
 </@c.page>
